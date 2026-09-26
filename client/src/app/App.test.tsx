@@ -119,7 +119,8 @@ describe('App', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'This level is being built' }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('Level 3-1 – ML Quest')
+    // The title is set in an effect after the lazily loaded screen renders: wait for it.
+    await waitFor(() => expect(document.title).toBe('Level 3-1 – ML Quest'))
   })
 
   it('plays Roll Downhill from briefing to debrief', async () => {

@@ -1,0 +1,74 @@
+name: Deploy
+
+# Builds client/ and publishes it to GitHub Pages on every push to main
+# (https://amide-init.github.io/ml-quest/). main only receives PRs that passed CI.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# One deployment at a time; never cancel a deployment that is already running.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm (version from client/package.json "packageManager")
+        uses: pnpm/action-setup@v6
+        with:
+          package_json_file: client/package.json
+
+      - name: Set up Node (version from .nvmrc)
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Build
+        run: pnpm build
+        env:
+          # e.g. "/ml-quest/" for a project site; "/" if a custom domain is added later.
+          VITE_BASE: ${{ steps.pages.outputs.base_path }}/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: client/dist
+
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

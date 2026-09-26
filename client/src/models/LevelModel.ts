@@ -1,22 +1,10 @@
 import { z } from 'zod'
 import { starRulesSchema } from './ConditionModel'
+import { linearNoisySpecSchema } from './DatasetModel'
 import { landscapeSpecSchema, pointSchema } from './LandscapeModel'
 
 export const levelIdSchema = z.string().regex(/^w[1-6]-l[1-8]$/, 'Level ids look like "w1-l3"')
 export type LevelId = z.infer<typeof levelIdSchema>
-
-/** Which algorithm a level trains, and its setup. A discriminated union so each algorithm gets its own fields. */
-export const levelAlgorithmSchema = z.discriminatedUnion('id', [
-  z.object({
-    id: z.literal('landscape-2d'),
-    landscape: landscapeSpecSchema,
-    /** Where the ball starts. */
-    start: pointSchema,
-    /** "In the valley" = within this distance of the global minimum. */
-    targetRadius: z.number().positive(),
-  }),
-])
-export type LevelAlgorithm = z.infer<typeof levelAlgorithmSchema>
 
 const rangeControlSchema = z
   .object({
@@ -28,6 +16,40 @@ const rangeControlSchema = z
   .refine((c) => c.min < c.max && c.initial >= c.min && c.initial <= c.max, {
     message: 'Range control needs min < max and min ≤ initial ≤ max',
   })
+
+/**
+ * Which algorithm a level trains, its setup and its controls. A discriminated union, so each
+ * algorithm declares exactly the fields it needs.
+ */
+export const levelAlgorithmSchema = z.discriminatedUnion('id', [
+  z.object({
+    id: z.literal('landscape-2d'),
+    landscape: landscapeSpecSchema,
+    /** Where the ball starts. */
+    start: pointSchema,
+    /** "In the valley" = within this distance of the global minimum. */
+    targetRadius: z.number().positive(),
+    controls: z.object({
+      learningRate: rangeControlSchema,
+      /** The attempt ends (and is checked) after this many steps. */
+      stepBudget: z.number().int().positive(),
+    }),
+  }),
+  z.object({
+    id: z.literal('linear-regression'),
+    dataset: linearNoisySpecSchema,
+    /** The line the player starts from. */
+    initial: z.object({ w: z.number(), b: z.number() }),
+    /** Visible data window (also the drag range of the line's handles). */
+    view: z.object({ xMin: z.number(), xMax: z.number(), yMin: z.number(), yMax: z.number() }),
+    /** Show the live loss meter (W1-L2) or only the residuals (W1-L1). */
+    showLoss: z.boolean(),
+    /** When set, the attempt is checked automatically after this many moves. */
+    moveBudget: z.number().int().positive().optional(),
+  }),
+])
+export type LevelAlgorithm = z.infer<typeof levelAlgorithmSchema>
+export type AlgorithmId = LevelAlgorithm['id']
 
 /**
  * A level is data (ARCHITECTURE §5.5, RULES.md §3): no code, player-facing text as locale keys.
@@ -42,11 +64,6 @@ export const levelConfigSchema = z
     level: z.number().int().min(1).max(8),
     seed: z.number().int().nonnegative(),
     algorithm: levelAlgorithmSchema,
-    controls: z.object({
-      learningRate: rangeControlSchema,
-      /** The attempt ends (and is checked) after this many steps. */
-      stepBudget: z.number().int().positive(),
-    }),
     stars: starRulesSchema,
     text: z.object({
       title: z.string(),
@@ -62,3 +79,8 @@ export const levelConfigSchema = z
   })
 
 export type LevelConfig = z.infer<typeof levelConfigSchema>
+
+/** A level config narrowed to one algorithm, e.g. LevelOf<'linear-regression'>. */
+export type LevelOf<Id extends AlgorithmId> = LevelConfig & {
+  readonly algorithm: Extract<LevelAlgorithm, { id: Id }>
+}

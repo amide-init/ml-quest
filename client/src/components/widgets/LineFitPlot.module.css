@@ -1,0 +1,81 @@
+.sheet {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  user-select: none;
+}
+
+.axis {
+  stroke: var(--color-line);
+  stroke-width: 1.5;
+}
+
+.tick {
+  fill: var(--color-ink-muted);
+  font-size: 12px;
+  font-family: var(--font-text);
+}
+
+.grid {
+  stroke: var(--color-line);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.residual {
+  stroke: var(--color-ridge);
+  stroke-width: 1.5;
+  opacity: 0.85;
+}
+
+.point {
+  fill: var(--color-ink);
+}
+
+.line {
+  stroke: var(--color-beacon);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.handle {
+  cursor: grab;
+  outline: none;
+}
+
+.handle:active {
+  cursor: grabbing;
+}
+
+.handleHit {
+  fill: transparent;
+}
+
+.handleBody {
+  fill: var(--color-beacon);
+  stroke: var(--color-paper-raised);
+  stroke-width: 3;
+}
+
+.handle:focus-visible .handleBody {
+  stroke: var(--color-focus);
+  stroke-width: 4;
+}
+
+.disabled .handle {
+  cursor: default;
+}
+
+.hint {
+  margin-top: var(--space-3);
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}

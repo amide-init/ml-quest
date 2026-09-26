@@ -4,6 +4,9 @@ import { checkCondition, evaluate } from './Evaluate'
 
 const metrics = (overrides: Partial<Metrics> = {}): Metrics => ({
   steps: 10,
+  moves: 0,
+  test_loss: Number.NaN,
+  loss_gap: Number.NaN,
   final_loss: 0.02,
   distance_to_global_min: 0.03,
   hints_used: 0,

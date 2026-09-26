@@ -11,6 +11,10 @@ export interface MetricInput<TData = void> {
   readonly hintsRevealed: number
   /** Only for landscape levels: where the true valley floor is. */
   readonly globalMinimum?: Vector
+  /** The hidden test set, when the level has one. Only metrics computed from it ever reach the UI. */
+  readonly testData?: TData
+  /** The best achievable training loss, when known (e.g. least squares), for "loss gap". */
+  readonly optimalLoss?: number
 }
 
 export interface MetricDefinition {
@@ -25,9 +29,28 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
     better: 'lower',
     compute: (input) => input.trace.filter((entry) => entry.command.type === 'step').length,
   },
+  moves: {
+    better: 'lower',
+    compute: (input) => input.trace.filter((entry) => entry.command.type === 'set-params').length,
+  },
   final_loss: {
     better: 'lower',
     compute: (input) => input.algorithm.loss(input.params, input.data),
+  },
+  test_loss: {
+    better: 'lower',
+    compute: (input) =>
+      input.testData === undefined
+        ? Number.NaN
+        : input.algorithm.loss(input.params, input.testData),
+  },
+  loss_gap: {
+    better: 'lower',
+    // How much worse than the best possible fit. 0 = optimal.
+    compute: (input) =>
+      input.optimalLoss === undefined
+        ? Number.NaN
+        : input.algorithm.loss(input.params, input.data) - input.optimalLoss,
   },
   distance_to_global_min: {
     better: 'lower',

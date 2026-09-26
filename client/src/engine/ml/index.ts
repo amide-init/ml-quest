@@ -4,5 +4,6 @@
  */
 export { createLandscape2D, LANDSCAPE_2D_ID } from './algorithms/Landscape2D'
 export { findLandscapeMinimum } from './algorithms/LandscapeMinimum'
+export { leastSquares, LINEAR_REGRESSION_ID, linearRegression } from './algorithms/LinearRegression'
 export type { LandscapeMinimum } from './algorithms/LandscapeMinimum'
 export { gradientDescentStep } from './optimizers/GradientDescent'

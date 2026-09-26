@@ -16,5 +16,9 @@ export type Command =
   | { readonly type: 'set-start'; readonly point: Point }
   | { readonly type: 'step' }
   | { readonly type: 'reset' }
+  /** Set model parameters directly, e.g. dragging a line sets { w, b }. One command = one "move". */
+  | { readonly type: 'set-params'; readonly values: Readonly<Record<string, number>> }
+  /** The player asks to be judged (e.g. "Check my line"). */
+  | { readonly type: 'check' }
 
 export type CommandType = Command['type']

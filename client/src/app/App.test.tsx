@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
@@ -108,10 +108,63 @@ describe('App', () => {
     expect(screen.getByText('Unlocked in Roll Downhill')).toBeInTheDocument()
   })
 
+  it('lists every World 1 level on the map in order', () => {
+    renderApp('/map')
+    const levels = screen.getAllByRole('listitem').map((item) => item.textContent ?? '')
+    const titles = ['Draw the Line', 'Feel the Loss', 'Roll Downhill']
+    const positions = titles.map((title) => levels.findIndex((text) => text.includes(title)))
+    expect(positions.every((position) => position >= 0)).toBe(true)
+    expect(positions.toSorted((a, b) => a - b)).toEqual(positions)
+  })
+
+  it('Draw the Line: explains a bad fit, then passes after moving the line with the keyboard', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/1')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+
+    await user.click(screen.getByRole('button', { name: 'Check my line' }))
+    expect(screen.getByRole('heading', { name: 'Not a good fit yet' })).toBeInTheDocument()
+    expect(
+      screen.getByText(/mean squared error is 17\.\d+\. It needs to be below 5/),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    const left = screen.getByRole('slider', { name: 'Left end of the line' })
+    const right = screen.getByRole('slider', { name: 'Right end of the line' })
+    // Starting line is flat at 10. Move the left end to 6 and the right end to 18.5.
+    for (let i = 0; i < 2; i++) fireEvent.keyDown(left, { key: 'ArrowDown', shiftKey: true })
+    fireEvent.blur(left)
+    for (let i = 0; i < 4; i++) fireEvent.keyDown(right, { key: 'ArrowUp', shiftKey: true })
+    fireEvent.keyDown(right, { key: 'ArrowUp' })
+    fireEvent.blur(right)
+    await waitFor(() => expect(right).toHaveAttribute('aria-valuenow', '18.5'))
+
+    await user.click(screen.getByRole('button', { name: 'Check my line' }))
+    expect(screen.getByRole('heading', { name: 'Good fit' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: /of 3 stars/ })).toBeInTheDocument()
+  })
+
+  it('Feel the Loss: every move updates the loss meter and the move count', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/2')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText('Moves 0 of 20')).toBeInTheDocument()
+    const before = screen.getByText('Loss (mean squared error)').nextElementSibling?.textContent
+
+    // The starting line's left end sits far above the data (≈15.6 vs ≈5.7), so lowering it helps.
+    const left = screen.getByRole('slider', { name: 'Left end of the line' })
+    fireEvent.keyDown(left, { key: 'ArrowDown', shiftKey: true })
+    fireEvent.blur(left)
+
+    expect(screen.getByText('Moves 1 of 20')).toBeInTheDocument()
+    const after = screen.getByText('Loss (mean squared error)').nextElementSibling?.textContent
+    expect(Number(after)).toBeLessThan(Number(before))
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getByText('Not played yet')).toBeInTheDocument()
+    expect(screen.getAllByText('Not played yet')).toHaveLength(3)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

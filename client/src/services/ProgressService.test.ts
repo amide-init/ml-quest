@@ -6,7 +6,15 @@ import { ProgressService } from './ProgressService'
 const result = (stars: StarCount): EvalResult => ({
   passed: stars > 0,
   stars,
-  metrics: { steps: 5, final_loss: 0, distance_to_global_min: 0, hints_used: 0 },
+  metrics: {
+    steps: 5,
+    moves: 0,
+    final_loss: 0,
+    test_loss: Number.NaN,
+    loss_gap: Number.NaN,
+    distance_to_global_min: 0,
+    hints_used: 0,
+  },
   failedConditions: [],
   nextStarConditions: [],
   cappedByHints: false,

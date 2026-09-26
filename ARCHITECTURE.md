@@ -401,6 +401,17 @@ The level lifecycle is an explicit, typed reducer in `engine/session/`. `useLeve
 
 ## 6. Training: running models without janking the UI
 
+### 6.0 As built (v1): one `LevelRunner` per algorithm family
+
+`services/training/LevelRunner.ts` is the contract `PlaySession` depends on: `scene` (static drawing data, **never the hidden test set**), `snapshot`, `apply(command)`, and `judge(command, session)`, which returns the evaluator's result when the attempt should end. `TrainingService.createRunner(level)` switches on `level.algorithm.id`, with an exhaustive `switch` and `assertNever`:
+
+| Algorithm | Runner | Scene / snapshot | Ends when |
+|---|---|---|---|
+| `landscape-2d` (W1-L3) | `LandscapeRunner` | contour map (cached per level) / ball, trail, preview | the ball reaches the valley, leaves the map, or the steps run out |
+| `linear-regression` (W1-L1, W1-L2) | `RegressionRunner` | training points only / `w`, `b`, loss, best loss, moves | the player presses Check, or the move budget runs out |
+
+To add an algorithm family: add a variant to `levelAlgorithmSchema`, a runner, a `case` in `TrainingService`, a scene/snapshot variant, and a level view in `pages/level/`. The compiler points at every place that needs it.
+
 ### 6.1 `TrainingService` and its two runner strategies
 
 `TrainingService` is the app's only entry point for running an algorithm. Internally it uses a `ModelRunner` strategy (`services/training/`). The rest of the app never sees which one is active.

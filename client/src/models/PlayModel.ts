@@ -1,15 +1,15 @@
 import type { LevelConfig } from './LevelModel'
-import type { LandscapeMap } from './MapModel'
+import type { LevelScene } from './MapModel'
 import type { ConceptId } from './ProgressModel'
 import type { SessionState } from './SessionModel'
-import type { LandscapeSnapshot } from './SnapshotModel'
+import type { LevelSnapshot } from './SnapshotModel'
 
-/** Everything a level screen renders, from one subscription. */
+/** Everything a level screen renders, from one subscription. scene.kind and snapshot.kind always match. */
 export interface PlayView {
   readonly level: LevelConfig
-  readonly map: LandscapeMap
+  readonly scene: LevelScene
   readonly session: SessionState
-  readonly snapshot: LandscapeSnapshot
+  readonly snapshot: LevelSnapshot
   /** Set when a pass was recorded: whether it beat the previous best, and any newly unlocked concept. */
   readonly reward: PlayReward | null
 }

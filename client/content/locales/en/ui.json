@@ -389,5 +389,7 @@
   "level.notes.free": "Optional reading about this level. It doesn't give the answer, so it never costs stars.",
   "level.notes.idea": "The idea",
   "level.notes.controls": "Your controls",
-  "level.notes.reading": "Reading the result"
+  "level.notes.reading": "Reading the result",
+  "update.ready": "A new version of ML Quest is ready.",
+  "update.install": "Update now"
 }

@@ -1,6 +1,12 @@
-import { StarRating } from '@/components/game'
+import { StarRating, UpdateBanner } from '@/components/game'
 import { ButtonLink, PageHeader } from '@/components/ui'
-import { useDocumentTitle, useLevelCatalog, useLevelStatuses, useProgress } from '@/hooks'
+import {
+  useAppUpdate,
+  useDocumentTitle,
+  useLevelCatalog,
+  useLevelStatuses,
+  useProgress,
+} from '@/hooks'
 import { t, type MessageKey } from '@/i18n'
 import styles from './WorldMapPage.module.css'
 
@@ -24,12 +30,14 @@ export function WorldMapPage() {
   const { bestStars } = useProgress()
   const catalog = useLevelCatalog()
   const statuses = useLevelStatuses()
+  const update = useAppUpdate()
   const levelsIn = (world: number) => catalog.filter((level) => level.world === world)
   // A world shows up on the map once it has at least one playable level.
   const worlds = WORLDS.filter((world) => levelsIn(world.id).length > 0)
 
   return (
     <div className={styles['page']}>
+      {update.ready ? <UpdateBanner onUpdate={update.install} /> : null}
       <PageHeader title={title} lede={t('map.lede')} />
       <ol className={styles['trail']}>
         {worlds.map((world) => {

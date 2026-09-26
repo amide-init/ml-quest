@@ -1,0 +1,13 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--color-line);
+  border-left: 3px solid var(--color-contour);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+}

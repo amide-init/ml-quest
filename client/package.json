@@ -19,6 +19,8 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router": "^8.4.0",
@@ -42,7 +44,7 @@
     "vite": "^8.3.0",
     "vitest": "^5.0.2"
   },
-  "description": "ML Quest \u2014 learn machine learning by training real models to beat levels.",
+  "description": "ML Quest — learn machine learning by training real models to beat levels.",
   "license": "MIT",
   "engines": {
     "node": ">=22",

@@ -1,0 +1,95 @@
+.page {
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.trail {
+  position: relative;
+  display: grid;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 44rem;
+}
+
+/* The route line connecting the worlds. */
+.trail::before {
+  content: '';
+  position: absolute;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  left: 0.6875rem;
+  border-left: 2px dashed var(--color-line);
+}
+
+.world {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.marker {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.1rem;
+  border: 2px solid var(--color-line);
+  border-radius: 50%;
+  background: var(--color-paper);
+}
+
+.open .marker {
+  border-color: var(--color-contour);
+}
+
+.current .marker {
+  border-color: var(--color-beacon);
+  background: var(--color-beacon);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--color-beacon) 22%, transparent);
+}
+
+.body {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.later .name {
+  color: var(--color-ink-muted);
+  font-weight: 500;
+}
+
+.concepts {
+  color: var(--color-ink-muted);
+}
+
+.release {
+  justify-self: start;
+  margin-top: var(--space-1);
+  padding: 0.125rem var(--space-3);
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-control);
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.open .release {
+  border-color: var(--color-contour);
+  color: var(--color-ink);
+}
+
+.action {
+  margin-top: var(--space-3);
+}

@@ -6,3 +6,4 @@
  * - migrations/ holds versioned migrations for persisted data.
  * See ARCHITECTURE.md §4.
  */
+export type { SettingsRepository } from './SettingsRepository'

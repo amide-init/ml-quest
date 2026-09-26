@@ -1,0 +1,99 @@
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-12);
+  align-items: center;
+  padding-block: var(--space-8) var(--space-16);
+}
+
+@media (min-width: 60rem) {
+  .hero {
+    grid-template-columns: minmax(0, 11fr) minmax(0, 13fr);
+    gap: var(--space-16);
+  }
+}
+
+.intro {
+  display: grid;
+  gap: var(--space-6);
+  max-width: 36rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.35rem + 2.2vw, 2.9rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+}
+
+.lede {
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.facts {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+
+.loop {
+  display: grid;
+  gap: var(--space-8);
+  padding-block: var(--space-12) var(--space-16);
+  border-top: 1.5px solid var(--color-line);
+}
+
+.loopTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.steps {
+  display: grid;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+@media (min-width: 48rem) {
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.step {
+  display: grid;
+  gap: var(--space-2);
+  counter-increment: step;
+  max-width: 22rem;
+}
+
+.step::before {
+  content: counter(step);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-contour);
+}
+
+.stepTitle {
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+.stepBody {
+  color: var(--color-ink-muted);
+}

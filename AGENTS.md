@@ -8,7 +8,7 @@ Instructions for AI coding agents (Claude Code, Codex, Cursor, Copilot, etc.) wo
 
 **Repo:** https://github.com/amide-init/ml-quest (default branch `main`, every push deploys to https://amide-init.github.io/ml-quest/, Vite `base` = `/ml-quest/`).
 
-**Status:** Phase 0 – Prototype. The foundation is in place: Vite app in `client/`, the layered folder skeleton, strict TypeScript, lint and layer-boundary checks, and Vitest. The game features (app shell, engine, the first level W1-L3 "Roll Downhill") are next.
+**Status:** Phase 0 – Prototype. The foundation is in place: Vite app in `client/`, the layered folder skeleton, strict TypeScript, lint and layer-boundary checks, and Vitest. The app shell (routing, layout, theme, i18n, Settings) is built; the engine and the first level W1-L3 "Roll Downhill" are next. **Copy the Settings feature when adding a feature** (ARCHITECTURE §4.5).
 
 ## Read these first
 

@@ -274,7 +274,24 @@ createServices(env)
 
 Each folder has an `index.ts` that exports only its public API. Cross-layer imports go through it (`@/services`, `@/models`) via TS path aliases.
 
-### 4.5 Request flow example (W1-L4 "Too Fast, Too Slow")
+### 4.5 Reference implementation: Settings
+
+The Settings feature is the smallest real example of every layer, and the one to copy when building a new feature:
+
+| Layer | File |
+|---|---|
+| Model | `models/SettingsModel.ts` (Zod schema, types, defaults) |
+| Repository | `repositories/SettingsRepository.ts` → `local-storage/LocalStorageSettingsRepository.ts` (versioned `{ v, data }`, backs up corrupt data) · `in-memory/InMemorySettingsRepository.ts` |
+| Service | `services/SettingsService.ts` |
+| Composition | `app/Container.ts` (falls back to in-memory when storage is blocked) · `app/Bootstrap.ts` (hydrates stores before first render) |
+| Store | `stores/SettingsStore.ts` |
+| Hooks | `hooks/useSettings.ts` · `hooks/useDocumentPreferences.ts` · `hooks/usePrefersReducedMotion.ts` |
+| Components | `components/ui/SegmentedControl.tsx` · `components/ui/Switch.tsx` |
+| Page | `pages/SettingsPage.tsx` |
+
+Fonts (Unbounded for display, Atkinson Hyperlegible Next for text) are **self-hosted** via `@fontsource-variable`, so there are no third-party requests and the game works offline.
+
+### 4.6 Request flow example (W1-L4 "Too Fast, Too Slow")
 
 ```
 1. LevelPage mounts → useLevelSession("w1-l4")

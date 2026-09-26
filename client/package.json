@@ -12,6 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:passbot": "vitest run tests/passbot",
+    "levels:validate": "vitest run tests/content",
     "lint": "pnpm lint:code && pnpm lint:boundaries",
     "lint:code": "oxlint --deny-warnings",
     "lint:boundaries": "depcruise src tests --config .dependency-cruiser.cjs",
@@ -44,7 +46,7 @@
     "vite": "^8.3.0",
     "vitest": "^5.0.2"
   },
-  "description": "ML Quest — learn machine learning by training real models to beat levels.",
+  "description": "ML Quest \u2014 learn machine learning by training real models to beat levels.",
   "license": "MIT",
   "engines": {
     "node": ">=22",

@@ -18,7 +18,7 @@ export type {
   ThemePreference,
 } from './SettingsModel'
 export type { Algorithm, Rng, StepResult, StepStatus, Vector } from './EngineModel'
-export { landscapeSpecSchema } from './LandscapeModel'
+export { landscapeSpecSchema, pointSchema } from './LandscapeModel'
 export type { LandscapeSpec, Point } from './LandscapeModel'
 export type { Command, CommandType, HyperparameterName } from './CommandModel'
 export {
@@ -30,3 +30,8 @@ export {
 export type { Comparison, Condition, LeafCondition, MetricId, StarRules } from './ConditionModel'
 export type { ConditionFailure, EvalResult, Metrics, StarCount } from './EvalResultModel'
 export type { SessionEvent, SessionPhase, SessionState, TracedCommand } from './SessionModel'
+export { levelAlgorithmSchema, levelConfigSchema, levelIdSchema } from './LevelModel'
+export type { LevelAlgorithm, LevelConfig, LevelId } from './LevelModel'
+export type { ContourLine, LandscapeMap } from './MapModel'
+export type { PlayView } from './PlayModel'
+export type { LandscapeSnapshot } from './SnapshotModel'

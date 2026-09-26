@@ -1,7 +1,14 @@
 import { getLocalStorage } from '@/platform'
+import { BundledLevelRepository } from '@/repositories/bundled/BundledLevelRepository'
 import { InMemorySettingsRepository } from '@/repositories/in-memory/InMemorySettingsRepository'
 import { LocalStorageSettingsRepository } from '@/repositories/local-storage/LocalStorageSettingsRepository'
-import { SettingsService, type Services } from '@/services'
+import {
+  EvaluationService,
+  LevelService,
+  SettingsService,
+  TrainingService,
+  type Services,
+} from '@/services'
 
 export interface ContainerOptions {
   /** "browser" uses localStorage when available; "memory" keeps everything in memory (tests). */
@@ -21,5 +28,11 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
 
   return {
     settings: new SettingsService(settingsRepository),
+    levels: new LevelService(
+      new BundledLevelRepository(),
+      new TrainingService(),
+      new EvaluationService(),
+      () => performance.now(),
+    ),
   }
 }

@@ -1,0 +1,19 @@
+.stars {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.star {
+  width: 2rem;
+  height: 2rem;
+}
+
+.earned {
+  fill: var(--color-beacon);
+  stroke: var(--color-beacon);
+}
+
+.empty {
+  fill: none;
+  stroke: var(--color-line);
+}

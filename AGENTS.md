@@ -8,7 +8,7 @@ Instructions for AI coding agents (Claude Code, Codex, Cursor, Copilot, etc.) wo
 
 **Repo:** https://github.com/amide-init/ml-quest (default branch `main`, every push deploys to https://amide-init.github.io/ml-quest/, Vite `base` = `/ml-quest/`).
 
-**Status:** Phase 0 – Prototype. The foundation is in place: Vite app in `client/`, the layered folder skeleton, strict TypeScript, lint and layer-boundary checks, and Vitest. The app shell (routing, layout, theme, i18n, Settings) is built; the engine and the first level W1-L3 "Roll Downhill" are next. **Copy the Settings feature when adding a feature** (ARCHITECTURE §4.5).
+**Status:** Phase 0 – Prototype. The foundation is in place: Vite app in `client/`, the layered folder skeleton, strict TypeScript, lint and layer-boundary checks, and Vitest. The app shell and the first playable level, W1-L3 "Roll Downhill", are built (engine, evaluator, session, pass-bot). **Copy the Settings feature when adding a feature** (ARCHITECTURE §4.5).
 
 ## Read these first
 
@@ -43,11 +43,11 @@ pnpm format           # prettier --write · format:check in CI
 pnpm test             # vitest run: "node" project (engine, services, repos, lib, tests/) + "dom" project (app, pages, components, hooks)
 pnpm test:watch       # vitest in watch mode
 pnpm test:coverage    # v8 coverage → client/coverage/
+pnpm test:passbot     # replay every content/levels/*/*.solution.json run through the real services
+pnpm levels:validate  # level schema + every text key exists in ui.json
 
-# Planned, NOT available yet (don't run until they exist in package.json):
-# pnpm test:passbot     # replay every level solution through the engine
+# Planned, NOT available yet (don't run until it exists in package.json):
 # pnpm test:e2e         # playwright
-# pnpm levels:validate  # schema + cross-registry checks on content/levels
 ```
 
 ## Layout: layered architecture

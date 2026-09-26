@@ -14,7 +14,7 @@ export function component(v: Vector, index: number): number {
 }
 
 /** Destructure a 2D vector safely. */
-export function xy(v: Vector): readonly [number, number] {
+export function xy(v: Vector): [number, number] {
   assert(v.length === 2, `Expected a 2D vector, got length ${v.length}`)
   return [component(v, 0), component(v, 1)]
 }

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "w2-l7",
+  "world": 2,
+  "level": 7,
+  "seed": 706,
+  "algorithm": {
+    "id": "logistic-regression",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 240,
+      "testPerClass": 300,
+      "minorityShare": 0.25,
+      "centers": [
+        [-0.7, -0.35],
+        [0.7, 0.35]
+      ],
+      "spread": 0.75
+    },
+    "view": {
+      "xMin": -3.25,
+      "xMax": 3.25,
+      "yMin": -2.6,
+      "yMax": 2.6
+    },
+    "optimizer": {
+      "id": "complexity",
+      "degree": 1,
+      "threshold": {
+        "min": 0.05,
+        "max": 0.95,
+        "step": 0.05,
+        "initial": 0.5
+      },
+      "learningRate": 0.5,
+      "maxEpochs": 2000
+    }
+  },
+  "stars": {
+    "pass": {
+      "all": [
+        {
+          "metric": "test_recall",
+          "op": ">=",
+          "value": 0.75
+        },
+        {
+          "metric": "test_precision",
+          "op": ">=",
+          "value": 0.65
+        }
+      ]
+    },
+    "two": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 2
+    },
+    "three": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 1
+    }
+  },
+  "text": {
+    "title": "level.w2-l7.title",
+    "mission": "level.w2-l7.mission",
+    "hints": ["level.w2-l7.hint1", "level.w2-l7.hint2", "level.w2-l7.hint3"],
+    "debrief": "level.w2-l7.debrief",
+    "concept": "precision-recall"
+  },
+  "authors": ["amide-init"]
+}

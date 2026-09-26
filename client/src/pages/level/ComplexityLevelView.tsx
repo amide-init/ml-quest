@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui'
-import { RegionMap } from '@/components/viz'
+import { ConfusionMatrix, RegionMap } from '@/components/viz'
 import { HyperparameterControls } from '@/components/widgets'
 import type { UseLevelSession } from '@/hooks'
 import { t, type MessageKey } from '@/i18n'
@@ -20,14 +20,20 @@ interface ComplexityLevelViewProps {
 const percent = (share: number) => Math.round(share * 100)
 
 /** What the level is about, from the controls it offers: each talks about its result differently. */
-type Focus = 'overfit' | 'gap' | 'minority'
+type Focus = 'overfit' | 'gap' | 'minority' | 'matrix'
 
 const focusOf = (scene: ComplexityScene): Focus =>
-  scene.oversample ? 'minority' : scene.regularization ? 'gap' : 'overfit'
+  scene.threshold
+    ? 'matrix'
+    : scene.oversample
+      ? 'minority'
+      : scene.regularization
+        ? 'gap'
+        : 'overfit'
 
 const describeNext = (focus: Focus) => (condition: ConditionFailure) => {
   if (condition.metric === 'attempt') {
-    return focus === 'overfit'
+    return condition.expected <= 1
       ? t('level.result.next.attempt.overfitter')
       : t('level.result.next.attempt.within', { value: condition.expected })
   }
@@ -46,6 +52,7 @@ function describeResult(result: EvalResult, focus: Focus) {
     train: percent(result.metrics.accuracy),
     gap: percent(result.metrics.accuracy_gap),
     recall: percent(result.metrics.test_recall),
+    precision: percent(result.metrics.test_precision),
   }
   switch (focus) {
     case 'overfit':
@@ -85,6 +92,26 @@ function describeResult(result: EvalResult, focus: Focus) {
             title: t('level.result.minority.failed.title'),
             body: t('level.result.minority.failed.body', values),
           }
+    case 'matrix': {
+      if (result.passed) {
+        return {
+          title: t('level.result.matrix.passed.title'),
+          body: t('level.result.matrix.passed.body', values),
+        }
+      }
+      // Name the target that was missed, with the level's own number.
+      const failure = result.failedConditions[0]
+      const target = percent(failure?.expected ?? Number.NaN)
+      return failure?.metric === 'test_precision'
+        ? {
+            title: t('level.result.matrix.precision.title'),
+            body: t('level.result.matrix.precision.body', { ...values, target }),
+          }
+        : {
+            title: t('level.result.matrix.recall.title'),
+            body: t('level.result.matrix.recall.body', { ...values, target }),
+          }
+    }
     default:
       return assertNever(focus)
   }
@@ -94,6 +121,7 @@ function describeResult(result: EvalResult, focus: Focus) {
  * W2-L4 The Overfitter: pick the model's flexibility, look at the border, check on new data.
  * W2-L5 Tame It: the degree is fixed and high; a regularization slider tames it instead.
  * W2-L6 Unfair Data: a straight border on imbalanced data; an oversampling slider rebalances it.
+ * W2-L7 Read the Matrix: a trained model; the threshold slider moves the border and the matrix.
  */
 export function ComplexityLevelView({
   game,
@@ -107,6 +135,7 @@ export function ComplexityLevelView({
 
   const regularization = scene.regularization
   const oversample = scene.oversample
+  const threshold = scene.threshold
   const focus = focusOf(scene)
   const resultText = result ? describeResult(result, focus) : null
 
@@ -155,7 +184,7 @@ export function ComplexityLevelView({
               onCommand={game.dispatch}
             />
           ) : null}
-          {focus === 'minority' ? null : (
+          {focus === 'minority' || focus === 'matrix' ? null : (
             <p className={styles['stats']}>
               {scene.degree
                 ? t('level.complexity.terms', { count: polynomialTermCount(snapshot.degree) })
@@ -195,22 +224,60 @@ export function ComplexityLevelView({
               onCommand={game.dispatch}
             />
           ) : null}
-          <p className={styles['mission']} aria-live="polite">
-            {!trained
-              ? t('level.complexity.none')
-              : focus === 'minority'
-                ? t('level.oversample.trained', {
-                    found: trained.perClass[1].correct,
-                    minority: trained.perClass[1].total,
-                    right: trained.perClass[0].correct,
-                    majority: trained.perClass[0].total,
-                  })
-                : t('level.complexity.trained', {
-                    degree: trained.degree,
-                    correct: trained.correct,
-                    total: trained.total,
-                  })}
-          </p>
+          {threshold ? (
+            <HyperparameterControls
+              name="threshold"
+              label={t('level.matrix.threshold')}
+              hint={t('level.matrix.threshold.hint')}
+              value={snapshot.threshold}
+              min={threshold.min}
+              max={threshold.max}
+              step={threshold.step}
+              disabled={false}
+              onCommand={game.dispatch}
+            />
+          ) : null}
+          {threshold && trained ? (
+            <>
+              <ConfusionMatrix
+                confusion={trained.confusion}
+                caption={t('level.matrix.caption', { total: trained.total })}
+                actual={[t('level.matrix.actual.positive'), t('level.matrix.actual.negative')]}
+                predicted={[
+                  t('level.matrix.predicted.positive'),
+                  t('level.matrix.predicted.negative'),
+                ]}
+                cells={{
+                  truePositives: t('level.matrix.cell.tp'),
+                  falseNegatives: t('level.matrix.cell.fn'),
+                  falsePositives: t('level.matrix.cell.fp'),
+                  trueNegatives: t('level.matrix.cell.tn'),
+                }}
+              />
+              <p className={styles['stats']} aria-live="polite">
+                <span>{t('level.matrix.recall', { value: percent(trained.recall) })}</span>
+                <span>{t('level.matrix.precision', { value: percent(trained.precision) })}</span>
+              </p>
+            </>
+          ) : null}
+          {focus === 'matrix' ? null : (
+            <p className={styles['mission']} aria-live="polite">
+              {!trained
+                ? t('level.complexity.none')
+                : focus === 'minority'
+                  ? t('level.oversample.trained', {
+                      found: trained.perClass[1].correct,
+                      minority: trained.perClass[1].total,
+                      right: trained.perClass[0].correct,
+                      majority: trained.perClass[0].total,
+                    })
+                  : t('level.complexity.trained', {
+                      degree: trained.degree,
+                      correct: trained.correct,
+                      total: trained.total,
+                    })}
+            </p>
+          )}
           <Button variant="primary" onClick={() => game.dispatch({ type: 'check' })}>
             {t('level.complexity.check')}
           </Button>

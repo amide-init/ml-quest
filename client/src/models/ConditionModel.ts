@@ -21,6 +21,8 @@ export const metricIdSchema = z.enum([
   'accuracy_gap',
   'recall',
   'test_recall',
+  'precision',
+  'test_precision',
 ])
 export type MetricId = z.infer<typeof metricIdSchema>
 

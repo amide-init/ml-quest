@@ -29,3 +29,11 @@ export interface StepResult {
   readonly gradient: Vector
   readonly status: StepStatus
 }
+
+/** Confusion counts with class 1 as "positive" (the class the level asks you to find, W2-L6+). */
+export interface Confusion {
+  readonly truePositives: number
+  readonly falsePositives: number
+  readonly trueNegatives: number
+  readonly falseNegatives: number
+}

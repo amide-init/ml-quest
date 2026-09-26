@@ -146,6 +146,8 @@ export interface ComplexityScene {
   } | null
   /** The minority-oversampling slider (W2-L6), or null when the level has none. */
   readonly oversample: { readonly min: number; readonly max: number; readonly step: number } | null
+  /** The decision-threshold slider (W2-L7), or null: the model is then trained by the player. */
+  readonly threshold: { readonly min: number; readonly max: number; readonly step: number } | null
 }
 
 export type LevelScene =

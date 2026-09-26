@@ -31,4 +31,3 @@ export {
   tabularConfusion,
   tabularScore,
 } from './algorithms/MultiLogisticRegression'
-export type { Confusion } from './algorithms/MultiLogisticRegression'

@@ -1,0 +1,54 @@
+.matrix {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.caption {
+  text-align: left;
+  font-weight: 700;
+  padding-bottom: var(--space-1);
+}
+
+.matrix th {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-ink-muted);
+  text-align: left;
+  vertical-align: bottom;
+}
+
+.matrix th[scope='row'] {
+  vertical-align: middle;
+}
+
+.right,
+.wrong {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sheet);
+  vertical-align: top;
+}
+
+.right {
+  background: color-mix(in oklab, var(--color-contour) 22%, transparent);
+  border: 1.5px solid transparent;
+}
+
+/* Mistakes: an outline instead of a fill, so the two kinds read apart without relying on colour. */
+.wrong {
+  border: 1.5px dashed var(--color-ink-muted);
+}
+
+.count {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.meaning {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+}

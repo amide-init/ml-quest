@@ -40,7 +40,9 @@ pnpm lint             # lint:code + lint:boundaries
 pnpm lint:code        # oxlint --deny-warnings (zero warnings allowed)
 pnpm lint:boundaries  # dependency-cruiser layer rules (.dependency-cruiser.cjs)
 pnpm format           # prettier --write · format:check in CI
-pnpm test             # vitest (engine, services, components, level validation)
+pnpm test             # vitest run: "node" project (engine, services, repos, lib, tests/) + "dom" project (app, pages, components, hooks)
+pnpm test:watch       # vitest in watch mode
+pnpm test:coverage    # v8 coverage → client/coverage/
 pnpm test:passbot     # replay every level solution through the engine
 pnpm test:e2e         # playwright
 pnpm levels:validate  # schema + cross-registry checks on content/levels
@@ -154,6 +156,7 @@ Follow these in order. Each step names the layer it belongs to.
 - Keep changes scoped to the current roadmap phase (see PRD → Roadmap). v1 is frozen at 16 levels across Worlds 1–2.
 - For engine work: write or update the Vitest tests with the change. ML algorithms need a finite-difference gradient check.
 - For service work: test with `InMemory*` repositories and a fake clock.
+- Tests sit next to the source as `Xxx.test.ts(x)`. The folder decides the environment: `app/`, `pages/`, `components/` and `hooks/` run in **jsdom**, and everything else runs in plain **Node**. If a non-UI test needs the DOM, the code is in the wrong layer. Import `describe`/`it`/`expect` from `vitest` explicitly; there are no globals.
 - For a new level: add the config, `*.solution.json` (and an anti-solution if the level has a trap), strings, and concept card. Then run `levels:validate` and `test:passbot`.
 - If a change alters a contract in ARCHITECTURE.md, update the doc or add an ADR in the same change.
 - Use Conventional Commits (`feat(services): …`, `content(w1): …`). Don't commit or push unless asked.

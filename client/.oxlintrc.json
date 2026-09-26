@@ -40,7 +40,10 @@
 
     "import/no-cycle": "error",
     "import/no-default-export": "error",
-    "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }]
+    "import/no-unassigned-import": [
+      "error",
+      { "allow": ["**/*.css", "@testing-library/jest-dom/vitest"] }
+    ]
   },
   "overrides": [
     {

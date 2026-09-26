@@ -6,21 +6,10 @@ import {
   useLevelCatalog,
   useLevelStatuses,
   useProgress,
+  useWorldProgress,
 } from '@/hooks'
 import { t, type MessageKey } from '@/i18n'
 import styles from './WorldMapPage.module.css'
-
-type Release = 'v1' | 'v2' | 'v3'
-
-// Static until the WorldService and level content land (roadmap Phase 1). Order follows PRD "World map and levels".
-const WORLDS: readonly { id: number; release: Release }[] = [
-  { id: 1, release: 'v1' },
-  { id: 2, release: 'v1' },
-  { id: 3, release: 'v2' },
-  { id: 4, release: 'v2' },
-  { id: 5, release: 'v3' },
-  { id: 6, release: 'v3' },
-]
 
 const worldKey = (id: number, field: 'name' | 'concepts') => `world.${id}.${field}` as MessageKey
 
@@ -32,8 +21,8 @@ export function WorldMapPage() {
   const statuses = useLevelStatuses()
   const update = useAppUpdate()
   const levelsIn = (world: number) => catalog.filter((level) => level.world === world)
-  // A world shows up on the map once it has at least one playable level.
-  const worlds = WORLDS.filter((world) => levelsIn(world.id).length > 0)
+  // Only worlds with at least one playable level are listed (later worlds appear as they ship).
+  const worlds = useWorldProgress()
 
   return (
     <div className={styles['page']}>
@@ -43,22 +32,31 @@ export function WorldMapPage() {
         {worlds.map((world) => {
           const className = [
             styles['world'],
-            world.release === 'v1' ? styles['open'] : styles['later'],
-            world.id === 1 ? styles['current'] : '',
+            world.complete ? styles['complete'] : '',
+            world.current ? styles['current'] : '',
           ].join(' ')
           return (
-            <li key={world.id} className={className}>
+            <li key={world.world} className={className}>
               <span className={styles['marker']} aria-hidden="true" />
               <div className={styles['body']}>
-                <span className={styles['label']}>{t('map.world.label', { id: world.id })}</span>
-                <h2 className={styles['name']}>{t(worldKey(world.id, 'name'))}</h2>
-                <p className={styles['concepts']}>{t(worldKey(world.id, 'concepts'))}</p>
-                <span className={styles['release']}>{t(`map.release.${world.release}`)}</span>
+                <span className={styles['label']}>{t('map.world.label', { id: world.world })}</span>
+                <h2 className={styles['name']}>{t(worldKey(world.world, 'name'))}</h2>
+                <p className={styles['concepts']}>{t(worldKey(world.world, 'concepts'))}</p>
+                <span className={styles['progress']}>
+                  {world.complete
+                    ? t('map.world.complete', { stars: world.stars, max: world.maxStars })
+                    : t('map.world.progress', {
+                        passed: world.passed,
+                        levels: world.levels,
+                        stars: world.stars,
+                        max: world.maxStars,
+                      })}
+                </span>
                 <ul
                   className={styles['levels']}
-                  aria-label={t('map.levels.label', { world: t(worldKey(world.id, 'name')) })}
+                  aria-label={t('map.levels.label', { world: t(worldKey(world.world, 'name')) })}
                 >
-                  {levelsIn(world.id).map((level) => {
+                  {levelsIn(world.world).map((level) => {
                     const stars = bestStars(level.id)
                     const requires = statuses[level.id]?.requires ?? null
                     return (

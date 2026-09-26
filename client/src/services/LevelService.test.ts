@@ -61,3 +61,36 @@ describe('LevelService.levelStatuses', () => {
     expect(statuses.every((status) => status.state === 'open')).toBe(true)
   })
 })
+
+describe('LevelService.worldProgress', () => {
+  it('starts a new player in World 1 with nothing passed', () => {
+    const worlds = service().worldProgress(DEFAULT_PROGRESS)
+    expect(worlds.map((world) => world.world)).toEqual([1, 2])
+    expect(worlds[0]).toEqual({
+      world: 1,
+      levels: 8,
+      passed: 0,
+      stars: 0,
+      maxStars: 24,
+      complete: false,
+      current: true,
+    })
+    expect(worlds[1]?.current).toBe(false)
+  })
+
+  it('marks a finished world complete and moves "current" to the next one', () => {
+    const world1 = Array.from({ length: 8 }, (_, i) => `w1-l${i + 1}`)
+    const worlds = service().worldProgress(passed(...world1, 'w2-l1'))
+    expect(worlds[0]).toMatchObject({ complete: true, current: false, passed: 8, stars: 8 })
+    expect(worlds[1]).toMatchObject({ complete: false, current: true, passed: 1 })
+  })
+
+  it('keeps the last world current once everything is complete', () => {
+    const all = [1, 2].flatMap((w) => Array.from({ length: 8 }, (_, i) => `w${w}-l${i + 1}`))
+    const worlds = service().worldProgress(passed(...all))
+    expect(worlds.map((world) => [world.complete, world.current])).toEqual([
+      [true, false],
+      [true, true],
+    ])
+  })
+})

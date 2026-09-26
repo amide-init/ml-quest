@@ -732,12 +732,27 @@ describe('App', () => {
     expect(update).toHaveBeenCalledWith(true)
   })
 
+  it('marks a finished world complete on the map', async () => {
+    const services = await renderApp('/map')
+    act(() =>
+      services.progress.replace({
+        levels: Object.fromEntries(
+          [1, 2, 3, 4, 5, 6, 7, 8].map((n) => [`w1-l${n}`, { bestStars: n === 4 ? 2 : 3 }]),
+        ),
+        concepts: [],
+      }),
+    )
+    expect(screen.getByText('World complete: 23 of 24 stars')).toBeInTheDocument()
+    expect(screen.getByText('0 of 8 levels passed, 0 of 24 stars')).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     await renderApp('/map')
     expect(screen.getAllByText('Not played yet')).toHaveLength(16)
     // Only worlds with levels are on the map; later worlds appear once their first level ships.
     expect(screen.getByRole('heading', { name: 'Boundary Plains' })).toBeInTheDocument()
+    expect(screen.getAllByText('0 of 8 levels passed, 0 of 24 stars')).toHaveLength(2)
     expect(screen.queryByRole('heading', { name: 'Forest of Trees' })).not.toBeInTheDocument()
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()

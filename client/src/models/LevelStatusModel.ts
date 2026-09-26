@@ -20,3 +20,17 @@ export interface LevelStatus {
    */
   readonly playNext: LevelSummary | null
 }
+
+/** One world's standing on the map: how far the player is, and whether it's done. */
+export interface WorldProgress {
+  readonly world: number
+  readonly levels: number
+  readonly passed: number
+  readonly stars: number
+  /** 3 per level. */
+  readonly maxStars: number
+  /** Every level passed. */
+  readonly complete: boolean
+  /** Where the player is: the first world that isn't complete (the last one if all are). */
+  readonly current: boolean
+}

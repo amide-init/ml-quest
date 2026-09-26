@@ -107,4 +107,4 @@ export type {
   TabularData,
   TwoBlobsSpec,
 } from './DatasetModel'
-export type { LevelState, LevelStatus, LevelSummary } from './LevelStatusModel'
+export type { LevelState, LevelStatus, LevelSummary, WorldProgress } from './LevelStatusModel'

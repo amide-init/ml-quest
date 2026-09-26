@@ -39,8 +39,25 @@
   background: var(--color-paper);
 }
 
-.open .marker {
+.marker {
   border-color: var(--color-contour);
+}
+
+/* A finished world: a filled marker with a check. */
+.complete .marker {
+  background: var(--color-contour);
+}
+
+.complete .marker::after {
+  content: '';
+  position: absolute;
+  top: 0.28rem;
+  left: 0.45rem;
+  width: 0.3rem;
+  height: 0.55rem;
+  border-right: 2px solid var(--color-paper-raised);
+  border-bottom: 2px solid var(--color-paper-raised);
+  transform: rotate(45deg);
 }
 
 .current .marker {
@@ -66,28 +83,23 @@
   line-height: 1.25;
 }
 
-.later .name {
-  color: var(--color-ink-muted);
-  font-weight: 500;
-}
-
 .concepts {
   color: var(--color-ink-muted);
 }
 
-.release {
+.progress {
   justify-self: start;
   margin-top: var(--space-1);
   padding: 0.125rem var(--space-3);
-  border: 1.5px solid var(--color-line);
+  border: 1.5px solid var(--color-contour);
   border-radius: var(--radius-control);
   font-size: var(--text-sm);
-  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
 }
 
-.open .release {
-  border-color: var(--color-contour);
-  color: var(--color-ink);
+.complete .progress {
+  background: color-mix(in oklab, var(--color-contour) 18%, transparent);
+  font-weight: 700;
 }
 
 .levels {

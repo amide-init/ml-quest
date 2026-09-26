@@ -1,4 +1,4 @@
-import type { LevelConfig, LevelStatus, LevelSummary, Progress } from '@/models'
+import type { LevelConfig, LevelStatus, LevelSummary, Progress, WorldProgress } from '@/models'
 import type { LevelRepository } from '@/repositories'
 import { PlaySession } from './PlaySession'
 import type { AudioService } from './AudioService'
@@ -78,6 +78,32 @@ export class LevelService {
       previous = { summary, passed }
     }
     return statuses
+  }
+
+  /** Each world that has levels, in order, with the player's progress through it (the map). */
+  worldProgress(progress: Progress): readonly WorldProgress[] {
+    const worlds = new Map<number, { levels: number; passed: number; stars: number }>()
+    for (const summary of this.listLevels()) {
+      const stars = progress.levels[summary.id]?.bestStars ?? 0
+      const world = worlds.get(summary.world) ?? { levels: 0, passed: 0, stars: 0 }
+      worlds.set(summary.world, {
+        levels: world.levels + 1,
+        passed: world.passed + (stars > 0 ? 1 : 0),
+        stars: world.stars + stars,
+      })
+    }
+    const entries = [...worlds.entries()].toSorted(([a], [b]) => a - b)
+    const firstUnfinished = entries.find(([, world]) => world.passed < world.levels)?.[0]
+    const currentWorld = firstUnfinished ?? entries.at(-1)?.[0]
+    return entries.map(([world, { levels, passed, stars }]) => ({
+      world,
+      levels,
+      passed,
+      stars,
+      maxStars: levels * 3,
+      complete: passed === levels,
+      current: world === currentWorld,
+    }))
   }
 
   /** Starts a fresh session, or returns null when the level doesn't exist (yet). */

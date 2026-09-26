@@ -26,9 +26,6 @@
   "home.loop.pass.body": "You pass when the model hits the goal. The debrief then names the idea you just used.",
   "map.title": "World map",
   "map.lede": "From your first loss curve to a classifier you can trust. More worlds, from decision trees to attention, arrive in later versions.",
-  "map.release.v1": "Opens in v1",
-  "map.release.v2": "Planned for v2",
-  "map.release.v3": "Planned for v3",
   "map.world.label": "World {id}",
   "world.1.name": "Valley of Loss",
   "world.1.concepts": "Data, loss, gradient descent, learning rate",
@@ -391,5 +388,7 @@
   "level.notes.controls": "Your controls",
   "level.notes.reading": "Reading the result",
   "update.ready": "A new version of ML Quest is ready.",
-  "update.install": "Update now"
+  "update.install": "Update now",
+  "map.world.progress": "{passed} of {levels} levels passed, {stars} of {max} stars",
+  "map.world.complete": "World complete: {stars} of {max} stars"
 }

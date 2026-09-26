@@ -1,14 +1,72 @@
-import type { LevelConfig } from '@/models'
+import type { LandscapeMap, LevelConfig, LevelOf, Point } from '@/models'
+import { contourLines, createLandscape2D, findLandscapeMinimum, xy } from '@/engine'
+import { assertNever } from '@/lib'
+import type { EvaluationService } from './EvaluationService'
 import { LandscapeRunner } from './training/LandscapeRunner'
+import type { LevelRunner } from './training/LevelRunner'
+import { RegressionRunner } from './training/RegressionRunner'
+
+const CONTOUR_LEVELS = [
+  0.02, 0.06, 0.12, 0.2, 0.3, 0.42, 0.56, 0.72, 0.9, 1.1, 1.35, 1.65, 2, 2.45, 3,
+]
+const CONTOUR_RESOLUTION = 90
 
 /**
- * The app's only entry point for running an algorithm (ARCHITECTURE §6.1).
- * Every current level is a landscape level, cheap enough to run inline. When a second algorithm
- * arrives (linear regression, W1-L1), switch on level.algorithm.id here; training loops (W1-L4)
- * get a WorkerRunner.
+ * The app's only entry point for running an algorithm (ARCHITECTURE §6.1). Picks the runner for a
+ * level's algorithm. Every current level is cheap enough to run inline; training loops (W1-L4)
+ * will add a WorkerRunner behind the same LevelRunner interface.
  */
 export class TrainingService {
-  createRunner(level: LevelConfig): LandscapeRunner {
-    return new LandscapeRunner(level)
+  readonly #evaluation: EvaluationService
+  readonly #maps = new Map<string, LandscapeMap>()
+
+  constructor(evaluation: EvaluationService) {
+    this.#evaluation = evaluation
+  }
+
+  createRunner(level: LevelConfig): LevelRunner {
+    const algorithm = level.algorithm
+    switch (algorithm.id) {
+      case 'landscape-2d': {
+        const landscapeLevel = { ...level, algorithm }
+        return new LandscapeRunner(
+          landscapeLevel,
+          this.#landscapeMap(landscapeLevel),
+          this.#evaluation,
+        )
+      }
+      case 'linear-regression':
+        return new RegressionRunner({ ...level, algorithm }, this.#evaluation)
+      default:
+        return assertNever(algorithm)
+    }
+  }
+
+  /** Contours and the global minimum are costly to compute, so they are cached per level. */
+  #landscapeMap(level: LevelOf<'landscape-2d'>): LandscapeMap {
+    const cached = this.#maps.get(level.id)
+    if (cached) {
+      return cached
+    }
+    const { landscape, targetRadius, controls } = level.algorithm
+    const algorithm = createLandscape2D(landscape)
+    const minimum = findLandscapeMinimum(algorithm, landscape.bounds)
+    const loss = (point: Point) => algorithm.loss(Float64Array.from(point))
+    const map: LandscapeMap = {
+      kind: 'landscape',
+      bounds: landscape.bounds,
+      contours: contourLines(
+        loss,
+        { ...landscape.bounds, resolution: CONTOUR_RESOLUTION },
+        CONTOUR_LEVELS.map((value) => minimum.loss + value),
+      ),
+      levelCount: CONTOUR_LEVELS.length,
+      minimum: xy(minimum.point),
+      targetRadius,
+      stepBudget: controls.stepBudget,
+      learningRate: controls.learningRate,
+    }
+    this.#maps.set(level.id, map)
+    return map
   }
 }

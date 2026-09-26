@@ -1,15 +1,6 @@
-import type {
-  Command,
-  EvalResult,
-  LandscapeMap,
-  LevelConfig,
-  PlayReward,
-  PlayView,
-  SessionEvent,
-} from '@/models'
+import type { Command, EvalResult, LevelConfig, PlayReward, PlayView, SessionEvent } from '@/models'
 import { createSession, sessionReducer } from '@/engine'
-import type { EvaluationService } from './EvaluationService'
-import type { LandscapeRunner } from './training/LandscapeRunner'
+import type { LevelRunner } from './training/LevelRunner'
 
 type Listener = () => void
 
@@ -17,40 +8,33 @@ type Listener = () => void
 export type OnPassed = (result: EvalResult) => PlayReward
 
 /**
- * One play-through of one level: session reducer + runner + evaluator.
- * Exposes an immutable PlayView with subscribe/getView, which is what React's useSyncExternalStore needs.
+ * One play-through of one level: session reducer + runner. The runner decides when an attempt
+ * ends (through the evaluator); this class records it. Exposes an immutable PlayView with
+ * subscribe/getView, which is what React's useSyncExternalStore needs.
  */
 export class PlaySession {
-  readonly #level: LevelConfig
-  readonly #map: LandscapeMap
-  readonly #evaluation: EvaluationService
-  readonly #createRunner: () => LandscapeRunner
+  readonly #createRunner: () => LevelRunner
   readonly #now: () => number
   readonly #onPassed: OnPassed
   readonly #startedAt: number
   readonly #listeners = new Set<Listener>()
-  #runner: LandscapeRunner
+  #runner: LevelRunner
   #view: PlayView
 
   constructor(
     level: LevelConfig,
-    map: LandscapeMap,
-    createRunner: () => LandscapeRunner,
-    evaluation: EvaluationService,
+    createRunner: () => LevelRunner,
     now: () => number,
     onPassed: OnPassed,
   ) {
-    this.#level = level
-    this.#map = map
     this.#createRunner = createRunner
-    this.#evaluation = evaluation
     this.#now = now
     this.#onPassed = onPassed
     this.#startedAt = now()
     this.#runner = createRunner()
     this.#view = {
       level,
-      map,
+      scene: this.#runner.scene,
       session: createSession(level.id),
       snapshot: this.#runner.snapshot,
       reward: null,
@@ -68,10 +52,7 @@ export class PlaySession {
     this.#send({ type: 'start', at: this.#elapsed() })
   }
 
-  /**
-   * Record and apply a player command. After each step the attempt is checked automatically:
-   * it ends when the ball reaches the valley, leaves the map, or the step budget runs out.
-   */
+  /** Record and apply a player command, then let the runner judge whether the attempt is over. */
   dispatch(command: Command): void {
     if (this.#view.session.phase !== 'playing') {
       return
@@ -81,19 +62,11 @@ export class PlaySession {
     const snapshot = this.#runner.apply(command)
     this.#set({ session, snapshot })
 
-    if (command.type === 'step') {
-      const result = this.#evaluation.evaluateLandscape(
-        this.#level,
-        snapshot,
-        session,
-        this.#map.minimum,
-      )
-      const outOfSteps = snapshot.steps >= this.#level.controls.stepBudget
-      if (result.passed || snapshot.status === 'diverged' || outOfSteps) {
-        this.#send({ type: 'evaluated', result, at })
-        if (result.passed) {
-          this.#set({ reward: this.#onPassed(result) })
-        }
+    const result = this.#runner.judge(command, session)
+    if (result) {
+      this.#send({ type: 'evaluated', result, at })
+      if (result.passed) {
+        this.#set({ reward: this.#onPassed(result) })
       }
     }
   }

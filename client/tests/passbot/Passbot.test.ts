@@ -42,8 +42,7 @@ function createLevelService() {
   // Each call advances the fake clock by 1 s, so no run ever triggers idle hints by accident.
   return new LevelService(
     repository,
-    new TrainingService(),
-    new EvaluationService(),
+    new TrainingService(new EvaluationService()),
     new ProgressService(new InMemoryProgressRepository()),
     () => (time += 1000),
   )
@@ -82,7 +81,8 @@ describe('pass-bot', () => {
           expect(view?.session.lastResult?.stars).toBe(run.expect.stars)
         }
         if (run.expect.status !== undefined) {
-          expect(view?.snapshot.status).toBe(run.expect.status)
+          const snapshot = view?.snapshot
+          expect(snapshot?.kind === 'landscape' ? snapshot.status : 'n/a').toBe(run.expect.status)
         }
       })
     })

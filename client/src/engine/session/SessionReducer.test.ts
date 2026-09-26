@@ -5,7 +5,15 @@ import { createSession, HINT_IDLE_MS, sessionReducer } from './SessionReducer'
 const result = (passed: boolean): EvalResult => ({
   passed,
   stars: passed ? 1 : 0,
-  metrics: { steps: 5, final_loss: 0.1, distance_to_global_min: 0.1, hints_used: 0 },
+  metrics: {
+    steps: 5,
+    moves: 0,
+    final_loss: 0.1,
+    test_loss: Number.NaN,
+    loss_gap: Number.NaN,
+    distance_to_global_min: 0.1,
+    hints_used: 0,
+  },
   failedConditions: [],
   nextStarConditions: [],
   cappedByHints: false,

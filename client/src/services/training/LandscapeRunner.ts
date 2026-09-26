@@ -1,23 +1,36 @@
-import type { Command, LandscapeSnapshot, LevelConfig, Point } from '@/models'
+import type {
+  Command,
+  EvalResult,
+  LandscapeMap,
+  LandscapeSnapshot,
+  LevelOf,
+  Point,
+  SessionState,
+} from '@/models'
 import { createLandscape2D, gradientDescentStep, vector, xy } from '@/engine'
+import type { EvaluationService } from '@/services/EvaluationService'
+import type { LevelRunner } from './LevelRunner'
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
 
 /**
  * Runs a landscape level on the main thread (the "InlineRunner" of ARCHITECTURE §6.1):
- * each step is a single gradient evaluation, so a worker round-trip would only add latency.
- * Applies commands and produces immutable snapshots for the UI.
+ * each step is one gradient evaluation, so a worker round-trip would only add latency.
  */
-export class LandscapeRunner {
+export class LandscapeRunner implements LevelRunner {
+  readonly scene: LandscapeMap
   readonly #algorithm
-  readonly #level: LevelConfig
+  readonly #level: LevelOf<'landscape-2d'>
+  readonly #evaluation: EvaluationService
   #snapshot: LandscapeSnapshot
 
-  constructor(level: LevelConfig) {
+  constructor(level: LevelOf<'landscape-2d'>, scene: LandscapeMap, evaluation: EvaluationService) {
     this.#level = level
+    this.scene = scene
+    this.#evaluation = evaluation
     this.#algorithm = createLandscape2D(level.algorithm.landscape)
     this.#snapshot = this.#snapshotAt(level.algorithm.start, [level.algorithm.start], {
-      learningRate: level.controls.learningRate.initial,
+      learningRate: level.algorithm.controls.learningRate.initial,
       steps: 0,
       status: 'ok',
     })
@@ -27,13 +40,12 @@ export class LandscapeRunner {
     return this.#snapshot
   }
 
-  /** Applies one command and returns the new snapshot (the previous one is never mutated). */
   apply(command: Command): LandscapeSnapshot {
     const current = this.#snapshot
     switch (command.type) {
       case 'set-hyperparameter': {
         // Game rule, not math clamping: the slider's range is part of the level design.
-        const { min, max } = this.#level.controls.learningRate
+        const { min, max } = this.#level.algorithm.controls.learningRate
         const learningRate = clamp(command.value, min, max)
         this.#snapshot = this.#snapshotAt(current.position, current.path, {
           ...current,
@@ -72,8 +84,30 @@ export class LandscapeRunner {
         this.#snapshot = this.#snapshotAt(start, [start], { ...current, status: 'ok' })
         break
       }
+      case 'set-params':
+      case 'check':
+        // Not used by landscape levels: the ball only moves by gradient steps.
+        break
     }
     return this.#snapshot
+  }
+
+  /** Checked after every step: ends on reaching the valley, leaving the map, or running out of steps. */
+  judge(command: Command, session: SessionState): EvalResult | null {
+    if (command.type !== 'step') {
+      return null
+    }
+    const snapshot = this.#snapshot
+    const result = this.#evaluation.evaluate(this.#level, {
+      algorithm: this.#algorithm,
+      data: undefined,
+      params: vector(...snapshot.position),
+      trace: session.trace,
+      hintsRevealed: session.hintsRevealed,
+      globalMinimum: vector(...this.scene.minimum),
+    })
+    const outOfSteps = snapshot.steps >= this.#level.algorithm.controls.stepBudget
+    return result.passed || snapshot.status === 'diverged' || outOfSteps ? result : null
   }
 
   #snapshotAt(
@@ -84,12 +118,15 @@ export class LandscapeRunner {
     const params = vector(...position)
     const [gx, gy] = xy(this.#algorithm.gradient(params))
     return {
+      kind: 'landscape',
       position,
       path,
       loss: this.#algorithm.loss(params),
       gradient: [gx, gy],
       preview: [position[0] - rest.learningRate * gx, position[1] - rest.learningRate * gy],
-      ...rest,
+      learningRate: rest.learningRate,
+      steps: rest.steps,
+      status: rest.status,
     }
   }
 }

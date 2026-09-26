@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "w1-l1",
+  "world": 1,
+  "level": 1,
+  "seed": 101,
+  "algorithm": {
+    "id": "linear-regression",
+    "dataset": {
+      "generator": "linear-noisy",
+      "trainCount": 24,
+      "testCount": 40,
+      "slope": 1.8,
+      "intercept": 3,
+      "noise": 1.6,
+      "xMin": 0.5,
+      "xMax": 9.5
+    },
+    "initial": {
+      "w": 0,
+      "b": 10
+    },
+    "view": {
+      "xMin": 0,
+      "xMax": 10,
+      "yMin": 0,
+      "yMax": 24
+    },
+    "showLoss": false
+  },
+  "stars": {
+    "pass": {
+      "metric": "final_loss",
+      "op": "<",
+      "value": 5
+    },
+    "two": {
+      "metric": "loss_gap",
+      "op": "<=",
+      "value": 0.35
+    },
+    "three": {
+      "all": [
+        {
+          "metric": "loss_gap",
+          "op": "<=",
+          "value": 0.1
+        },
+        {
+          "metric": "test_loss",
+          "op": "<=",
+          "value": 3.9
+        }
+      ]
+    }
+  },
+  "text": {
+    "title": "level.w1-l1.title",
+    "mission": "level.w1-l1.mission",
+    "hints": ["level.w1-l1.hint1", "level.w1-l1.hint2", "level.w1-l1.hint3"],
+    "debrief": "level.w1-l1.debrief",
+    "concept": "linear-regression"
+  },
+  "authors": ["amide-init"]
+}

@@ -1,0 +1,361 @@
+{
+  "level": "w1-l2",
+  "runs": [
+    {
+      "name": "straight to the lowest loss in one move",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.95,
+            "b": 2.5
+          }
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "eight moves, close to the lowest loss",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.0,
+            "b": 8.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.05,
+            "b": 7.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.1,
+            "b": 7.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.15,
+            "b": 7.4
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.2,
+            "b": 7.2
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.25,
+            "b": 7.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.3,
+            "b": 6.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.9,
+            "b": 2.4
+          }
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "fourteen moves",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.0,
+            "b": 8.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.05,
+            "b": 7.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.1,
+            "b": 7.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.15,
+            "b": 7.4
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.2,
+            "b": 7.2
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.25,
+            "b": 7.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.3,
+            "b": 6.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.35,
+            "b": 6.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.4,
+            "b": 6.4
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.45,
+            "b": 6.2
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.5,
+            "b": 6.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.55,
+            "b": 5.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.6,
+            "b": 5.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 2,
+            "b": 2
+          }
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: wanders for 20 moves and never gets close (auto-checked)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.0,
+            "b": 8.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.05,
+            "b": 7.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.1,
+            "b": 7.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.15,
+            "b": 7.4
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.2,
+            "b": 7.2
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.25,
+            "b": 7.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.3,
+            "b": 6.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.35,
+            "b": 6.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.4,
+            "b": 6.4
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.45,
+            "b": 6.2
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.5,
+            "b": 6.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.55,
+            "b": 5.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.6,
+            "b": 5.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.65,
+            "b": 5.4
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.7000000000000002,
+            "b": 5.199999999999999
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.75,
+            "b": 5.0
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.8,
+            "b": 4.8
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.85,
+            "b": 4.6
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.9,
+            "b": 4.4
+          }
+        },
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.4,
+            "b": 6
+          }
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: checks the starting line",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

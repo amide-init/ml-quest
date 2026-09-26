@@ -1,0 +1,51 @@
+.meter {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.label {
+  font-weight: 700;
+}
+
+.value {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  position: relative;
+  height: 0.75rem;
+  border-radius: var(--radius-control);
+  background: color-mix(in oklab, var(--color-line) 60%, transparent);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: var(--radius-control);
+  background: var(--color-ridge);
+  transition: width 260ms var(--ease-out);
+}
+
+.best {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--color-contour);
+}
+
+.note {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}

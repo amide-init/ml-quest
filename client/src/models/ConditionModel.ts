@@ -3,7 +3,10 @@ import { z } from 'zod'
 /** Metrics a level can be judged on. Each id has an implementation in engine/eval/Metrics.ts. */
 export const metricIdSchema = z.enum([
   'steps',
+  'moves',
   'final_loss',
+  'test_loss',
+  'loss_gap',
   'distance_to_global_min',
   'hints_used',
 ])

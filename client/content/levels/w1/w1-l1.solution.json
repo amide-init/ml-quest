@@ -1,0 +1,91 @@
+{
+  "level": "w1-l1",
+  "runs": [
+    {
+      "name": "best-fit line, also good on the hidden points",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.7765,
+            "b": 3.3104
+          }
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "close, but not the best fit",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.9,
+            "b": 2.4
+          }
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "rough line through the cloud",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 1.4,
+            "b": 6
+          }
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: check the flat starting line",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: steep line that misses the trend",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-params",
+          "values": {
+            "w": 3,
+            "b": -2
+          }
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

@@ -9,6 +9,8 @@ const conceptText = (id: string, field: 'term' | 'definition') =>
 
 // Which level unlocks each concept. Moves into content with the Codex pipeline (ARCHITECTURE §9).
 const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
+  'linear-regression': 'level.w1-l1.title',
+  'loss-function': 'level.w1-l2.title',
   'gradient-descent': 'level.w1-l3.title',
 }
 

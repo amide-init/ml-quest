@@ -38,8 +38,7 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
     progress,
     levels: new LevelService(
       new BundledLevelRepository(),
-      new TrainingService(),
-      new EvaluationService(),
+      new TrainingService(new EvaluationService()),
       progress,
       () => performance.now(),
     ),

@@ -1,33 +1,20 @@
 import { Button } from '@/components/ui'
 import { t, type MessageKey } from '@/i18n'
-import type { EvalResult, LandscapeSnapshot } from '@/models'
+import type { EvalResult } from '@/models'
 import { StarRating } from './StarRating'
 import styles from './Panel.module.css'
 
 interface ResultPanelProps {
   readonly result: EvalResult
-  readonly snapshot: LandscapeSnapshot
+  /** Headline and explanation, chosen by the level screen (it knows the level's vocabulary). */
+  readonly title: string
+  readonly body: string
   readonly onRetry: () => void
   readonly onContinue: () => void
 }
 
 /** Pass or fail, stars, and what to do next. Failures say what went wrong, not just "failed". */
-export function ResultPanel({ result, snapshot, onRetry, onContinue }: ResultPanelProps) {
-  const steps = result.metrics.steps
-  const diverged = snapshot.status === 'diverged'
-  const title = result.passed
-    ? t('level.result.passed.title')
-    : diverged
-      ? t('level.result.diverged.title')
-      : t('level.result.budget.title')
-  const body = result.passed
-    ? t('level.result.passed.body', { steps })
-    : diverged
-      ? t('level.result.diverged.body')
-      : t('level.result.budget.body', {
-          steps,
-          distance: result.metrics.distance_to_global_min.toFixed(2),
-        })
+export function ResultPanel({ result, title, body, onRetry, onContinue }: ResultPanelProps) {
   const next = result.passed ? result.nextStarConditions[0] : undefined
 
   return (

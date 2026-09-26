@@ -2,6 +2,7 @@ import type { Point } from './LandscapeModel'
 
 /** What the UI renders for a landscape level at one moment (ARCHITECTURE §6). Plain data, easy to diff. */
 export interface LandscapeSnapshot {
+  readonly kind: 'landscape'
   /** The ball's position. */
   readonly position: Point
   /** Every position this attempt, starting point first (the trail). */
@@ -16,3 +17,18 @@ export interface LandscapeSnapshot {
   /** "diverged" once the ball has left the map. */
   readonly status: 'ok' | 'diverged'
 }
+
+/** A regression level's state: the player's line and how well it fits the visible data. */
+export interface RegressionSnapshot {
+  readonly kind: 'regression'
+  readonly w: number
+  readonly b: number
+  /** Mean squared error on the training points. */
+  readonly loss: number
+  /** Lowest loss reached this attempt (the meter's "best" marker). */
+  readonly bestLoss: number
+  /** Number of set-params commands this attempt. */
+  readonly moves: number
+}
+
+export type LevelSnapshot = LandscapeSnapshot | RegressionSnapshot

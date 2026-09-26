@@ -79,6 +79,13 @@ function LevelLocked({ requires, playNext }: { requires: LevelSummary; playNext:
 
 function LevelScreen({ levelId, world, level }: LevelProps) {
   const game = useLevelSession(levelId)
+  if (game === 'loading') {
+    return (
+      <p className={noticeStyles['page']} role="status">
+        {t('app.loading')}
+      </p>
+    )
+  }
   if (!game) {
     return <LevelPlaceholder world={world} level={level} />
   }

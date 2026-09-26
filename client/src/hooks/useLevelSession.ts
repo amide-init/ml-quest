@@ -18,14 +18,30 @@ export interface UseLevelSession {
 const noopSubscribe = () => () => {}
 const nullView = () => null
 
+/** The level's model loads on demand, so a session is briefly 'loading' before it is ready. */
+type SessionLoad =
+  | { readonly status: 'loading' }
+  | { readonly status: 'missing' }
+  | { readonly status: 'ready'; readonly session: PlaySession }
+
 /**
  * Starts a play session for a level and keeps the component in sync with it.
- * Returns null when the level doesn't exist yet. Render with key={levelId} so a new
- * level gets a new session.
+ * Returns 'loading' while the level's model loads, and null when the level doesn't exist yet.
+ * Render with key={levelId} so a new level gets a new session.
  */
-export function useLevelSession(levelId: string): UseLevelSession | null {
+export function useLevelSession(levelId: string): UseLevelSession | 'loading' | null {
   const { levels } = useServices()
-  const [session] = useState<PlaySession | null>(() => levels.startSession(levelId))
+  const [load, setLoad] = useState<SessionLoad>({ status: 'loading' })
+  useEffect(() => {
+    let current = true
+    void levels.startSession(levelId).then((started) => {
+      if (current) setLoad(started ? { status: 'ready', session: started } : { status: 'missing' })
+    })
+    return () => {
+      current = false
+    }
+  }, [levels, levelId])
+  const session = load.status === 'ready' ? load.session : null
   const view = useSyncExternalStore(
     session?.subscribe ?? noopSubscribe,
     session?.getView ?? nullView,
@@ -40,6 +56,9 @@ export function useLevelSession(levelId: string): UseLevelSession | null {
     return () => window.clearInterval(timer)
   }, [session, playing])
 
+  if (load.status === 'loading') {
+    return 'loading'
+  }
   if (!session || !view) {
     return null
   }

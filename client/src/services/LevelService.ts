@@ -112,20 +112,19 @@ export class LevelService {
     }))
   }
 
-  /** Starts a fresh session, or returns null when the level doesn't exist (yet). */
-  startSession(id: string): PlaySession | null {
+  /**
+   * Starts a fresh session, or returns null when the level doesn't exist (yet). Async because the
+   * level's model family loads on demand.
+   */
+  async startSession(id: string): Promise<PlaySession | null> {
     const level = this.#levels.get(id)
     if (!level) {
       return null
     }
-    return new PlaySession(
-      level,
-      () => this.#training.createRunner(level),
-      this.#now,
-      (result) => {
-        this.#audio?.levelPassed()
-        return this.#progress.recordResult(level.id, result, level.text.concept)
-      },
-    )
+    const createRunner = await this.#training.loadRunner(level)
+    return new PlaySession(level, createRunner, this.#now, (result) => {
+      this.#audio?.levelPassed()
+      return this.#progress.recordResult(level.id, result, level.text.concept)
+    })
   }
 }

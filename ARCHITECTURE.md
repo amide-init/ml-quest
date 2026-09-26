@@ -402,7 +402,7 @@ The level lifecycle is an explicit, typed reducer in `engine/session/`. `useLeve
 
 ### 6.0 As built (v1): one `LevelRunner` per algorithm family
 
-`services/training/LevelRunner.ts` is the contract `PlaySession` depends on: `scene` (static drawing data, **never the hidden test set**), `snapshot`, `apply(command)`, and `judge(command, session)`, which returns the evaluator's result when the attempt should end. `TrainingService.createRunner(level)` switches on `level.algorithm.id`, with an exhaustive `switch` and `assertNever`:
+`services/training/LevelRunner.ts` is the contract `PlaySession` depends on: `scene` (static drawing data, **never the hidden test set**), `snapshot`, `apply(command)`, and `judge(command, session)`, which returns the evaluator's result when the attempt should end. `TrainingService.loadRunner(level)` switches on `level.algorithm.id` (exhaustive `switch` + `assertNever`) and **dynamically imports that model family's module** (`training/LandscapeFamily`, `RegressionFamily`, `ClassificationFamily`), which returns a factory: one fresh runner per attempt, so retry stays synchronous. Each family and the engine code it needs is its own lazy chunk (2–4 kB gz today), so the first page load carries no training code and a new world grows only its own chunk (D5). `LevelService.startSession` is therefore async, and the level page shows "Loading the level…" while a family loads:
 
 | Algorithm | Runner | Scene / snapshot | Ends when |
 |---|---|---|---|

@@ -69,8 +69,8 @@ describe('pass-bot', () => {
         expect(solution.runs.some((run) => run.expect.passed)).toBe(true)
       })
 
-      it.each(solution.runs.map((run) => [run.name, run] as const))('%s', (_name, run) => {
-        const session = createLevelService().startSession(solution.level)
+      it.each(solution.runs.map((run) => [run.name, run] as const))('%s', async (_name, run) => {
+        const session = await createLevelService().startSession(solution.level)
         expect(session, `level ${solution.level} from ${file} not found`).not.toBeNull()
         session?.start()
         for (const command of run.commands) {

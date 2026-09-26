@@ -1,0 +1,67 @@
+.transfer {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  max-width: var(--reading-width);
+  margin-top: var(--space-12);
+  padding-top: var(--space-8);
+  border-top: 1.5px solid var(--color-line);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+}
+
+.subTitle {
+  margin-top: var(--space-4);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* The sub-heading above says what the box is; the label stays for screen readers. */
+.label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.hint {
+  color: var(--color-ink-muted);
+}
+
+.code {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+  resize: vertical;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.preview {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-4);
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+}
+
+.problem {
+  font-weight: 700;
+}

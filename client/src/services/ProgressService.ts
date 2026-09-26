@@ -39,6 +39,15 @@ export class ProgressService {
     return (this.#progress.levels[levelId]?.bestStars ?? 0) as StarCount
   }
 
+  /** Replace all progress, e.g. from an imported code (the caller has validated it). */
+  replace(progress: Progress): void {
+    this.#progress = progress
+    this.#repository.save(progress)
+    for (const listener of this.#listeners) {
+      listener()
+    }
+  }
+
   /**
    * Record a finished attempt. Failed attempts change nothing (retries are free, PRD);
    * a pass keeps the best star count and unlocks the level's concept card once.

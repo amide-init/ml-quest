@@ -2,6 +2,7 @@ import { PageHeader, SegmentedControl, Switch, type SegmentedOption } from '@/co
 import { useDocumentTitle, useSettings } from '@/hooks'
 import { t } from '@/i18n'
 import type { MotionPreference, ThemePreference } from '@/models'
+import { ProgressCodes } from './settings/ProgressCodes'
 import styles from './SettingsPage.module.css'
 
 const THEME_OPTIONS: readonly SegmentedOption<ThemePreference>[] = [
@@ -54,6 +55,7 @@ export function SettingsPage() {
           />
         </div>
       </div>
+      <ProgressCodes />
     </div>
   )
 }

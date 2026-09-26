@@ -1,3 +1,4 @@
+import type { ExportService } from './ExportService'
 import type { LevelService } from './LevelService'
 import type { ProgressService } from './ProgressService'
 import type { SettingsService } from './SettingsService'
@@ -7,4 +8,6 @@ export interface Services {
   readonly settings: SettingsService
   readonly levels: LevelService
   readonly progress: ProgressService
+  /** Progress export/import codes (PRD F8). */
+  readonly progressCodes: ExportService
 }

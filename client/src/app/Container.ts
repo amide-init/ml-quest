@@ -6,6 +6,7 @@ import { LocalStorageProgressRepository } from '@/repositories/local-storage/Loc
 import { LocalStorageSettingsRepository } from '@/repositories/local-storage/LocalStorageSettingsRepository'
 import {
   EvaluationService,
+  ExportService,
   LevelService,
   ProgressService,
   SettingsService,
@@ -39,6 +40,7 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
   return {
     settings: new SettingsService(settingsRepository),
     progress,
+    progressCodes: new ExportService(progress),
     levels: new LevelService(
       new BundledLevelRepository(),
       new TrainingService(new EvaluationService()),

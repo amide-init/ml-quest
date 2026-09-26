@@ -23,3 +23,30 @@ export const progressSchema = z.object({
 export type Progress = z.infer<typeof progressSchema>
 
 export const DEFAULT_PROGRESS: Progress = { levels: {}, concepts: [] }
+
+/** Totals shown when comparing two saves (the import preview, ARCHITECTURE §8.2). */
+export interface ProgressSummary {
+  readonly stars: number
+  readonly levels: number
+  readonly concepts: number
+}
+
+/** Why a progress code could not be read. */
+export type ProgressCodeProblem =
+  /** Not an ML Quest code at all. */
+  | 'format'
+  /** The checksum doesn't match: part of the code is missing or changed (copy-paste). */
+  | 'checksum'
+  /** Checksum fine but the contents don't decode or validate. */
+  | 'unreadable'
+  /** Made by a newer version of the game than this one. */
+  | 'newer'
+
+export type ProgressCodeRead =
+  | {
+      readonly ok: true
+      readonly progress: Progress
+      readonly incoming: ProgressSummary
+      readonly current: ProgressSummary
+    }
+  | { readonly ok: false; readonly problem: ProgressCodeProblem }

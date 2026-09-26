@@ -127,7 +127,6 @@ src/
     CodexPage.tsx
     SandboxPage.tsx       # (v2)
     SettingsPage.tsx
-    ImportPage.tsx
   components/             # Reusable, presentational. Data in via props, events out via callbacks.
     ui/                   # Design-system primitives: Button, Card, Modal, Slider, Toggle, Toast
     widgets/              # Level controls: DragPoints, LearningRateSlider, FeatureToggle,
@@ -477,7 +476,7 @@ interface ModelRunner {
 
 ### Routing
 
-We use **hash routing** (`/#/w1/l4`). It works on GitHub Pages without the `404.html` redirect hack and needs no server rewrites. The trade-off is uglier URLs, which is acceptable for a game. Routes: `/`, `/map`, `/w/:world/l/:level`, `/codex`, `/sandbox`, `/settings`, `/import`.
+We use **hash routing** (`/#/w1/l4`). It works on GitHub Pages without the `404.html` redirect hack and needs no server rewrites. The trade-off is uglier URLs, which is acceptable for a game. Routes: `/`, `/map`, `/w/:world/l/:level`, `/codex`, `/sandbox`, `/settings` (export/import codes live in Settings).
 
 ---
 
@@ -500,11 +499,12 @@ Persistence is split across three layers. **Repositories** read and write storag
 
 ### 8.2 Export / import code (F8), handled by `ExportService`
 
-`code = "MLQ1-" + base64url(deflate(JSON(progress))) + "-" + crc32`
+`code = "MLQ1-" + base64url(flag + deflate-raw(JSON({ v, data: progress }))) + "-" + crc32(body)`
 
-- The version prefix allows format changes later, and the checksum catches copy-paste truncation.
-- Import runs the same migration and validation path as load. Before overwriting, it shows a **diff preview** ("This code has 18 stars; you currently have 22").
-- Deflate uses the native `CompressionStream` where available, with a tiny fallback. The target is under ~200 characters for a full v1 save.
+- The version prefix allows format changes later, and the checksum catches copy-paste truncation. A paste that starts like a code but is cut off is reported as incomplete, not as a foreign string. Whitespace (line wraps from chat apps) is ignored.
+- Import validates with the same Zod schema as load (`{ v, data }` envelope; migrations for older versions will run here once a v2 exists). Before overwriting, Settings shows a **diff preview** ("This code has 22 stars from 10 levels… This device has 18 stars…"), and replacing needs a click.
+- Deflate uses the native `CompressionStream` (`lib/Deflate.ts`); the flag byte marks plain JSON on a browser without it. A full v1 save (16 levels at 3 stars, 16 cards) is **~360 characters**, most of it the concept ids; fine for copy-paste, which is how codes move.
+- UI: the "Move your progress" section of Settings (not a separate `/import` route). `platform/Clipboard.ts` copies; if the browser refuses, the page asks the player to copy by hand.
 
 ---
 

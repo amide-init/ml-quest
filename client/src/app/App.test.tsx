@@ -519,6 +519,9 @@ describe('App', () => {
     const user = userEvent.setup()
     renderApp('/map')
     expect(screen.getAllByText('Not played yet')).toHaveLength(15)
+    // Only worlds with levels are on the map; later worlds appear once their first level ships.
+    expect(screen.getByRole('heading', { name: 'Boundary Plains' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Forest of Trees' })).not.toBeInTheDocument()
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

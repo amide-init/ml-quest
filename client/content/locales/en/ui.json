@@ -25,7 +25,7 @@
   "home.loop.pass.title": "Beat the target",
   "home.loop.pass.body": "You pass when the model hits the goal. The debrief then names the idea you just used.",
   "map.title": "World map",
-  "map.lede": "Six worlds, from your first loss curve to attention. The first two open in version 1.",
+  "map.lede": "From your first loss curve to a classifier you can trust. More worlds, from decision trees to attention, arrive in later versions.",
   "map.release.v1": "Opens in v1",
   "map.release.v2": "Planned for v2",
   "map.release.v3": "Planned for v3",

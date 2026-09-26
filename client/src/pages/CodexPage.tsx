@@ -12,6 +12,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   'linear-regression': 'level.w1-l1.title',
   'loss-function': 'level.w1-l2.title',
   'gradient-descent': 'level.w1-l3.title',
+  'learning-rate': 'level.w1-l4.title',
 }
 
 export function CodexPage() {

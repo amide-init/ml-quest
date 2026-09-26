@@ -16,10 +16,12 @@ const KEY_COMMIT_MS = 600
 type Ends = readonly [number, number]
 
 interface LineFitPlotProps {
-  readonly scene: RegressionScene
+  readonly scene: Pick<RegressionScene, 'points' | 'view'>
   readonly w: number
   readonly b: number
   readonly disabled: boolean
+  /** Hide the handles entirely (the optimizer, not the player, moves the line). */
+  readonly readOnly?: boolean
   /** Widgets never call services: they emit commands (ARCHITECTURE §3). */
   readonly onCommand: (command: Command) => void
 }
@@ -30,7 +32,14 @@ const round = (value: number) => Math.round(value * 10_000) / 10_000
  * Scatter plot with a draggable line (W1-L1, W1-L2). The player moves the two end handles;
  * letting go (or a pause after arrow keys) sends one set-params command = one move.
  */
-export function LineFitPlot({ scene, w, b, disabled, onCommand }: LineFitPlotProps) {
+export function LineFitPlot({
+  scene,
+  w,
+  b,
+  disabled,
+  readOnly = false,
+  onCommand,
+}: LineFitPlotProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const commitTimer = useRef<number | undefined>(undefined)
   const [draft, setDraft] = useState<Ends | null>(null)
@@ -179,7 +188,7 @@ export function LineFitPlot({ scene, w, b, disabled, onCommand }: LineFitPlotPro
             <circle key={`p${x},${y}`} className={styles['point']} cx={sx(x)} cy={sy(y)} r={4.5} />
           ))}
 
-          {([0, 1] as const).map((index) => (
+          {(readOnly ? [] : ([0, 1] as const)).map((index) => (
             <g
               key={index}
               className={styles['handle']}
@@ -215,7 +224,7 @@ export function LineFitPlot({ scene, w, b, disabled, onCommand }: LineFitPlotPro
           ))}
         </svg>
       </div>
-      {disabled ? null : <p className={styles['hint']}>{t('level.line.hint')}</p>}
+      {disabled || readOnly ? null : <p className={styles['hint']}>{t('level.line.hint')}</p>}
     </div>
   )
 }

@@ -15,6 +15,8 @@ export interface MetricInput<TData = void> {
   readonly testData?: TData
   /** The best achievable training loss, when known (e.g. least squares), for "loss gap". */
   readonly optimalLoss?: number
+  /** For training levels: the epoch at which training converged (null = never). */
+  readonly convergedAt?: number | null
 }
 
 export interface MetricDefinition {
@@ -32,6 +34,11 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   moves: {
     better: 'lower',
     compute: (input) => input.trace.filter((entry) => entry.command.type === 'set-params').length,
+  },
+  epochs_to_converge: {
+    better: 'lower',
+    // Never converged (too slow or diverged) = NaN, which fails every condition.
+    compute: (input) => input.convergedAt ?? Number.NaN,
   },
   final_loss: {
     better: 'lower',

@@ -1,6 +1,6 @@
 import { LevelStats } from '@/components/game'
 import { LossLandscapeMap } from '@/components/viz'
-import { StepControls } from '@/components/widgets'
+import { HyperparameterControls } from '@/components/widgets'
 import type { UseLevelSession } from '@/hooks'
 import { t } from '@/i18n'
 import type { LandscapeMap, LandscapeSnapshot } from '@/models'
@@ -59,11 +59,16 @@ export function LandscapeLevelView({
       controls={
         <>
           <LevelStats steps={snapshot.steps} budget={scene.stepBudget} loss={snapshot.loss} />
-          <StepControls
-            learningRate={snapshot.learningRate}
+          <HyperparameterControls
+            name="learningRate"
+            label={t('level.stepSize.label')}
+            hint={t('level.stepSize.hint')}
+            value={snapshot.learningRate}
             min={scene.learningRate.min}
             max={scene.learningRate.max}
             step={scene.learningRate.step}
+            actionLabel={t('level.step')}
+            action={{ type: 'step' }}
             disabled={false}
             onCommand={game.dispatch}
           />

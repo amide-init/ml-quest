@@ -111,7 +111,7 @@ describe('App', () => {
   it('lists every World 1 level on the map in order', () => {
     renderApp('/map')
     const levels = screen.getAllByRole('listitem').map((item) => item.textContent ?? '')
-    const titles = ['Draw the Line', 'Feel the Loss', 'Roll Downhill']
+    const titles = ['Draw the Line', 'Feel the Loss', 'Roll Downhill', 'Too Fast, Too Slow']
     const positions = titles.map((title) => levels.findIndex((text) => text.includes(title)))
     expect(positions.every((position) => position >= 0)).toBe(true)
     expect(positions.toSorted((a, b) => a - b)).toEqual(positions)
@@ -161,10 +161,43 @@ describe('App', () => {
     expect(Number(after)).toBeLessThan(Number(before))
   })
 
+  it('Too Fast, Too Slow: a tiny rate is too slow, a huge one blows up, the sweet spot converges', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/4')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText('Press Train to see the loss curve.')).toBeInTheDocument()
+
+    // Default rate 0.02: too slow.
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Too slow' }, { timeout: 4000 }),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Learning rate' }), {
+      target: { value: '1.2' },
+    })
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Too fast: the loss blew up' }, { timeout: 4000 }),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Learning rate' }), {
+      target: { value: '0.6' },
+    })
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Converged' }, { timeout: 4000 }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+    expect(screen.getByText(/converged in 4 epochs/)).toBeInTheDocument()
+  }, 15_000)
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(3)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(4)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

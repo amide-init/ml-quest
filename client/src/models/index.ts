@@ -31,10 +31,30 @@ export type { Comparison, Condition, LeafCondition, MetricId, StarRules } from '
 export type { ConditionFailure, EvalResult, Metrics, StarCount } from './EvalResultModel'
 export type { SessionEvent, SessionPhase, SessionState, TracedCommand } from './SessionModel'
 export { levelAlgorithmSchema, levelConfigSchema, levelIdSchema } from './LevelModel'
-export type { AlgorithmId, LevelAlgorithm, LevelConfig, LevelId, LevelOf } from './LevelModel'
-export type { ContourLine, LandscapeMap, LevelScene, RegressionScene } from './MapModel'
+export type {
+  AlgorithmId,
+  LevelAlgorithm,
+  LevelConfig,
+  LevelId,
+  LevelOf,
+  OptimizerId,
+  RegressionLevelWith,
+} from './LevelModel'
+export type {
+  ContourLine,
+  LandscapeMap,
+  LevelScene,
+  RegressionScene,
+  TrainingScene,
+} from './MapModel'
 export type { PlayReward, PlayView } from './PlayModel'
-export type { LandscapeSnapshot, LevelSnapshot, RegressionSnapshot } from './SnapshotModel'
+export type {
+  LandscapeSnapshot,
+  LevelSnapshot,
+  RegressionSnapshot,
+  TrainingRun,
+  TrainingSnapshot,
+} from './SnapshotModel'
 export {
   conceptIdSchema,
   DEFAULT_PROGRESS,

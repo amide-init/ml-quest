@@ -20,5 +20,7 @@ export type Command =
   | { readonly type: 'set-params'; readonly values: Readonly<Record<string, number>> }
   /** The player asks to be judged (e.g. "Check my line"). */
   | { readonly type: 'check' }
+  /** Run the optimizer with the current hyperparameters (e.g. "Train"). */
+  | { readonly type: 'train' }
 
 export type CommandType = Command['type']

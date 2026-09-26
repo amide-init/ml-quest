@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const metricIdSchema = z.enum([
   'steps',
   'moves',
+  'epochs_to_converge',
   'final_loss',
   'test_loss',
   'loss_gap',

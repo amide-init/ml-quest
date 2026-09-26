@@ -408,7 +408,10 @@ The level lifecycle is an explicit, typed reducer in `engine/session/`. `useLeve
 | Algorithm | Runner | Scene / snapshot | Ends when |
 |---|---|---|---|
 | `landscape-2d` (W1-L3) | `LandscapeRunner` | contour map (cached per level) / ball, trail, preview | the ball reaches the valley, leaves the map, or the steps run out |
-| `linear-regression` (W1-L1, W1-L2) | `RegressionRunner` | training points only / `w`, `b`, loss, best loss, moves | the player presses Check, or the move budget runs out |
+| `linear-regression` + `manual` optimizer (W1-L1, W1-L2) | `RegressionRunner` | training points only / `w`, `b`, loss, best loss, moves | the player presses Check, or the move budget runs out |
+| `linear-regression` + `gradient-descent` optimizer (W1-L4) | `GradientDescentRunner` | training points, learning-rate range, target loss / the recorded run, epoch by epoch | every Train press is judged: converged, too slow, or diverged |
+
+**Training runs are computed inline and replayed.** The Web Worker (§6.2) isn't used yet, on purpose. ARCHITECTURE's rule is to choose the runner by cost, and full-batch gradient descent on ≤ 500 points for ≤ 500 epochs takes microseconds, so a worker round-trip would only add latency and a harder-to-test path. `trainGradientDescent` records every epoch, and the UI replays it with `usePlayback`, which is time-based (`requestAnimationFrame` + elapsed time): throttled frames skip ahead, a hidden tab pauses and then catches up, and reduced motion shows the finished run. The WorkerRunner arrives with the first level whose training takes more than about one frame (World 4 neural networks) (ADR-0004).
 
 To add an algorithm family: add a variant to `levelAlgorithmSchema`, a runner, a `case` in `TrainingService`, a scene/snapshot variant, and a level view in `pages/level/`. The compiler points at every place that needs it.
 

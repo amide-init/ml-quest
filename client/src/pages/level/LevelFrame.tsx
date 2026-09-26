@@ -13,12 +13,22 @@ interface LevelFrameProps {
   readonly visual: ReactNode
   /** Controls shown while playing. */
   readonly controls: ReactNode
-  /** Result wording, in the level's own vocabulary. */
+  /** Result wording, in the level's own vocabulary. Null while the result isn't ready to show. */
   readonly resultText: { readonly title: string; readonly body: string } | null
+  /** Shown instead of the result while it isn't ready yet (e.g. a training run is replaying). */
+  readonly pending?: ReactNode
 }
 
 /** What every level shares: header, briefing, result, hints and debrief, driven by the session phase. */
-export function LevelFrame({ game, world, level, visual, controls, resultText }: LevelFrameProps) {
+export function LevelFrame({
+  game,
+  world,
+  level,
+  visual,
+  controls,
+  resultText,
+  pending,
+}: LevelFrameProps) {
   const { session, reward } = game.view
   const config = game.view.level
   const title = levelText(config.text.title)
@@ -46,6 +56,8 @@ export function LevelFrame({ game, world, level, visual, controls, resultText }:
               {controls}
             </>
           ) : null}
+
+          {(phase === 'passed' || phase === 'failed') && !resultText ? pending : null}
 
           {(phase === 'passed' || phase === 'failed') && result && resultText ? (
             <ResultPanel

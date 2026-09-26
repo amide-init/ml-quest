@@ -2,22 +2,16 @@ import type {
   Command,
   DatasetSplit,
   EvalResult,
-  LevelOf,
   RegressionData,
+  RegressionLevelWith,
   RegressionScene,
   RegressionSnapshot,
   SessionState,
 } from '@/models'
-import {
-  createSeededRandom,
-  generateLinearNoisy,
-  hashSeed,
-  leastSquares,
-  linearRegression,
-  vector,
-} from '@/engine'
+import { linearRegression, vector } from '@/engine'
 import type { EvaluationService } from '@/services/EvaluationService'
 import type { LevelRunner } from './LevelRunner'
+import { prepareRegression } from './RegressionData'
 
 /**
  * Runs a linear-regression level where the player sets the line directly (the "manual" optimizer):
@@ -25,31 +19,27 @@ import type { LevelRunner } from './LevelRunner'
  */
 export class RegressionRunner implements LevelRunner {
   readonly scene: RegressionScene
-  readonly #level: LevelOf<'linear-regression'>
+  readonly #level: RegressionLevelWith<'manual'>
   readonly #evaluation: EvaluationService
   readonly #data: DatasetSplit<RegressionData>
   readonly #optimalLoss: number
   #snapshot: RegressionSnapshot
 
-  constructor(level: LevelOf<'linear-regression'>, evaluation: EvaluationService) {
+  constructor(level: RegressionLevelWith<'manual'>, evaluation: EvaluationService) {
     this.#level = level
     this.#evaluation = evaluation
-    this.#data = generateLinearNoisy(level.algorithm.dataset, {
-      train: createSeededRandom(hashSeed(level.id, level.seed, 'train')),
-      test: createSeededRandom(hashSeed(level.id, level.seed, 'test')),
-    })
-    const best = leastSquares(this.#data.train)
-    this.#optimalLoss = this.#loss(best.w, best.b)
+    const prepared = prepareRegression(level)
+    this.#data = prepared.split
+    this.#optimalLoss = prepared.optimalLoss
 
     const { w, b } = level.algorithm.initial
     const initialLoss = this.#loss(w, b)
-    const { x, y } = this.#data.train
     this.scene = {
       kind: 'regression',
-      points: [...x].map((xi, i) => [xi, y[i] ?? 0] as const).map(([px, py]) => [px, py]),
+      points: prepared.points,
       view: level.algorithm.view,
-      showLoss: level.algorithm.showLoss,
-      moveBudget: level.algorithm.moveBudget ?? null,
+      showLoss: level.algorithm.optimizer.showLoss,
+      moveBudget: level.algorithm.optimizer.moveBudget ?? null,
       initialLoss,
     }
     this.#snapshot = {
@@ -92,6 +82,7 @@ export class RegressionRunner implements LevelRunner {
       case 'set-hyperparameter':
       case 'set-start':
       case 'step':
+      case 'train':
         break
     }
     return this.#snapshot
@@ -99,7 +90,7 @@ export class RegressionRunner implements LevelRunner {
 
   /** Ends when the player presses Check, or automatically when the move budget runs out. */
   judge(command: Command, session: SessionState): EvalResult | null {
-    const budget = this.#level.algorithm.moveBudget
+    const budget = this.#level.algorithm.optimizer.moveBudget
     const outOfMoves = budget !== undefined && this.#snapshot.moves >= budget
     if (command.type !== 'check' && !(command.type === 'set-params' && outOfMoves)) {
       return null

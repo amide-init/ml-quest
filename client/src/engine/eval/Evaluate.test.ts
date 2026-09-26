@@ -1,17 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import type { Metrics, StarRules } from '@/models'
+import { makeMetrics } from '@tests/fakes/Metrics'
 import { checkCondition, evaluate } from './Evaluate'
 
-const metrics = (overrides: Partial<Metrics> = {}): Metrics => ({
-  steps: 10,
-  moves: 0,
-  test_loss: Number.NaN,
-  loss_gap: Number.NaN,
-  final_loss: 0.02,
-  distance_to_global_min: 0.03,
-  hints_used: 0,
-  ...overrides,
-})
+const metrics = (overrides: Partial<Metrics> = {}): Metrics =>
+  makeMetrics({ steps: 10, final_loss: 0.02, distance_to_global_min: 0.03, ...overrides })
 
 // Roll Downhill: reach the valley in ≤ 15 steps; ≤ 10 for two stars; ≤ 7 and very close for three.
 const RULES: StarRules = {

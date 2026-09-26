@@ -1,0 +1,11 @@
+.visual {
+  display: grid;
+  gap: var(--space-4);
+}
+.status {
+  padding: var(--space-4) var(--space-6);
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

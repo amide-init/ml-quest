@@ -24,5 +24,7 @@ export type Command =
   | { readonly type: 'train' }
   /** Remove a training point, or put it back if it was removed (W1-L6 data cleaning). */
   | { readonly type: 'toggle-point'; readonly index: number }
+  /** Turn feature scaling (standardization) on or off (W1-L7). */
+  | { readonly type: 'set-scaling'; readonly enabled: boolean }
 
 export type CommandType = Command['type']

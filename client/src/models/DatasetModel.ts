@@ -6,6 +6,12 @@ export interface RegressionData {
   readonly y: Float64Array
 }
 
+/** Several input features (one column each) and a target: y ≈ w₁x₁ + w₂x₂ + … + b. */
+export interface TabularData {
+  readonly columns: readonly Float64Array[]
+  readonly y: Float64Array
+}
+
 /** Every dataset comes as a visible training set and a hidden test set (ARCHITECTURE D6). */
 export interface DatasetSplit<TData> {
   readonly train: TData
@@ -42,3 +48,19 @@ export const linearNoisySpecSchema = z
   })
   .refine((spec) => spec.xMin < spec.xMax, { message: 'xMin must be below xMax' })
 export type LinearNoisySpec = z.infer<typeof linearNoisySpecSchema>
+
+/** y = Σ weightᵢ · xᵢ + intercept + Gaussian noise, each xᵢ uniform in its own range (W1-L7). */
+export const linearMultiSpecSchema = z.object({
+  generator: z.literal('linear-multi'),
+  trainCount: z.number().int().min(3).max(500),
+  testCount: z.number().int().min(1).max(500),
+  weights: z.array(z.number()).min(1).max(8),
+  intercept: z.number(),
+  noise: z.number().nonnegative(),
+  /** One [min, max] per feature, in the same order as weights. Uneven ranges are the point of W1-L7. */
+  ranges: z
+    .array(z.tuple([z.number(), z.number()]))
+    .min(1)
+    .max(8),
+})
+export type LinearMultiSpec = z.infer<typeof linearMultiSpecSchema>

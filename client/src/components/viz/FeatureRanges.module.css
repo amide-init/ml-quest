@@ -1,0 +1,54 @@
+.panel {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+}
+
+.heading {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+}
+
+.row {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.track {
+  position: relative;
+  height: 0.875rem;
+  border-radius: var(--radius-control);
+  background: color-mix(in oklab, var(--color-line) 55%, transparent);
+}
+
+.bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--radius-control);
+  background: var(--color-ridge);
+  transition:
+    left 360ms var(--ease-out),
+    width 360ms var(--ease-out);
+}
+
+.scaled .bar {
+  background: var(--color-contour);
+}
+
+.axis {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}

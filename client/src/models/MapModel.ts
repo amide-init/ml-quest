@@ -64,4 +64,31 @@ export interface CleaningScene {
   readonly minPoints: number
 }
 
-export type LevelScene = LandscapeMap | RegressionScene | TrainingScene | CleaningScene
+/** One input feature's range before and after scaling (for the feature-range panel). */
+export interface FeatureRange {
+  /** Locale key of the feature's name. */
+  readonly label: string
+  readonly min: number
+  readonly max: number
+  readonly scaledMin: number
+  readonly scaledMax: number
+}
+
+/** A feature-scaling level (W1-L7): feature ranges, controls, and the best unscaled baseline. */
+export interface ScalingScene {
+  readonly kind: 'scaling'
+  readonly features: readonly FeatureRange[]
+  readonly learningRate: { readonly min: number; readonly max: number; readonly step: number }
+  readonly maxEpochs: number
+  readonly targetLoss: number
+  readonly initialLoss: number
+  /** The fastest any learning rate converges WITHOUT scaling: the bar to beat. */
+  readonly baseline: {
+    readonly learningRate: number
+    readonly epochs: number
+    readonly losses: readonly number[]
+  }
+}
+
+export type LevelScene =
+  LandscapeMap | RegressionScene | TrainingScene | CleaningScene | ScalingScene

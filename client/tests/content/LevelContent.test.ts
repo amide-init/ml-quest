@@ -22,7 +22,9 @@ describe('level content', () => {
         `concept.${level.text.concept}.term`,
         `concept.${level.text.concept}.definition`,
       ]
-      const missing = [title, mission, ...hints, debrief, ...conceptKeys].filter(
+      const featureKeys =
+        level.algorithm.id === 'multi-linear-regression' ? level.algorithm.featureLabels : []
+      const missing = [title, mission, ...hints, debrief, ...conceptKeys, ...featureKeys].filter(
         (key) => !(key in strings),
       )
       expect(missing).toEqual([])

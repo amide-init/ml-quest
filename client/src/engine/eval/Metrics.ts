@@ -22,6 +22,8 @@ export interface MetricInput<TData = void> {
   /** Training points the player removed, and the ones that were really outliers (W1-L6). */
   readonly removedPoints?: readonly number[]
   readonly outlierPoints?: readonly number[]
+  /** Epochs the best unscaled run needed, for "speedup" (W1-L7). */
+  readonly baselineEpochs?: number
 }
 
 export interface MetricDefinition {
@@ -77,6 +79,14 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   attempt: {
     better: 'lower',
     compute: (input) => input.attempt ?? Number.NaN,
+  },
+  speedup: {
+    better: 'higher',
+    // How many times faster than the baseline; NaN if this run never converged.
+    compute: (input) =>
+      input.baselineEpochs === undefined || !input.convergedAt
+        ? Number.NaN
+        : input.baselineEpochs / input.convergedAt,
   },
   points_removed: {
     better: 'lower',

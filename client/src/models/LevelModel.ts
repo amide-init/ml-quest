@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { starRulesSchema } from './ConditionModel'
-import { linearNoisySpecSchema } from './DatasetModel'
+import { linearMultiSpecSchema, linearNoisySpecSchema } from './DatasetModel'
 import { landscapeSpecSchema, pointSchema } from './LandscapeModel'
 
 export const levelIdSchema = z.string().regex(/^w[1-6]-l[1-8]$/, 'Level ids look like "w1-l3"')
@@ -81,6 +81,21 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         minPoints: z.number().int().min(2),
       }),
     ]),
+  }),
+  z.object({
+    /** Several features, one weight each (W1-L7 Scale Matters). */
+    id: z.literal('multi-linear-regression'),
+    dataset: linearMultiSpecSchema,
+    /** Locale keys naming each feature, in dataset order. */
+    featureLabels: z.array(z.string()).min(1),
+    optimizer: z.object({
+      /** The player picks the learning rate, may scale the features, and presses Train. */
+      id: z.literal('gradient-descent'),
+      learningRate: rangeControlSchema,
+      maxEpochs: z.number().int().positive().max(2000),
+      /** "Converged" = training loss within this much of the best possible loss. */
+      convergenceGap: z.number().positive(),
+    }),
   }),
 ])
 export type LevelAlgorithm = z.infer<typeof levelAlgorithmSchema>

@@ -62,5 +62,22 @@ export interface CleaningSnapshot {
   readonly loss: number
 }
 
+/** A recorded run where only the loss per epoch matters (index 0 = before training). */
+export interface LossRun {
+  readonly learningRate: number
+  readonly losses: readonly number[]
+  readonly status: 'converged' | 'diverged' | 'too-slow'
+  readonly convergedAt: number | null
+}
+
+/** A feature-scaling level's state (W1-L7). */
+export interface ScalingSnapshot {
+  readonly kind: 'scaling'
+  readonly scaled: boolean
+  readonly learningRate: number
+  /** The latest run, with whether it used scaled features. */
+  readonly run: (LossRun & { readonly scaled: boolean }) | null
+}
+
 export type LevelSnapshot =
-  LandscapeSnapshot | RegressionSnapshot | TrainingSnapshot | CleaningSnapshot
+  LandscapeSnapshot | RegressionSnapshot | TrainingSnapshot | CleaningSnapshot | ScalingSnapshot

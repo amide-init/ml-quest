@@ -31,4 +31,23 @@ export interface RegressionSnapshot {
   readonly moves: number
 }
 
-export type LevelSnapshot = LandscapeSnapshot | RegressionSnapshot
+/** One recorded training run: the model after every epoch (index 0 = before training). */
+export interface TrainingRun {
+  readonly learningRate: number
+  readonly epochs: readonly { readonly w: number; readonly b: number; readonly loss: number }[]
+  /** converged = reached the target loss; diverged = loss blew up; too-slow = ran out of epochs. */
+  readonly status: 'converged' | 'diverged' | 'too-slow'
+  /** First epoch at which the target loss was reached, or null. */
+  readonly convergedAt: number | null
+}
+
+/** A training level's state: the chosen learning rate and the latest run (W1-L4). */
+export interface TrainingSnapshot {
+  readonly kind: 'training'
+  readonly learningRate: number
+  /** Loss and parameters before training, so the plot has something to show at first. */
+  readonly initial: { readonly w: number; readonly b: number; readonly loss: number }
+  readonly run: TrainingRun | null
+}
+
+export type LevelSnapshot = LandscapeSnapshot | RegressionSnapshot | TrainingSnapshot

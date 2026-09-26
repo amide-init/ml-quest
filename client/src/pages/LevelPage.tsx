@@ -4,6 +4,7 @@ import { useDocumentTitle, useLevelSession } from '@/hooks'
 import { t } from '@/i18n'
 import { LandscapeLevelView } from './level/LandscapeLevelView'
 import { RegressionLevelView } from './level/RegressionLevelView'
+import { TrainingLevelView } from './level/TrainingLevelView'
 import { NotFoundPage } from './NotFoundPage'
 import noticeStyles from './NoticePage.module.css'
 
@@ -52,6 +53,17 @@ function LevelScreen({ levelId, world, level }: { levelId: string; world: number
   if (scene.kind === 'regression' && snapshot.kind === 'regression') {
     return (
       <RegressionLevelView
+        game={game}
+        scene={scene}
+        snapshot={snapshot}
+        world={world}
+        level={level}
+      />
+    )
+  }
+  if (scene.kind === 'training' && snapshot.kind === 'training') {
+    return (
+      <TrainingLevelView
         game={game}
         scene={scene}
         snapshot={snapshot}

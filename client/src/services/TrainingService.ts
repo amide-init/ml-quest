@@ -2,6 +2,7 @@ import type { LandscapeMap, LevelConfig, LevelOf, Point } from '@/models'
 import { contourLines, createLandscape2D, findLandscapeMinimum, xy } from '@/engine'
 import { assertNever } from '@/lib'
 import type { EvaluationService } from './EvaluationService'
+import { GradientDescentRunner } from './training/GradientDescentRunner'
 import { LandscapeRunner } from './training/LandscapeRunner'
 import type { LevelRunner } from './training/LevelRunner'
 import { RegressionRunner } from './training/RegressionRunner'
@@ -35,8 +36,23 @@ export class TrainingService {
           this.#evaluation,
         )
       }
-      case 'linear-regression':
-        return new RegressionRunner({ ...level, algorithm }, this.#evaluation)
+      case 'linear-regression': {
+        const optimizer = algorithm.optimizer
+        switch (optimizer.id) {
+          case 'manual':
+            return new RegressionRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              this.#evaluation,
+            )
+          case 'gradient-descent':
+            return new GradientDescentRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              this.#evaluation,
+            )
+          default:
+            return assertNever(optimizer)
+        }
+      }
       default:
         return assertNever(algorithm)
     }

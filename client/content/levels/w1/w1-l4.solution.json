@@ -1,0 +1,99 @@
+{
+  "level": "w1-l4",
+  "runs": [
+    {
+      "name": "sweet spot: learning rate 0.6",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.6
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "moderate: learning rate 0.3",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.3
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "cautious: learning rate 0.1",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.1
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution, too slow: the default rate 0.02",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution, zigzag: rate 1.0 bounces and never settles",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 1.0
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution, too fast: rate 1.2 blows up",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 1.2
+        },
+        {
+          "type": "train"
+        }
+      ]
+    }
+  ]
+}

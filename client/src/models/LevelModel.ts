@@ -38,14 +38,30 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
   z.object({
     id: z.literal('linear-regression'),
     dataset: linearNoisySpecSchema,
-    /** The line the player starts from. */
+    /** The line the player (or the optimizer) starts from. */
     initial: z.object({ w: z.number(), b: z.number() }),
     /** Visible data window (also the drag range of the line's handles). */
     view: z.object({ xMin: z.number(), xMax: z.number(), yMin: z.number(), yMax: z.number() }),
-    /** Show the live loss meter (W1-L2) or only the residuals (W1-L1). */
-    showLoss: z.boolean(),
-    /** When set, the attempt is checked automatically after this many moves. */
-    moveBudget: z.number().int().positive().optional(),
+    /** Who changes the parameters (ARCHITECTURE §3 "optimizer slot"). */
+    optimizer: z.discriminatedUnion('id', [
+      z.object({
+        /** The player drags the line (W1-L1, W1-L2). */
+        id: z.literal('manual'),
+        /** Show the live loss meter (W1-L2) or only the residuals (W1-L1). */
+        showLoss: z.boolean(),
+        /** When set, the attempt is checked automatically after this many moves. */
+        moveBudget: z.number().int().positive().optional(),
+      }),
+      z.object({
+        /** The player picks the learning rate and presses Train (W1-L4). */
+        id: z.literal('gradient-descent'),
+        learningRate: rangeControlSchema,
+        /** Training stops after this many epochs. */
+        maxEpochs: z.number().int().positive().max(500),
+        /** "Converged" = training loss within this much of the best possible loss. */
+        convergenceGap: z.number().positive(),
+      }),
+    ]),
   }),
 ])
 export type LevelAlgorithm = z.infer<typeof levelAlgorithmSchema>
@@ -83,4 +99,14 @@ export type LevelConfig = z.infer<typeof levelConfigSchema>
 /** A level config narrowed to one algorithm, e.g. LevelOf<'linear-regression'>. */
 export type LevelOf<Id extends AlgorithmId> = LevelConfig & {
   readonly algorithm: Extract<LevelAlgorithm, { id: Id }>
+}
+
+type RegressionAlgorithm = Extract<LevelAlgorithm, { id: 'linear-regression' }>
+export type OptimizerId = RegressionAlgorithm['optimizer']['id']
+
+/** A linear-regression level narrowed to one optimizer, e.g. RegressionLevelWith<'gradient-descent'>. */
+export type RegressionLevelWith<Id extends OptimizerId> = LevelConfig & {
+  readonly algorithm: RegressionAlgorithm & {
+    readonly optimizer: Extract<RegressionAlgorithm['optimizer'], { id: Id }>
+  }
 }

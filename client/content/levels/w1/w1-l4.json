@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "w1-l4",
+  "world": 1,
+  "level": 4,
+  "seed": 104,
+  "algorithm": {
+    "id": "linear-regression",
+    "dataset": {
+      "generator": "linear-noisy",
+      "trainCount": 24,
+      "testCount": 20,
+      "slope": 4,
+      "intercept": 10,
+      "noise": 1.2,
+      "xMin": -1,
+      "xMax": 1
+    },
+    "initial": {
+      "w": 0,
+      "b": 0
+    },
+    "view": {
+      "xMin": -1.2,
+      "xMax": 1.2,
+      "yMin": 0,
+      "yMax": 18
+    },
+    "optimizer": {
+      "id": "gradient-descent",
+      "learningRate": {
+        "min": 0.01,
+        "max": 1.2,
+        "step": 0.01,
+        "initial": 0.02
+      },
+      "maxEpochs": 60,
+      "convergenceGap": 0.05
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "epochs_to_converge",
+      "op": "<",
+      "value": 50
+    },
+    "two": {
+      "metric": "epochs_to_converge",
+      "op": "<=",
+      "value": 15
+    },
+    "three": {
+      "metric": "epochs_to_converge",
+      "op": "<=",
+      "value": 7
+    }
+  },
+  "text": {
+    "title": "level.w1-l4.title",
+    "mission": "level.w1-l4.mission",
+    "hints": ["level.w1-l4.hint1", "level.w1-l4.hint2", "level.w1-l4.hint3"],
+    "debrief": "level.w1-l4.debrief",
+    "concept": "learning-rate"
+  },
+  "authors": ["amide-init"]
+}

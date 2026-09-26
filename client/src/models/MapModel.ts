@@ -38,4 +38,16 @@ export interface RegressionScene {
   readonly initialLoss: number
 }
 
-export type LevelScene = LandscapeMap | RegressionScene
+/** A training level: the training points plus the controls and the loss target for the curve. */
+export interface TrainingScene {
+  readonly kind: 'training'
+  readonly points: readonly Point[]
+  readonly view: RegressionScene['view']
+  readonly learningRate: { readonly min: number; readonly max: number; readonly step: number }
+  readonly maxEpochs: number
+  /** Training loss that counts as "converged" (best possible + the level's gap). */
+  readonly targetLoss: number
+  readonly initialLoss: number
+}
+
+export type LevelScene = LandscapeMap | RegressionScene | TrainingScene

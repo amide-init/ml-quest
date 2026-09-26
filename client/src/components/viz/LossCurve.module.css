@@ -1,0 +1,56 @@
+.sheet {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.axis {
+  stroke: var(--color-line);
+  stroke-width: 1.5;
+}
+
+.tick {
+  fill: var(--color-ink-muted);
+  font-size: 12px;
+  font-family: var(--font-text);
+}
+
+.target {
+  stroke: var(--color-contour);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.targetLabel {
+  fill: var(--color-contour);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-text);
+}
+
+.curve {
+  fill: none;
+  stroke: var(--color-beacon);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.head {
+  fill: var(--color-beacon);
+  stroke: var(--color-paper-raised);
+  stroke-width: 2;
+}
+
+.empty {
+  fill: var(--color-ink-muted);
+  font-size: 14px;
+  font-family: var(--font-text);
+}

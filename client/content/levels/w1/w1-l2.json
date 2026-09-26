@@ -26,8 +26,11 @@
       "yMin": 0,
       "yMax": 24
     },
-    "showLoss": true,
-    "moveBudget": 20
+    "optimizer": {
+      "id": "manual",
+      "showLoss": true,
+      "moveBudget": 20
+    }
   },
   "stars": {
     "pass": {

@@ -1,3 +1,4 @@
+import { makeMetrics } from '@tests/fakes/Metrics'
 import { describe, expect, it, vi } from 'vitest'
 import type { EvalResult, StarCount } from '@/models'
 import { InMemoryProgressRepository } from '@/repositories/in-memory/InMemoryProgressRepository'
@@ -6,15 +7,7 @@ import { ProgressService } from './ProgressService'
 const result = (stars: StarCount): EvalResult => ({
   passed: stars > 0,
   stars,
-  metrics: {
-    steps: 5,
-    moves: 0,
-    final_loss: 0,
-    test_loss: Number.NaN,
-    loss_gap: Number.NaN,
-    distance_to_global_min: 0,
-    hints_used: 0,
-  },
+  metrics: makeMetrics({ steps: 5 }),
   failedConditions: [],
   nextStarConditions: [],
   cappedByHints: false,

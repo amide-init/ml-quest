@@ -2,6 +2,7 @@ import type { LandscapeMap, LevelConfig, LevelOf, Point } from '@/models'
 import { contourLines, createLandscape2D, findLandscapeMinimum, xy } from '@/engine'
 import { assertNever } from '@/lib'
 import type { EvaluationService } from './EvaluationService'
+import { BoundaryRunner } from './training/BoundaryRunner'
 import { CleaningRunner } from './training/CleaningRunner'
 import { DescentRunner } from './training/DescentRunner'
 import { GradientDescentRunner } from './training/GradientDescentRunner'
@@ -75,6 +76,8 @@ export class TrainingService {
       }
       case 'multi-linear-regression':
         return new ScalingRunner({ ...level, algorithm }, this.#evaluation)
+      case 'logistic-regression':
+        return new BoundaryRunner({ ...level, algorithm }, this.#evaluation)
       default:
         return assertNever(algorithm)
     }

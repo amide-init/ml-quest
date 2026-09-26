@@ -85,5 +85,24 @@ export interface ScalingSnapshot {
   readonly run: (LossRun & { readonly scaled: boolean }) | null
 }
 
+/** A classification level's state: the boundary and how many training points it gets right (W2). */
+export interface BoundarySnapshot {
+  readonly kind: 'boundary'
+  /** Two points the boundary passes through (the handles). */
+  readonly p: Point
+  readonly q: Point
+  /** Which side is class 1: false = left of p→q. */
+  readonly flipped: boolean
+  /** Correctly classified training points, and the total. */
+  readonly correct: number
+  readonly total: number
+  readonly moves: number
+}
+
 export type LevelSnapshot =
-  LandscapeSnapshot | RegressionSnapshot | TrainingSnapshot | CleaningSnapshot | ScalingSnapshot
+  | LandscapeSnapshot
+  | RegressionSnapshot
+  | TrainingSnapshot
+  | CleaningSnapshot
+  | ScalingSnapshot
+  | BoundarySnapshot

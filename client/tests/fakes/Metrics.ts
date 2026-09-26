@@ -18,6 +18,8 @@ export function makeMetrics(overrides: Partial<Metrics> = {}): Metrics {
     points_removed: Number.NaN,
     good_points_removed: Number.NaN,
     speedup: Number.NaN,
+    accuracy: Number.NaN,
+    test_accuracy: Number.NaN,
     ...overrides,
   }
 }

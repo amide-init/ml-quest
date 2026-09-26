@@ -24,6 +24,9 @@ export interface MetricInput<TData = void> {
   readonly outlierPoints?: readonly number[]
   /** Epochs the best unscaled run needed, for "speedup" (W1-L7). */
   readonly baselineEpochs?: number
+  /** Share of points classified correctly, on the training set and the hidden test set (World 2). */
+  readonly trainAccuracy?: number
+  readonly testAccuracy?: number
 }
 
 export interface MetricDefinition {
@@ -87,6 +90,14 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
       input.baselineEpochs === undefined || !input.convergedAt
         ? Number.NaN
         : input.baselineEpochs / input.convergedAt,
+  },
+  accuracy: {
+    better: 'higher',
+    compute: (input) => input.trainAccuracy ?? Number.NaN,
+  },
+  test_accuracy: {
+    better: 'higher',
+    compute: (input) => input.testAccuracy ?? Number.NaN,
   },
   points_removed: {
     better: 'lower',

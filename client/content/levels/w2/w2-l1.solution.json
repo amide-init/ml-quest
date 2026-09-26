@@ -1,0 +1,122 @@
+{
+  "level": "w2-l1",
+  "runs": [
+    {
+      "name": "the diagonal between the clusters: best on the hidden points",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-boundary",
+          "p": [-2, 2],
+          "q": [2, -2]
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "vertical line: every training point right, weaker on hidden points",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-boundary",
+          "p": [0, 2],
+          "q": [0, -2]
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "nearly flat line: just enough",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-boundary",
+          "p": [-2, 0.3],
+          "q": [2, -0.3]
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "sides the wrong way round, then swapped",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-boundary",
+          "p": [2, -2],
+          "q": [-2, 2]
+        },
+        {
+          "type": "flip-sides"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: checks the starting boundary",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: horizontal line misses the lean of the clusters",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-boundary",
+          "p": [-2, 0],
+          "q": [2, 0]
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: right line, sides swapped",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-boundary",
+          "p": [-2, 2],
+          "q": [2, -2]
+        },
+        {
+          "type": "flip-sides"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

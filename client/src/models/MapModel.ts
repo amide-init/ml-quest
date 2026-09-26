@@ -92,5 +92,20 @@ export interface ScalingScene {
   }
 }
 
+/** A labelled point in feature space. */
+export interface LabelledPoint {
+  readonly x: number
+  readonly y: number
+  /** 0 or 1. */
+  readonly label: number
+}
+
+/** A classification level (World 2): training points only, never the hidden test set. */
+export interface BoundaryScene {
+  readonly kind: 'boundary'
+  readonly points: readonly LabelledPoint[]
+  readonly view: RegressionScene['view']
+}
+
 export type LevelScene =
-  LandscapeMap | RegressionScene | TrainingScene | CleaningScene | ScalingScene
+  LandscapeMap | RegressionScene | TrainingScene | CleaningScene | ScalingScene | BoundaryScene

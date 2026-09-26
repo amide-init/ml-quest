@@ -2,6 +2,7 @@ import { useParams } from 'react-router'
 import { ButtonLink, PageHeader } from '@/components/ui'
 import { useDocumentTitle, useLevelSession } from '@/hooks'
 import { t } from '@/i18n'
+import { BoundaryLevelView } from './level/BoundaryLevelView'
 import { CleaningLevelView } from './level/CleaningLevelView'
 import { LandscapeLevelView } from './level/LandscapeLevelView'
 import { RegressionLevelView } from './level/RegressionLevelView'
@@ -88,6 +89,17 @@ function LevelScreen({ levelId, world, level }: { levelId: string; world: number
   if (scene.kind === 'scaling' && snapshot.kind === 'scaling') {
     return (
       <ScalingLevelView game={game} scene={scene} snapshot={snapshot} world={world} level={level} />
+    )
+  }
+  if (scene.kind === 'boundary' && snapshot.kind === 'boundary') {
+    return (
+      <BoundaryLevelView
+        game={game}
+        scene={scene}
+        snapshot={snapshot}
+        world={world}
+        level={level}
+      />
     )
   }
   throw new Error(

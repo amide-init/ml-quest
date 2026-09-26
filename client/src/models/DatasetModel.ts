@@ -12,6 +12,14 @@ export interface TabularData {
   readonly y: Float64Array
 }
 
+/** Points in 2D with a class label (0 or 1), for classification (World 2). */
+export interface ClassificationData {
+  readonly x1: Float64Array
+  readonly x2: Float64Array
+  /** 0 or 1 per point. */
+  readonly label: Uint8Array
+}
+
 /** Every dataset comes as a visible training set and a hidden test set (ARCHITECTURE D6). */
 export interface DatasetSplit<TData> {
   readonly train: TData
@@ -64,3 +72,16 @@ export const linearMultiSpecSchema = z.object({
     .max(8),
 })
 export type LinearMultiSpec = z.infer<typeof linearMultiSpecSchema>
+
+/** Two Gaussian clusters, one per class (W2 "Split the Kingdom"). Overlap sets how hard the split is. */
+export const twoBlobsSpecSchema = z.object({
+  generator: z.literal('two-blobs'),
+  /** Points per class in the training set; the test set is the same size per class. */
+  trainPerClass: z.number().int().min(2).max(250),
+  testPerClass: z.number().int().min(1).max(250),
+  /** Cluster centres for class 0 and class 1. */
+  centers: z.tuple([z.tuple([z.number(), z.number()]), z.tuple([z.number(), z.number()])]),
+  /** Standard deviation of each cluster. */
+  spread: z.number().positive(),
+})
+export type TwoBlobsSpec = z.infer<typeof twoBlobsSpecSchema>

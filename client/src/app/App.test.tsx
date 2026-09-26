@@ -61,11 +61,11 @@ describe('App', () => {
   })
 
   it('shows the placeholder for a level that is not built yet', () => {
-    renderApp('/w/2/l/1')
+    renderApp('/w/2/l/5')
     expect(
       screen.getByRole('heading', { level: 1, name: 'This level is being built' }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('Level 2-1 – ML Quest')
+    expect(document.title).toBe('Level 2-5 – ML Quest')
   })
 
   it('plays Roll Downhill from briefing to debrief', async () => {
@@ -320,10 +320,35 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   }, 25_000)
 
+  it('Split the Kingdom: the starting border fails; the diagonal, placed by keyboard, wins', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/2/l/1')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    await user.click(screen.getByRole('button', { name: 'Check the border' }))
+    expect(screen.getByRole('heading', { name: 'Too many on the wrong side' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    // Handle 1 from (-2.5, -2) to (-2, 2); handle 2 from (-2.5, 2) to (2, -2).
+    const first = screen.getByRole('button', { name: /Border handle 1/ })
+    fireEvent.keyDown(first, { key: 'ArrowRight' })
+    for (let i = 0; i < 4; i++) fireEvent.keyDown(first, { key: 'ArrowRight' })
+    for (let i = 0; i < 8; i++) fireEvent.keyDown(first, { key: 'ArrowUp', shiftKey: true })
+    fireEvent.blur(first)
+    const second = screen.getByRole('button', { name: /Border handle 2/ })
+    for (let i = 0; i < 9; i++) fireEvent.keyDown(second, { key: 'ArrowRight', shiftKey: true })
+    for (let i = 0; i < 8; i++) fireEvent.keyDown(second, { key: 'ArrowDown', shiftKey: true })
+    fireEvent.blur(second)
+    // The border now runs from (-2, 2) to (2, -2): the diagonal between the two kingdoms.
+    await waitFor(() => expect(screen.getByText('39 of 40 on the right side')).toBeInTheDocument())
+    await user.click(screen.getByRole('button', { name: 'Check the border' }))
+    expect(screen.getByRole('heading', { name: 'Kingdom split' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(8)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(9)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

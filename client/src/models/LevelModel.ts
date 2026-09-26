@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { starRulesSchema } from './ConditionModel'
-import { linearMultiSpecSchema, linearNoisySpecSchema } from './DatasetModel'
+import { linearMultiSpecSchema, linearNoisySpecSchema, twoBlobsSpecSchema } from './DatasetModel'
 import { landscapeSpecSchema, pointSchema } from './LandscapeModel'
 
 export const levelIdSchema = z.string().regex(/^w[1-6]-l[1-8]$/, 'Level ids look like "w1-l3"')
@@ -101,6 +101,18 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
       maxEpochs: z.number().int().positive().max(2000),
       /** "Converged" = training loss within this much of the best possible loss. */
       convergenceGap: z.number().positive(),
+    }),
+  }),
+  z.object({
+    /** Classification with a straight boundary (World 2). */
+    id: z.literal('logistic-regression'),
+    dataset: twoBlobsSpecSchema,
+    /** Visible window of the 2D feature space. */
+    view: z.object({ xMin: z.number(), xMax: z.number(), yMin: z.number(), yMax: z.number() }),
+    optimizer: z.object({
+      /** The player places the boundary by dragging two handles (W2-L1 Split the Kingdom). */
+      id: z.literal('manual-boundary'),
+      initial: z.object({ p: pointSchema, q: pointSchema }),
     }),
   }),
 ])

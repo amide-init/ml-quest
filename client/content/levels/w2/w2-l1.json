@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "w2-l1",
+  "world": 2,
+  "level": 1,
+  "seed": 201,
+  "algorithm": {
+    "id": "logistic-regression",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 20,
+      "testPerClass": 30,
+      "centers": [
+        [-1.1, -0.7],
+        [1.1, 0.7]
+      ],
+      "spread": 0.7
+    },
+    "view": {
+      "xMin": -3,
+      "xMax": 3,
+      "yMin": -2.4,
+      "yMax": 2.4
+    },
+    "optimizer": {
+      "id": "manual-boundary",
+      "initial": {
+        "p": [-2.5, -2],
+        "q": [-2.5, 2]
+      }
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "accuracy",
+      "op": ">=",
+      "value": 0.9
+    },
+    "two": {
+      "metric": "accuracy",
+      "op": ">=",
+      "value": 0.95
+    },
+    "three": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.95
+    }
+  },
+  "text": {
+    "title": "level.w2-l1.title",
+    "mission": "level.w2-l1.mission",
+    "hints": ["level.w2-l1.hint1", "level.w2-l1.hint2", "level.w2-l1.hint3"],
+    "debrief": "level.w2-l1.debrief",
+    "concept": "classification"
+  },
+  "authors": ["amide-init"]
+}

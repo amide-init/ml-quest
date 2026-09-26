@@ -3,7 +3,7 @@ import type {
   EvalResult,
   LandscapeMap,
   LandscapeSnapshot,
-  LevelOf,
+  LandscapeLevelWith,
   Point,
   SessionState,
 } from '@/models'
@@ -20,17 +20,21 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 export class LandscapeRunner implements LevelRunner {
   readonly scene: LandscapeMap
   readonly #algorithm
-  readonly #level: LevelOf<'landscape-2d'>
+  readonly #level: LandscapeLevelWith<'manual-steps'>
   readonly #evaluation: EvaluationService
   #snapshot: LandscapeSnapshot
 
-  constructor(level: LevelOf<'landscape-2d'>, scene: LandscapeMap, evaluation: EvaluationService) {
+  constructor(
+    level: LandscapeLevelWith<'manual-steps'>,
+    scene: LandscapeMap,
+    evaluation: EvaluationService,
+  ) {
     this.#level = level
     this.scene = scene
     this.#evaluation = evaluation
     this.#algorithm = createLandscape2D(level.algorithm.landscape)
     this.#snapshot = this.#snapshotAt(level.algorithm.start, [level.algorithm.start], {
-      learningRate: level.algorithm.controls.learningRate.initial,
+      learningRate: level.algorithm.optimizer.learningRate.initial,
       steps: 0,
       status: 'ok',
     })
@@ -45,7 +49,7 @@ export class LandscapeRunner implements LevelRunner {
     switch (command.type) {
       case 'set-hyperparameter': {
         // Game rule, not math clamping: the slider's range is part of the level design.
-        const { min, max } = this.#level.algorithm.controls.learningRate
+        const { min, max } = this.#level.algorithm.optimizer.learningRate
         const learningRate = clamp(command.value, min, max)
         this.#snapshot = this.#snapshotAt(current.position, current.path, {
           ...current,
@@ -107,7 +111,7 @@ export class LandscapeRunner implements LevelRunner {
       hintsRevealed: session.hintsRevealed,
       globalMinimum: vector(...this.scene.minimum),
     })
-    const outOfSteps = snapshot.steps >= this.#level.algorithm.controls.stepBudget
+    const outOfSteps = snapshot.steps >= this.#level.algorithm.optimizer.stepBudget
     return result.passed || snapshot.status === 'diverged' || outOfSteps ? result : null
   }
 

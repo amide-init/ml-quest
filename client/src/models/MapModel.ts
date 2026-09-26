@@ -18,8 +18,14 @@ export interface LandscapeMap {
   readonly minimum: Point
   /** The ball must end within this distance of the minimum (drawn as the target ring). */
   readonly targetRadius: number
-  readonly stepBudget: number
-  readonly learningRate: { readonly min: number; readonly max: number; readonly step: number }
+  /** How this landscape is played: the player steps (W1-L3), or picks a start and rolls (W1-L5). */
+  readonly play:
+    | {
+        readonly mode: 'manual-steps'
+        readonly stepBudget: number
+        readonly learningRate: { readonly min: number; readonly max: number; readonly step: number }
+      }
+    | { readonly mode: 'auto-descent'; readonly maxSteps: number }
 }
 
 /** Everything needed to draw a regression level. Contains ONLY the training points (ARCHITECTURE D6). */

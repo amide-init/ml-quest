@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { RegressionData } from '@/models'
-import { createSeededRandom, vector } from '@/engine/math'
+import { createSeededRandom, distance, vector } from '@/engine/math'
 import { generateLinearNoisy } from '@/engine/data'
+import { createLandscape2D } from './algorithms/Landscape2D'
 import { leastSquares, linearRegression } from './algorithms/LinearRegression'
 import { trainGradientDescent } from './Train'
 
@@ -59,5 +60,26 @@ describe('trainGradientDescent', () => {
     const slow = train(0.2).convergedAt ?? Infinity
     const fast = train(0.6).convergedAt ?? Infinity
     expect(fast).toBeLessThan(slow)
+  })
+
+  it('handles loss surfaces that go negative (regression: a well is not a blow-up)', () => {
+    const landscape = createLandscape2D({
+      bounds: { min: [-1, -1], max: [1, 1] },
+      bowl: { center: [0, 0], radii: [1.2, 1.2], angleDeg: 0 },
+      wells: [{ center: [0.3, -0.2], depth: 1, width: 0.25 }],
+    })
+    const start = vector(0.2, -0.1)
+    expect(landscape.loss(start)).toBeLessThan(0)
+    const result = trainGradientDescent({
+      algorithm: landscape,
+      data: undefined,
+      initial: start,
+      learningRate: 0.05,
+      maxEpochs: 200,
+      isConverged: (_loss, params, previous) =>
+        params !== previous && distance(params, previous) < 1e-4,
+    })
+    expect(result.status).toBe('converged')
+    expect(result.epochs.length).toBeGreaterThan(2)
   })
 })

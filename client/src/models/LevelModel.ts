@@ -29,11 +29,24 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
     start: pointSchema,
     /** "In the valley" = within this distance of the global minimum. */
     targetRadius: z.number().positive(),
-    controls: z.object({
-      learningRate: rangeControlSchema,
-      /** The attempt ends (and is checked) after this many steps. */
-      stepBudget: z.number().int().positive(),
-    }),
+    /** Who moves the ball (ARCHITECTURE §3 "optimizer slot"). */
+    optimizer: z.discriminatedUnion('id', [
+      z.object({
+        /** The player takes each step and picks its size (W1-L3 Roll Downhill). */
+        id: z.literal('manual-steps'),
+        learningRate: rangeControlSchema,
+        /** The attempt ends (and is checked) after this many steps. */
+        stepBudget: z.number().int().positive(),
+      }),
+      z.object({
+        /** The player picks the start; gradient descent rolls the ball (W1-L5 Bumpy Terrain). */
+        id: z.literal('auto-descent'),
+        learningRate: z.number().positive(),
+        maxSteps: z.number().int().positive().max(1000),
+        /** The ball has settled when a step moves it less than this. */
+        settleDistance: z.number().positive(),
+      }),
+    ]),
   }),
   z.object({
     id: z.literal('linear-regression'),
@@ -99,6 +112,16 @@ export type LevelConfig = z.infer<typeof levelConfigSchema>
 /** A level config narrowed to one algorithm, e.g. LevelOf<'linear-regression'>. */
 export type LevelOf<Id extends AlgorithmId> = LevelConfig & {
   readonly algorithm: Extract<LevelAlgorithm, { id: Id }>
+}
+
+type LandscapeAlgorithm = Extract<LevelAlgorithm, { id: 'landscape-2d' }>
+export type LandscapeOptimizerId = LandscapeAlgorithm['optimizer']['id']
+
+/** A landscape level narrowed to one optimizer, e.g. LandscapeLevelWith<'auto-descent'>. */
+export type LandscapeLevelWith<Id extends LandscapeOptimizerId> = LevelConfig & {
+  readonly algorithm: LandscapeAlgorithm & {
+    readonly optimizer: Extract<LandscapeAlgorithm['optimizer'], { id: Id }>
+  }
 }
 
 type RegressionAlgorithm = Extract<LevelAlgorithm, { id: 'linear-regression' }>

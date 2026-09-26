@@ -4,6 +4,7 @@ import { HyperparameterControls } from '@/components/widgets'
 import type { UseLevelSession } from '@/hooks'
 import { t } from '@/i18n'
 import type { LandscapeMap, LandscapeSnapshot } from '@/models'
+import { DescentLevelView } from './DescentLevelView'
 import { LevelFrame } from './LevelFrame'
 
 interface LandscapeLevelViewProps {
@@ -15,13 +16,20 @@ interface LandscapeLevelViewProps {
 }
 
 /** World 1 descent levels (Roll Downhill): a contour map, a step-size slider and a Step button. */
-export function LandscapeLevelView({
-  game,
-  scene,
-  snapshot,
-  world,
-  level,
-}: LandscapeLevelViewProps) {
+export function LandscapeLevelView(props: LandscapeLevelViewProps) {
+  return props.scene.play.mode === 'auto-descent' ? (
+    <DescentLevelView {...props} />
+  ) : (
+    <SteppingLevelView {...props} />
+  )
+}
+
+/** W1-L3 Roll Downhill: the player takes each gradient step and picks its size. */
+function SteppingLevelView({ game, scene, snapshot, world, level }: LandscapeLevelViewProps) {
+  const play = scene.play
+  if (play.mode !== 'manual-steps') {
+    throw new Error('SteppingLevelView needs a manual-steps landscape')
+  }
   const result = game.view.session.lastResult
   const diverged = snapshot.status === 'diverged'
 
@@ -58,15 +66,15 @@ export function LandscapeLevelView({
       }
       controls={
         <>
-          <LevelStats steps={snapshot.steps} budget={scene.stepBudget} loss={snapshot.loss} />
+          <LevelStats steps={snapshot.steps} budget={play.stepBudget} loss={snapshot.loss} />
           <HyperparameterControls
             name="learningRate"
             label={t('level.stepSize.label')}
             hint={t('level.stepSize.hint')}
             value={snapshot.learningRate}
-            min={scene.learningRate.min}
-            max={scene.learningRate.max}
-            step={scene.learningRate.step}
+            min={play.learningRate.min}
+            max={play.learningRate.max}
+            step={play.learningRate.step}
             actionLabel={t('level.step')}
             action={{ type: 'step' }}
             disabled={false}

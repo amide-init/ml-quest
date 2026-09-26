@@ -33,6 +33,8 @@ export type { SessionEvent, SessionPhase, SessionState, TracedCommand } from './
 export { levelAlgorithmSchema, levelConfigSchema, levelIdSchema } from './LevelModel'
 export type {
   AlgorithmId,
+  LandscapeLevelWith,
+  LandscapeOptimizerId,
   LevelAlgorithm,
   LevelConfig,
   LevelId,

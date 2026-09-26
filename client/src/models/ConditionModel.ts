@@ -10,6 +10,7 @@ export const metricIdSchema = z.enum([
   'loss_gap',
   'distance_to_global_min',
   'hints_used',
+  'attempt',
 ])
 export type MetricId = z.infer<typeof metricIdSchema>
 

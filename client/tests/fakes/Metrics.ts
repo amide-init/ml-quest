@@ -14,6 +14,7 @@ export function makeMetrics(overrides: Partial<Metrics> = {}): Metrics {
     loss_gap: Number.NaN,
     distance_to_global_min: Number.NaN,
     hints_used: 0,
+    attempt: 1,
     ...overrides,
   }
 }

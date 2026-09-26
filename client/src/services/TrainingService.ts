@@ -2,6 +2,7 @@ import type { LandscapeMap, LevelConfig, LevelOf, Point } from '@/models'
 import { contourLines, createLandscape2D, findLandscapeMinimum, xy } from '@/engine'
 import { assertNever } from '@/lib'
 import type { EvaluationService } from './EvaluationService'
+import { DescentRunner } from './training/DescentRunner'
 import { GradientDescentRunner } from './training/GradientDescentRunner'
 import { LandscapeRunner } from './training/LandscapeRunner'
 import type { LevelRunner } from './training/LevelRunner'
@@ -29,12 +30,24 @@ export class TrainingService {
     const algorithm = level.algorithm
     switch (algorithm.id) {
       case 'landscape-2d': {
-        const landscapeLevel = { ...level, algorithm }
-        return new LandscapeRunner(
-          landscapeLevel,
-          this.#landscapeMap(landscapeLevel),
-          this.#evaluation,
-        )
+        const map = this.#landscapeMap({ ...level, algorithm })
+        const optimizer = algorithm.optimizer
+        switch (optimizer.id) {
+          case 'manual-steps':
+            return new LandscapeRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              map,
+              this.#evaluation,
+            )
+          case 'auto-descent':
+            return new DescentRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              map,
+              this.#evaluation,
+            )
+          default:
+            return assertNever(optimizer)
+        }
       }
       case 'linear-regression': {
         const optimizer = algorithm.optimizer
@@ -64,7 +77,7 @@ export class TrainingService {
     if (cached) {
       return cached
     }
-    const { landscape, targetRadius, controls } = level.algorithm
+    const { landscape, targetRadius, optimizer } = level.algorithm
     const algorithm = createLandscape2D(landscape)
     const minimum = findLandscapeMinimum(algorithm, landscape.bounds)
     const loss = (point: Point) => algorithm.loss(Float64Array.from(point))
@@ -79,8 +92,14 @@ export class TrainingService {
       levelCount: CONTOUR_LEVELS.length,
       minimum: xy(minimum.point),
       targetRadius,
-      stepBudget: controls.stepBudget,
-      learningRate: controls.learningRate,
+      play:
+        optimizer.id === 'manual-steps'
+          ? {
+              mode: 'manual-steps',
+              stepBudget: optimizer.stepBudget,
+              learningRate: optimizer.learningRate,
+            }
+          : { mode: 'auto-descent', maxSteps: optimizer.maxSteps },
     }
     this.#maps.set(level.id, map)
     return map

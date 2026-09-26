@@ -60,6 +60,10 @@
   transition: transform 300ms var(--ease-out);
 }
 
+.ball.replaying {
+  transition: none;
+}
+
 .ballHalo {
   fill: color-mix(in oklab, var(--color-beacon) 25%, transparent);
 }
@@ -72,4 +76,12 @@
 
 .offMap .ballBody {
   fill: var(--color-ink-muted);
+}
+.picking {
+  cursor: crosshair;
+}
+
+.picking:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
 }

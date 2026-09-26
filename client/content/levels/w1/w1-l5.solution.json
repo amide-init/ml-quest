@@ -1,0 +1,85 @@
+{
+  "level": "w1-l5",
+  "runs": [
+    {
+      "name": "reads the map: starts on the right side, first roll",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-start",
+          "point": [0.4, -0.2]
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "default start fails, then a good start on the second attempt",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-start",
+          "point": [0.4, -0.2]
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "right basin but a long roll from the far corner",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-start",
+          "point": [0.95, 0.65]
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: the default start rolls into a local minimum",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution, trap: looks close to the deep valley but rolls left",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-start",
+          "point": [0.2, 0.4]
+        },
+        {
+          "type": "train"
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 import { useParams } from 'react-router'
 import { ButtonLink, PageHeader } from '@/components/ui'
-import { useDocumentTitle, useLevelSession } from '@/hooks'
-import { t } from '@/i18n'
+import { useDocumentTitle, useLevelSession, useLevelStatuses } from '@/hooks'
+import { t, type MessageKey } from '@/i18n'
+import type { LevelSummary } from '@/models'
 import { BoundaryLevelView } from './level/BoundaryLevelView'
 import { CleaningLevelView } from './level/CleaningLevelView'
 import { ComplexityLevelView } from './level/ComplexityLevelView'
@@ -36,10 +37,47 @@ export function LevelPage() {
   }
   const levelId = `w${world}-l${level}`
   // key: a different level gets a fresh session.
-  return <LevelScreen key={levelId} levelId={levelId} world={world} level={level} />
+  return <LevelGate key={levelId} levelId={levelId} world={world} level={level} />
 }
 
-function LevelScreen({ levelId, world, level }: { levelId: string; world: number; level: number }) {
+interface LevelProps {
+  readonly levelId: string
+  readonly world: number
+  readonly level: number
+}
+
+/** A locked level says which level opens it instead of starting a session (PRD F1). */
+function LevelGate(props: LevelProps) {
+  const status = useLevelStatuses()[props.levelId]
+  return status?.requires ? (
+    <LevelLocked requires={status.requires} playNext={status.playNext ?? status.requires} />
+  ) : (
+    <LevelScreen {...props} />
+  )
+}
+
+function LevelLocked({ requires, playNext }: { requires: LevelSummary; playNext: LevelSummary }) {
+  useDocumentTitle(t('level.locked.title'))
+  const label = t('level.label', { world: requires.world, level: requires.level })
+  const nextLabel = t('level.label', { world: playNext.world, level: playNext.level })
+
+  return (
+    <div className={noticeStyles['page']}>
+      <PageHeader
+        title={t('level.locked.title')}
+        lede={t('level.locked.body', { level: label, title: t(requires.title as MessageKey) })}
+      />
+      <ButtonLink to={`/w/${playNext.world}/l/${playNext.level}`} variant="primary">
+        {t('level.locked.play', { level: nextLabel })}
+      </ButtonLink>{' '}
+      <ButtonLink to="/map" variant="quiet">
+        {t('level.back')}
+      </ButtonLink>
+    </div>
+  )
+}
+
+function LevelScreen({ levelId, world, level }: LevelProps) {
   const game = useLevelSession(levelId)
   if (!game) {
     return <LevelPlaceholder world={world} level={level} />

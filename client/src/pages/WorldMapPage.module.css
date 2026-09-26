@@ -112,3 +112,10 @@
 .levelName {
   flex: 1 1 12rem;
 }
+
+/* Not yet reachable: kept visible so the path ahead is clear, but quieter than playable rows. */
+.locked {
+  border-style: dashed;
+  background: transparent;
+  color: var(--color-ink-muted);
+}

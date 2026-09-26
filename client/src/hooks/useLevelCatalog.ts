@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { LevelSummary } from '@/services'
+import type { LevelSummary } from '@/models'
 import { useServices } from './useServices'
 
 /** Every playable level, in order (for the world map). */

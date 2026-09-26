@@ -5,7 +5,7 @@
  */
 export { EvaluationService } from './EvaluationService'
 export { LevelService } from './LevelService'
-export type { LevelSummary } from './LevelService'
+export type { UnlockPolicy } from './LevelService'
 export { PlaySession } from './PlaySession'
 export type { OnPassed } from './PlaySession'
 export { ProgressService } from './ProgressService'

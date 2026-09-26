@@ -1,6 +1,6 @@
 import { StarRating } from '@/components/game'
 import { ButtonLink, PageHeader } from '@/components/ui'
-import { useDocumentTitle, useLevelCatalog, useProgress } from '@/hooks'
+import { useDocumentTitle, useLevelCatalog, useLevelStatuses, useProgress } from '@/hooks'
 import { t, type MessageKey } from '@/i18n'
 import styles from './WorldMapPage.module.css'
 
@@ -23,6 +23,7 @@ export function WorldMapPage() {
   useDocumentTitle(title)
   const { bestStars } = useProgress()
   const catalog = useLevelCatalog()
+  const statuses = useLevelStatuses()
   const levelsIn = (world: number) => catalog.filter((level) => level.world === world)
   // A world shows up on the map once it has at least one playable level.
   const worlds = WORLDS.filter((world) => levelsIn(world.id).length > 0)
@@ -51,24 +52,41 @@ export function WorldMapPage() {
                 >
                   {levelsIn(world.id).map((level) => {
                     const stars = bestStars(level.id)
+                    const requires = statuses[level.id]?.requires ?? null
                     return (
-                      <li key={level.id} className={styles['level']}>
+                      <li
+                        key={level.id}
+                        className={[styles['level'], requires ? styles['locked'] : ''].join(' ')}
+                      >
                         <span className={styles['levelName']}>
                           {t('level.label', { world: level.world, level: level.level })}{' '}
                           <strong>{t(level.title as MessageKey)}</strong>
                         </span>
-                        {stars > 0 ? (
-                          <StarRating stars={stars} size="small" />
+                        {requires ? (
+                          <span className={styles['label']}>
+                            {t('map.level.locked', {
+                              level: t('level.label', {
+                                world: requires.world,
+                                level: requires.level,
+                              }),
+                            })}
+                          </span>
                         ) : (
-                          <span className={styles['label']}>{t('map.level.notPlayed')}</span>
+                          <>
+                            {stars > 0 ? (
+                              <StarRating stars={stars} size="small" />
+                            ) : (
+                              <span className={styles['label']}>{t('map.level.notPlayed')}</span>
+                            )}
+                            <ButtonLink
+                              to={`/w/${level.world}/l/${level.level}`}
+                              variant={stars > 0 ? 'quiet' : 'primary'}
+                              size="small"
+                            >
+                              {stars > 0 ? t('map.level.replay') : t('map.level.play')}
+                            </ButtonLink>
+                          </>
                         )}
-                        <ButtonLink
-                          to={`/w/${level.world}/l/${level.level}`}
-                          variant={stars > 0 ? 'quiet' : 'primary'}
-                          size="small"
-                        >
-                          {stars > 0 ? t('map.level.replay') : t('map.level.play')}
-                        </ButtonLink>
                       </li>
                     )
                   })}

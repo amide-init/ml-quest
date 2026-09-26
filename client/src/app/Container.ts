@@ -11,11 +11,14 @@ import {
   SettingsService,
   TrainingService,
   type Services,
+  type UnlockPolicy,
 } from '@/services'
 
 export interface ContainerOptions {
   /** "browser" uses localStorage when available; "memory" keeps everything in memory (tests). */
   readonly storage: 'browser' | 'memory'
+  /** Level unlocking; defaults to the PRD's one-by-one rule. */
+  readonly unlocks?: UnlockPolicy
 }
 
 /**
@@ -41,6 +44,7 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
       new TrainingService(new EvaluationService()),
       progress,
       () => performance.now(),
+      options.unlocks,
     ),
   }
 }

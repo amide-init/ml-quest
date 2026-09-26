@@ -44,7 +44,7 @@
   "world.6.concepts": "Embeddings, sequences, attention",
   "level.title": "Level {world}-{level}",
   "level.building.title": "This level is being built",
-  "level.building.body": "This level arrives in a later update. Roll Downhill (level 1-3) is playable now.",
+  "level.building.body": "This level arrives in a later version of ML Quest.",
   "level.back": "Back to the map",
   "codex.title": "ML Codex",
   "codex.empty.body": "Each level you beat adds a card here with the term and a one-line definition. Beat Roll Downhill to unlock gradient descent.",
@@ -439,5 +439,9 @@
   "nav.repo.star.name": "Star ML Quest on GitHub (opens in a new tab)",
   "nav.repo.fork": "Fork",
   "nav.repo.fork.name": "Fork ML Quest on GitHub (opens in a new tab)",
-  "app.loading": "Loading the level…"
+  "app.loading": "Loading the level…",
+  "map.level.locked": "Locked: pass {level} first",
+  "level.locked.title": "This level is locked",
+  "level.locked.body": "Levels open one by one, and each world opens after the boss of the one before. Pass {level}, {title}, to open this one.",
+  "level.locked.play": "Play {level}"
 }

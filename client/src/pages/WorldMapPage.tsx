@@ -1,0 +1,56 @@
+import { ButtonLink, PageHeader } from '@/components/ui'
+import { useDocumentTitle } from '@/hooks'
+import { t, type MessageKey } from '@/i18n'
+import styles from './WorldMapPage.module.css'
+
+type Release = 'v1' | 'v2' | 'v3'
+
+// Static until the WorldService and level content land (roadmap Phase 1). Order follows PRD "World map and levels".
+const WORLDS: readonly { id: number; release: Release }[] = [
+  { id: 1, release: 'v1' },
+  { id: 2, release: 'v1' },
+  { id: 3, release: 'v2' },
+  { id: 4, release: 'v2' },
+  { id: 5, release: 'v3' },
+  { id: 6, release: 'v3' },
+]
+
+const worldKey = (id: number, field: 'name' | 'concepts') => `world.${id}.${field}` as MessageKey
+
+export function WorldMapPage() {
+  const title = t('map.title')
+  useDocumentTitle(title)
+
+  return (
+    <div className={styles['page']}>
+      <PageHeader title={title} lede={t('map.lede')} />
+      <ol className={styles['trail']}>
+        {WORLDS.map((world) => {
+          const className = [
+            styles['world'],
+            world.release === 'v1' ? styles['open'] : styles['later'],
+            world.id === 1 ? styles['current'] : '',
+          ].join(' ')
+          return (
+            <li key={world.id} className={className}>
+              <span className={styles['marker']} aria-hidden="true" />
+              <div className={styles['body']}>
+                <span className={styles['label']}>{t('map.world.label', { id: world.id })}</span>
+                <h2 className={styles['name']}>{t(worldKey(world.id, 'name'))}</h2>
+                <p className={styles['concepts']}>{t(worldKey(world.id, 'concepts'))}</p>
+                <span className={styles['release']}>{t(`map.release.${world.release}`)}</span>
+                {world.id === 1 ? (
+                  <div className={styles['action']}>
+                    <ButtonLink to="/w/1/l/3" variant="primary" size="small">
+                      {t('map.preview')}
+                    </ButtonLink>
+                  </div>
+                ) : null}
+              </div>
+            </li>
+          )
+        })}
+      </ol>
+    </div>
+  )
+}

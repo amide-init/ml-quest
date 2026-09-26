@@ -3,3 +3,5 @@
  * May import: repository interfaces, engine, models, lib, config, platform. Never React.
  * See ARCHITECTURE.md §4.
  */
+export { SettingsService } from './SettingsService'
+export type { Services } from './Services'

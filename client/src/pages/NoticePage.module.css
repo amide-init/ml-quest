@@ -1,0 +1,10 @@
+.page {
+  display: grid;
+  gap: var(--space-6);
+  justify-items: start;
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.page > header {
+  margin-bottom: 0;
+}

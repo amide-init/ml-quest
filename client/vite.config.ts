@@ -14,6 +14,7 @@ export default defineConfig({
     // Keep in sync with "paths" in tsconfig.app.json.
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@content': fileURLToPath(new URL('./content', import.meta.url)),
     },
   },
 })

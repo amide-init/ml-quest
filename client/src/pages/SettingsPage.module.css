@@ -1,0 +1,14 @@
+.page {
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.fields {
+  display: grid;
+  gap: var(--space-8);
+  max-width: var(--reading-width);
+}
+
+.field + .field {
+  padding-top: var(--space-8);
+  border-top: 1.5px solid var(--color-line);
+}

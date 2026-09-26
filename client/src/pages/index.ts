@@ -3,3 +3,9 @@
  * May import: components, hooks, models (types), i18n.
  * See ARCHITECTURE.md §4.
  */
+export { CodexPage } from './CodexPage'
+export { HomePage } from './HomePage'
+export { LevelPage } from './LevelPage'
+export { NotFoundPage } from './NotFoundPage'
+export { SettingsPage } from './SettingsPage'
+export { WorldMapPage } from './WorldMapPage'

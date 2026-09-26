@@ -1,0 +1,96 @@
+.skipLink {
+  position: absolute;
+  left: var(--gutter);
+  top: -100px;
+  z-index: 10;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-weight: 700;
+}
+
+.skipLink:focus {
+  top: var(--space-3);
+}
+
+.header {
+  border-bottom: 1.5px solid var(--color-line);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-4) var(--gutter);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.glyph {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: none;
+}
+
+.glyphContour {
+  fill: none;
+  stroke: var(--color-contour);
+  stroke-width: 1.6;
+}
+
+.glyphBall {
+  fill: var(--color-beacon);
+}
+
+.nav ul {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  color: var(--color-ink-muted);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--color-ink);
+}
+
+.navLink[aria-current='page'] {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--color-beacon);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 0.45em;
+}
+
+.main {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--gutter) 0;
+}
+
+.main:focus {
+  outline: none;
+}

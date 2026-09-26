@@ -1,0 +1,89 @@
+.figure {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.sheet {
+  position: relative;
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.contour {
+  fill: none;
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+.valleyFill {
+  fill: color-mix(in oklab, var(--color-contour) 16%, transparent);
+  stroke: none;
+}
+
+.trail {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 5;
+  stroke-linecap: round;
+  opacity: 0.7;
+}
+
+.stepDot {
+  fill: var(--color-ink);
+}
+
+.minimum {
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.ball {
+  transition: transform 380ms var(--ease-out);
+}
+
+.ballBody {
+  fill: var(--color-beacon);
+  stroke: var(--color-paper-raised);
+  stroke-width: 3;
+}
+
+.ballHalo {
+  fill: color-mix(in oklab, var(--color-beacon) 25%, transparent);
+}
+
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+  font-size: var(--text-sm);
+}
+
+.stat {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-ink-muted);
+}
+
+.stat strong {
+  color: var(--color-ink);
+}
+
+.replay {
+  margin-left: auto;
+}
+
+.caption {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}

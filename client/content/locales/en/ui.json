@@ -404,5 +404,10 @@
   "level.result.matrix.recall.title": "Elders left out",
   "level.result.matrix.recall.body": "Only {recall}% of the new hill folk were invited; you need {target}%. (Precision: {precision}%.)",
   "level.result.matrix.precision.title": "Riders wasted",
-  "level.result.matrix.precision.body": "Only {precision}% of invitations reached hill folk; you need {target}%. (Recall: {recall}%.)"
+  "level.result.matrix.precision.body": "Only {precision}% of invitations reached hill folk; you need {target}%. (Recall: {recall}%.)",
+  "nav.repo.label": "ML Quest on GitHub",
+  "nav.repo.star": "Star",
+  "nav.repo.star.name": "Star ML Quest on GitHub (opens in a new tab)",
+  "nav.repo.fork": "Fork",
+  "nav.repo.fork.name": "Fork ML Quest on GitHub (opens in a new tab)"
 }

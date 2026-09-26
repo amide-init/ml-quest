@@ -11,13 +11,17 @@ export interface UseSettings {
 }
 
 export function useSettings(): UseSettings {
-  const { settings: settingsService } = useServices()
+  const { settings: settingsService, audio } = useServices()
   const settings = useSettingsStore((state) => state.settings)
   const setSettings = useSettingsStore((state) => state.setSettings)
 
   const updateSettings = useCallback(
-    (patch: SettingsPatch) => setSettings(settingsService.update(patch)),
-    [settingsService, setSettings],
+    (patch: SettingsPatch) => {
+      setSettings(settingsService.update(patch))
+      // Turning sound on plays the chime once, so the player hears what they switched on.
+      if (patch.soundEnabled === true) audio.preview()
+    },
+    [settingsService, setSettings, audio],
   )
 
   return { settings, persistent: settingsService.persistent, updateSettings }

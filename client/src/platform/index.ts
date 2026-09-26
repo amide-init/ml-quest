@@ -4,3 +4,4 @@
  */
 export { getLocalStorage } from './BrowserStorage'
 export { copyText } from './Clipboard'
+export { playChime } from './Sound'

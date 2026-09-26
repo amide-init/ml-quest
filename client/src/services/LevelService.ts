@@ -1,6 +1,7 @@
 import type { LevelConfig, LevelStatus, LevelSummary, Progress } from '@/models'
 import type { LevelRepository } from '@/repositories'
 import { PlaySession } from './PlaySession'
+import type { AudioService } from './AudioService'
 import type { ProgressService } from './ProgressService'
 import type { TrainingService } from './TrainingService'
 
@@ -20,6 +21,7 @@ export class LevelService {
   readonly #progress: ProgressService
   readonly #now: () => number
   readonly #unlocks: UnlockPolicy
+  readonly #audio: AudioService | null
 
   constructor(
     levels: LevelRepository,
@@ -27,12 +29,14 @@ export class LevelService {
     progress: ProgressService,
     now: () => number,
     unlocks: UnlockPolicy = 'sequential',
+    audio: AudioService | null = null,
   ) {
     this.#levels = levels
     this.#training = training
     this.#progress = progress
     this.#now = now
     this.#unlocks = unlocks
+    this.#audio = audio
   }
 
   getLevel(id: string): LevelConfig | null {
@@ -86,7 +90,10 @@ export class LevelService {
       level,
       () => this.#training.createRunner(level),
       this.#now,
-      (result) => this.#progress.recordResult(level.id, result, level.text.concept),
+      (result) => {
+        this.#audio?.levelPassed()
+        return this.#progress.recordResult(level.id, result, level.text.concept)
+      },
     )
   }
 }

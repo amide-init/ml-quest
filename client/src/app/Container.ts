@@ -1,10 +1,11 @@
-import { getLocalStorage } from '@/platform'
+import { getLocalStorage, playChime } from '@/platform'
 import { BundledLevelRepository } from '@/repositories/bundled/BundledLevelRepository'
 import { InMemoryProgressRepository } from '@/repositories/in-memory/InMemoryProgressRepository'
 import { InMemorySettingsRepository } from '@/repositories/in-memory/InMemorySettingsRepository'
 import { LocalStorageProgressRepository } from '@/repositories/local-storage/LocalStorageProgressRepository'
 import { LocalStorageSettingsRepository } from '@/repositories/local-storage/LocalStorageSettingsRepository'
 import {
+  AudioService,
   EvaluationService,
   ExportService,
   LevelService,
@@ -37,8 +38,11 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
     : new InMemoryProgressRepository()
 
   const progress = new ProgressService(progressRepository)
+  const settings = new SettingsService(settingsRepository)
+  const audio = new AudioService(settings, () => void playChime())
   return {
-    settings: new SettingsService(settingsRepository),
+    settings,
+    audio,
     progress,
     progressCodes: new ExportService(progress),
     levels: new LevelService(
@@ -47,6 +51,7 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
       progress,
       () => performance.now(),
       options.unlocks,
+      audio,
     ),
   }
 }

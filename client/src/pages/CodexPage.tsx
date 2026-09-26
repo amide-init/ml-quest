@@ -21,6 +21,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   sigmoid: 'level.w2-l2.title',
   'feature-engineering': 'level.w2-l3.title',
   overfitting: 'level.w2-l4.title',
+  regularization: 'level.w2-l5.title',
 }
 
 export function CodexPage() {

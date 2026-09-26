@@ -23,6 +23,7 @@ import {
   tabularScore,
   termValue,
   trainGradientDescent,
+  withL2Penalty,
   type Standardization,
 } from '@/engine'
 import type { EvaluationService } from '@/services/EvaluationService'
@@ -33,14 +34,22 @@ const clamp = (value: number, min: number, max: number) => Math.min(Math.max(val
 
 interface TrainedModel {
   readonly degree: number
+  readonly regularization: number
   readonly params: Vector
   readonly scaling: Standardization
 }
+
+const sliderOf = (control: { min: number; max: number; step: number }) => ({
+  min: control.min,
+  max: control.max,
+  step: control.step,
+})
 
 /**
  * W2-L4 The Overfitter: a small, noisy dataset and a model-complexity slider (polynomial degree).
  * Train fits the model and shows the border with TRAINING accuracy only; Check judges on the hidden
  * set. High degrees memorize the training points (100%) and fail on new ones: the trap.
+ * W2-L5 Tame It fixes a high degree and adds an L2 regularization slider instead.
  */
 export class ComplexityRunner implements LevelRunner {
   readonly scene: ComplexityScene
@@ -58,14 +67,21 @@ export class ComplexityRunner implements LevelRunner {
       test: createSeededRandom(hashSeed(level.id, level.seed, 'test')),
     })
     const { x1, x2, label } = this.#data.train
-    const { degree } = level.algorithm.optimizer
+    const { degree, regularization } = level.algorithm.optimizer
     this.scene = {
       kind: 'complexity',
       points: Array.from(x1, (x, i) => ({ x, y: x2[i] ?? 0, label: label[i] ?? 0 })),
       view: level.algorithm.view,
-      degree,
+      degree: typeof degree === 'number' ? null : sliderOf(degree),
+      regularization: regularization ? sliderOf(regularization) : null,
     }
-    this.#snapshot = { kind: 'complexity', degree: degree.initial, trained: null, checked: null }
+    this.#snapshot = {
+      kind: 'complexity',
+      degree: typeof degree === 'number' ? degree : degree.initial,
+      regularization: regularization?.initial ?? 0,
+      trained: null,
+      checked: null,
+    }
   }
 
   get snapshot(): ComplexitySnapshot {
@@ -76,7 +92,7 @@ export class ComplexityRunner implements LevelRunner {
     const current = this.#snapshot
     switch (command.type) {
       case 'set-hyperparameter':
-        if (command.name === 'degree') {
+        if (command.name === 'degree' && this.scene.degree) {
           const { min, max } = this.scene.degree
           this.#snapshot = {
             ...current,
@@ -84,15 +100,27 @@ export class ComplexityRunner implements LevelRunner {
             checked: null,
           }
         }
+        if (command.name === 'regularization' && this.scene.regularization) {
+          const { min, max } = this.scene.regularization
+          this.#snapshot = {
+            ...current,
+            regularization: clamp(command.value, min, max),
+            checked: null,
+          }
+        }
         break
       case 'train':
-        this.#model = this.#train(current.degree)
+        this.#model = this.#train(current.degree, current.regularization)
         this.#snapshot = { ...current, trained: this.#describe(this.#model), checked: null }
         break
       case 'check':
         // Checking an untrained (or changed) degree trains it first, so Check always judges what you chose.
-        if (!this.#model || this.#model.degree !== current.degree) {
-          this.#model = this.#train(current.degree)
+        if (
+          !this.#model ||
+          this.#model.degree !== current.degree ||
+          this.#model.regularization !== current.regularization
+        ) {
+          this.#model = this.#train(current.degree, current.regularization)
           this.#snapshot = { ...this.#snapshot, trained: this.#describe(this.#model) }
         }
         // Check is always judged, so the hidden points may now be shown (D6).
@@ -151,21 +179,26 @@ export class ComplexityRunner implements LevelRunner {
     return applyStandardization(expandPolynomial(data, model.degree), model.scaling)
   }
 
-  #train(degree: number): TrainedModel {
+  #train(degree: number, regularization: number): TrainedModel {
     const raw = expandPolynomial(this.#data.train, degree)
     const scaling = fitStandardization(raw)
     const data = applyStandardization(raw, scaling)
     const { learningRate, maxEpochs } = this.#level.algorithm.optimizer
     const size = data.columns.length + 1
     const result = trainGradientDescent({
-      algorithm: multiLogisticRegression,
+      algorithm: withL2Penalty(multiLogisticRegression, regularization),
       data,
       initial: new Float64Array(size),
       learningRate,
       maxEpochs,
       isConverged: () => false,
     })
-    return { degree, params: result.epochs.at(-1)?.params ?? new Float64Array(size), scaling }
+    return {
+      degree,
+      regularization,
+      params: result.epochs.at(-1)?.params ?? new Float64Array(size),
+      scaling,
+    }
   }
 
   #describe(model: TrainedModel): NonNullable<ComplexitySnapshot['trained']> {
@@ -182,6 +215,7 @@ export class ComplexityRunner implements LevelRunner {
     const total = this.#data.train.label.length
     return {
       degree: model.degree,
+      regularization: model.regularization,
       featureCount: terms.length,
       regions: sampleRegions(this.scene.view, score),
       boundary: borderOf(this.scene.view, score),

@@ -136,8 +136,11 @@ export interface FeatureSnapshot {
 export interface ComplexitySnapshot {
   readonly kind: 'complexity'
   readonly degree: number
+  /** L2 strength (0 when the level has no regularization slider). */
+  readonly regularization: number
   readonly trained: {
     readonly degree: number
+    readonly regularization: number
     /** Number of polynomial terms (model inputs) at that degree. */
     readonly featureCount: number
     readonly regions: DecisionRegions

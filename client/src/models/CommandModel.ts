@@ -2,7 +2,8 @@ import type { PolynomialFeature } from './DatasetModel'
 import type { Point } from './LandscapeModel'
 
 /** Hyperparameters a widget can set. Grows with later levels (lambda, threshold, degree…). */
-export type HyperparameterName = 'learningRate' | 'slope' | 'threshold' | 'degree'
+export type HyperparameterName =
+  'learningRate' | 'slope' | 'threshold' | 'degree' | 'regularization'
 
 /**
  * Every player action is a serializable Command (ARCHITECTURE §3). Widgets emit commands,

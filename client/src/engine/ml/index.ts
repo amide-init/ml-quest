@@ -11,6 +11,7 @@ export {
   solveLeastSquares,
 } from './algorithms/MultiLinearRegression'
 export type { LandscapeMinimum } from './algorithms/LandscapeMinimum'
+export { withL2Penalty } from './algorithms/L2Penalty'
 export { gradientDescentStep } from './optimizers/GradientDescent'
 export { trainGradientDescent } from './Train'
 export type { TrainOptions, TrainResult } from './Train'

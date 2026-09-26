@@ -80,4 +80,21 @@ describe('computeMetrics', () => {
     expect(metrics.test_f1).toBe(0)
     expect(metrics.test_precision).toBeNaN()
   })
+
+  it('reports tree size, questions asked, impurity and instability (World 3)', () => {
+    const metrics = computeMetrics({
+      algorithm: createLandscape2D(SPEC),
+      data: undefined,
+      params: vector(0, 0),
+      trace: [],
+      hintsRevealed: 0,
+      leafCount: 4,
+      impurity: 0.12,
+      instability: 0.05,
+    })
+    expect(metrics.leaf_count).toBe(4)
+    expect(metrics.split_count).toBe(3)
+    expect(metrics.impurity).toBe(0.12)
+    expect(metrics.instability).toBe(0.05)
+  })
 })

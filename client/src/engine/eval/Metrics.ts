@@ -57,6 +57,11 @@ export interface MetricInput<TData = void> {
   /** Confusion counts (class 1 = positive) on the training and hidden test set (W2-L6+). */
   readonly trainConfusion?: Confusion
   readonly testConfusion?: Confusion
+  /** Decision trees (World 3): leaves of the tree, weighted leaf Gini impurity, and the share of
+   * hidden points on which trees grown from resampled data disagree. */
+  readonly leafCount?: number
+  readonly impurity?: number
+  readonly instability?: number
 }
 
 export interface MetricDefinition {
@@ -128,6 +133,23 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   test_accuracy: {
     better: 'higher',
     compute: (input) => input.testAccuracy ?? Number.NaN,
+  },
+  leaf_count: {
+    better: 'lower',
+    compute: (input) => input.leafCount ?? Number.NaN,
+  },
+  split_count: {
+    better: 'lower',
+    // A binary tree with n leaves asks n - 1 questions.
+    compute: (input) => (input.leafCount === undefined ? Number.NaN : input.leafCount - 1),
+  },
+  impurity: {
+    better: 'lower',
+    compute: (input) => input.impurity ?? Number.NaN,
+  },
+  instability: {
+    better: 'lower',
+    compute: (input) => input.instability ?? Number.NaN,
   },
   recall: {
     better: 'higher',

@@ -16,4 +16,5 @@ export {
 } from './Polynomial'
 export { generateRings } from './Rings'
 export { generateClassification } from './Classification'
+export { generateGridRegions } from './GridRegions'
 export { oversampleMinority } from './Oversample'

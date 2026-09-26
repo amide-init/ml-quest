@@ -107,6 +107,33 @@ export const ringsSpecSchema = z.object({
 })
 export type RingsSpec = z.infer<typeof ringsSpecSchema>
 
+const classSchema = z.union([z.literal(0), z.literal(1)])
+
+/**
+ * Axis-aligned regions (World 3, decision trees): the map is cut into cells at `xCuts` and
+ * `yCuts`, each cell has a class, points fall uniformly, and `labelNoise` flips a share of labels.
+ * Cuts can sit anywhere, so the right split is rarely "the middle".
+ */
+export const gridRegionsSpecSchema = z
+  .object({
+    generator: z.literal('grid-regions'),
+    bounds: z.object({ xMin: z.number(), xMax: z.number(), yMin: z.number(), yMax: z.number() }),
+    xCuts: z.array(z.number()),
+    yCuts: z.array(z.number()),
+    /** Class of each cell, rows from the top (largest y) down, columns left to right. */
+    cells: z.array(z.array(classSchema).min(1)).min(1),
+    trainCount: z.number().int().min(4).max(500),
+    testCount: z.number().int().min(1).max(1000),
+    labelNoise: z.number().min(0).max(0.5),
+  })
+  .refine(
+    (spec) =>
+      spec.cells.length === spec.yCuts.length + 1 &&
+      spec.cells.every((row) => row.length === spec.xCuts.length + 1),
+    { message: 'cells must have yCuts + 1 rows of xCuts + 1 columns' },
+  )
+export type GridRegionsSpec = z.infer<typeof gridRegionsSpecSchema>
+
 /** Features a player can give a 2D classifier: the raw inputs and their degree-2 combinations. */
 export const polynomialFeatureSchema = z.enum(['x1', 'x2', 'x1^2', 'x2^2', 'x1*x2'])
 export type PolynomialFeature = z.infer<typeof polynomialFeatureSchema>

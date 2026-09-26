@@ -195,6 +195,8 @@ export const levelConfigSchema = z
       notes: z.object({ idea: z.string(), controls: z.string(), reading: z.string() }),
     }),
     authors: z.array(z.string()).default([]),
+    /** Still being built: shown in development and tested in CI, hidden on the live site. */
+    draft: z.boolean().optional(),
   })
   .refine((config) => config.id === `w${config.world}-l${config.level}`, {
     message: 'Level id must match world and level, e.g. world 1 level 3 → "w1-l3"',

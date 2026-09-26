@@ -31,3 +31,15 @@ export {
   tabularConfusion,
   tabularScore,
 } from './algorithms/MultiLogisticRegression'
+export {
+  gini,
+  growTree,
+  leafCount,
+  leafFor,
+  treeDepth,
+  treeImpurity,
+  treeProbability,
+} from './algorithms/DecisionTree'
+export type { TreeOptions } from './algorithms/DecisionTree'
+export { forestProbability, growForest } from './algorithms/RandomForest'
+export type { ForestOptions } from './algorithms/RandomForest'

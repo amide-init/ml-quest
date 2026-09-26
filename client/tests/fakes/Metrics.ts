@@ -29,6 +29,10 @@ export function makeMetrics(overrides: Partial<Metrics> = {}): Metrics {
     test_precision: Number.NaN,
     f1: Number.NaN,
     test_f1: Number.NaN,
+    leaf_count: Number.NaN,
+    split_count: Number.NaN,
+    impurity: Number.NaN,
+    instability: Number.NaN,
     ...overrides,
   }
 }

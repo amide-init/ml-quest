@@ -21,6 +21,8 @@ export interface ContainerOptions {
   readonly storage: 'browser' | 'memory'
   /** Level unlocking; defaults to the PRD's one-by-one rule. */
   readonly unlocks?: UnlockPolicy
+  /** Include levels marked draft (development, tests); the live site leaves them out. */
+  readonly drafts?: boolean
 }
 
 /**
@@ -46,7 +48,7 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
     progress,
     progressCodes: new ExportService(progress),
     levels: new LevelService(
-      new BundledLevelRepository(),
+      new BundledLevelRepository(undefined, { includeDrafts: options.drafts ?? false }),
       new TrainingService(new EvaluationService()),
       progress,
       () => performance.now(),

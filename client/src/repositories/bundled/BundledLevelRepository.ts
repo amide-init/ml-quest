@@ -16,11 +16,19 @@ export class BundledLevelRepository implements LevelRepository {
   /** Files that failed validation, with the reason. A broken level is skipped, not fatal. */
   readonly invalid: readonly { readonly file: string; readonly error: string }[]
 
-  constructor(sources: Record<string, unknown> = BUNDLED_LEVELS) {
+  /**
+   * `includeDrafts: false` hides levels marked `draft` (the live site while a world is built).
+   * Tests, the pass-bot and content validation keep the default and check drafts too.
+   */
+  constructor(
+    sources: Record<string, unknown> = BUNDLED_LEVELS,
+    { includeDrafts = true }: { readonly includeDrafts?: boolean } = {},
+  ) {
     const invalid: { file: string; error: string }[] = []
     for (const [file, json] of Object.entries(sources)) {
       const parsed = levelConfigSchema.safeParse(json)
       if (parsed.success) {
+        if (parsed.data.draft && !includeDrafts) continue
         this.#levels.set(parsed.data.id, parsed.data)
       } else {
         invalid.push({ file, error: parsed.error.message })

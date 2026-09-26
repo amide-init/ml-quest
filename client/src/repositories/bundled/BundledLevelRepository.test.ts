@@ -27,4 +27,12 @@ describe('BundledLevelRepository', () => {
   it('returns null for unknown ids', () => {
     expect(new BundledLevelRepository().get('w6-l8')).toBeNull()
   })
+
+  it('hides draft levels unless drafts are included', () => {
+    const draft = { ...new BundledLevelRepository().get('w1-l1'), draft: true }
+    expect(new BundledLevelRepository({ 'w1-l1.json': draft }).get('w1-l1')).not.toBeNull()
+    expect(
+      new BundledLevelRepository({ 'w1-l1.json': draft }, { includeDrafts: false }).get('w1-l1'),
+    ).toBeNull()
+  })
 })

@@ -93,6 +93,7 @@ export {
   linearMultiSpecSchema,
   linearNoisySpecSchema,
   polynomialFeatureSchema,
+  gridRegionsSpecSchema,
   ringsSpecSchema,
   twoBlobsSpecSchema,
 } from './DatasetModel'
@@ -103,8 +104,10 @@ export type {
   LinearNoisySpec,
   PolynomialFeature,
   RegressionData,
+  GridRegionsSpec,
   RingsSpec,
   TabularData,
   TwoBlobsSpec,
 } from './DatasetModel'
 export type { LevelState, LevelStatus, LevelSummary, WorldProgress } from './LevelStatusModel'
+export type { TreeLeaf, TreeNode, TreeSplit } from './TreeModel'

@@ -273,10 +273,57 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   }, 20_000)
 
+  it('Boss: each missing skill fails for its own reason; all three together win', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/8')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+
+    // As is: the unscaled feature makes every rate blow up.
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Too fast: the loss blew up' }, { timeout: 5000 }),
+    ).toBeInTheDocument()
+
+    // Scaled, but the broken points are kept: converges onto the wrong line.
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    await user.click(screen.getByRole('switch', { name: 'Scale the feature' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Learning rate' }), {
+      target: { value: '0.5' },
+    })
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole(
+        'heading',
+        { name: 'Trained, but on broken data' },
+        { timeout: 5000 },
+      ),
+    ).toBeInTheDocument()
+
+    // Clean + scale + rate 0.5: three stars. (Retry starts a clean attempt, so set everything again.)
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    await user.click(screen.getByRole('switch', { name: 'Scale the feature' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Learning rate' }), {
+      target: { value: '0.5' },
+    })
+    for (const name of [
+      'Point at x 88.4, y 11.9',
+      'Point at x 78.5, y 8.9',
+      'Point at x 77.6, y 9.7',
+      'Point at x 99.6, y 10.4',
+    ]) {
+      await user.click(screen.getByRole('checkbox', { name }))
+    }
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Converged' }, { timeout: 5000 }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  }, 25_000)
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(7)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(8)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

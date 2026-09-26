@@ -73,6 +73,12 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         maxEpochs: z.number().int().positive().max(500),
         /** "Converged" = training loss within this much of the best possible loss. */
         convergenceGap: z.number().positive(),
+        /** Let the player remove training points before training (W1-L8 boss). */
+        allowCleaning: z.boolean().default(false),
+        /** Let the player standardize the feature before training (W1-L8 boss). */
+        allowScaling: z.boolean().default(false),
+        /** With cleaning on, at least this many points must remain. */
+        minPoints: z.number().int().min(2).default(5),
       }),
       z.object({
         /** The line is refit exactly after every data change; the player edits the data (W1-L6). */

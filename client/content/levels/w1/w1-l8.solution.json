@@ -1,0 +1,283 @@
+{
+  "level": "w1-l8",
+  "runs": [
+    {
+      "name": "clean, scale, learning rate 0.5",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 26
+        },
+        {
+          "type": "toggle-point",
+          "index": 27
+        },
+        {
+          "type": "set-scaling",
+          "enabled": true
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.5
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "clean, scale, learning rate 0.2",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 26
+        },
+        {
+          "type": "toggle-point",
+          "index": 27
+        },
+        {
+          "type": "set-scaling",
+          "enabled": true
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.2
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "clean (plus one good point), scale, 0.5",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 26
+        },
+        {
+          "type": "toggle-point",
+          "index": 27
+        },
+        {
+          "type": "toggle-point",
+          "index": 0
+        },
+        {
+          "type": "set-scaling",
+          "enabled": true
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.5
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "clean, scale, cautious 0.1",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 26
+        },
+        {
+          "type": "toggle-point",
+          "index": 27
+        },
+        {
+          "type": "set-scaling",
+          "enabled": true
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.1
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: train as is (unscaled blows up)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: clean but unscaled, even the smallest rate blows up",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 26
+        },
+        {
+          "type": "toggle-point",
+          "index": 27
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.01
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: scale but keep the broken points",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-scaling",
+          "enabled": true
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.5
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: one broken point left",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 26
+        },
+        {
+          "type": "set-scaling",
+          "enabled": true
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "learningRate",
+          "value": 0.5
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: clean and scale, rate too small for the budget",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 26
+        },
+        {
+          "type": "toggle-point",
+          "index": 27
+        },
+        {
+          "type": "set-scaling",
+          "enabled": true
+        },
+        {
+          "type": "train"
+        }
+      ]
+    }
+  ]
+}

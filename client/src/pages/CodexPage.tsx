@@ -16,6 +16,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   'local-minimum': 'level.w1-l5.title',
   outlier: 'level.w1-l6.title',
   'feature-scaling': 'level.w1-l7.title',
+  preprocessing: 'level.w1-l8.title',
 }
 
 export function CodexPage() {

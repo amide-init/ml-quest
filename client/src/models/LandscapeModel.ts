@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const pointSchema = z.tuple([z.number(), z.number()])
+export const pointSchema = z.tuple([z.number(), z.number()])
 export type Point = z.infer<typeof pointSchema>
 
 /**

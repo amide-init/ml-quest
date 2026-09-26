@@ -1,0 +1,42 @@
+.controls {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.label {
+  font-weight: 700;
+}
+
+.value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.hint {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+
+.range {
+  width: 100%;
+  accent-color: var(--color-beacon);
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+
+.range:disabled {
+  cursor: not-allowed;
+}

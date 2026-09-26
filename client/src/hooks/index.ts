@@ -6,6 +6,8 @@
  */
 export { useDocumentPreferences } from './useDocumentPreferences'
 export { useDocumentTitle } from './useDocumentTitle'
+export { useLevelSession } from './useLevelSession'
+export type { UseLevelSession } from './useLevelSession'
 export { usePrefersReducedMotion } from './usePrefersReducedMotion'
 export { useSettings } from './useSettings'
 export type { UseSettings } from './useSettings'

@@ -1,0 +1,75 @@
+.sheet {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: manipulation;
+}
+
+.contour {
+  fill: none;
+  stroke-width: 1.3;
+  stroke-linejoin: round;
+}
+
+.target {
+  fill: color-mix(in oklab, var(--color-contour) 22%, transparent);
+  stroke: var(--color-contour);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.trail {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.75;
+}
+
+.trailDot {
+  fill: var(--color-ink);
+}
+
+.arrow {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 2 5;
+}
+
+.arrowHead {
+  fill: var(--color-ink);
+}
+
+.ghost {
+  fill: none;
+  stroke: var(--color-beacon);
+  stroke-width: 2.5;
+  stroke-dasharray: 3 3;
+}
+
+.ball {
+  transition: transform 300ms var(--ease-out);
+}
+
+.ballHalo {
+  fill: color-mix(in oklab, var(--color-beacon) 25%, transparent);
+}
+
+.ballBody {
+  fill: var(--color-beacon);
+  stroke: var(--color-paper-raised);
+  stroke-width: 3;
+}
+
+.offMap .ballBody {
+  fill: var(--color-ink-muted);
+}

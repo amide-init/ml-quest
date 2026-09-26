@@ -1,0 +1,84 @@
+{
+  "level": "w1-l3",
+  "runs": [
+    {
+      "name": "adaptive: small step on the steep start, then big steps",
+      "expect": { "passed": true, "stars": 3 },
+      "commands": [
+        { "type": "set-hyperparameter", "name": "learningRate", "value": 0.08 },
+        { "type": "step" },
+        { "type": "set-hyperparameter", "name": "learningRate", "value": 0.28 },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "set-hyperparameter", "name": "learningRate", "value": 0.3 },
+        { "type": "step" }
+      ]
+    },
+    {
+      "name": "steady: one well-chosen step size",
+      "expect": { "passed": true, "stars": 2 },
+      "commands": [
+        { "type": "set-hyperparameter", "name": "learningRate", "value": 0.18 },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    },
+    {
+      "name": "cautious: small but workable steps",
+      "expect": { "passed": true, "stars": 1 },
+      "commands": [
+        { "type": "set-hyperparameter", "name": "learningRate", "value": 0.1 },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    },
+    {
+      "name": "anti-solution, timid: default step size runs out of steps",
+      "expect": { "passed": false, "status": "ok" },
+      "commands": [
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    },
+    {
+      "name": "anti-solution, reckless: maximum step size overshoots off the map",
+      "expect": { "passed": false, "status": "diverged" },
+      "commands": [
+        { "type": "set-hyperparameter", "name": "learningRate", "value": 0.3 },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    }
+  ]
+}

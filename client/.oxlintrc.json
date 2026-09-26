@@ -12,37 +12,57 @@
   "ignorePatterns": ["dist", "coverage", "node_modules"],
   "rules": {
     "eqeqeq": ["error", "always"],
-    "no-console": ["warn", { "allow": ["warn", "error", "info"] }],
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error", "info"]
+      }
+    ],
     "no-debugger": "error",
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
     "no-restricted-imports": [
       "error",
       {
         "patterns": [
           {
             "group": ["../*", "../../*", "../../../*"],
-            "message": "Use the @/ alias for imports outside the current folder (RULES.md §4)."
+            "message": "Use the @/ alias for imports outside the current folder (RULES.md \u00a74)."
           }
         ]
       }
     ],
-
     "typescript/no-explicit-any": "error",
-    "typescript/ban-ts-comment": ["error", { "ts-expect-error": "allow-with-description" }],
+    "typescript/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description"
+      }
+    ],
     "typescript/consistent-type-imports": "error",
-
     "react/react-in-jsx-scope": "off",
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
     "react/jsx-key": "error",
     "react/no-array-index-key": "warn",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }],
-
+    "react/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true
+      }
+    ],
     "import/no-cycle": "error",
     "import/no-default-export": "error",
     "import/no-unassigned-import": [
       "error",
-      { "allow": ["**/*.css", "@testing-library/jest-dom/vitest"] }
+      {
+        "allow": ["**/*.css", "@testing-library/jest-dom/vitest"]
+      }
     ]
   },
   "overrides": [
@@ -56,6 +76,105 @@
       "files": ["src/**/index.ts"],
       "rules": {
         "unicorn/no-empty-file": "off"
+      }
+    },
+    {
+      "files": ["src/**"],
+      "rules": {
+        "no-restricted-globals": [
+          "error",
+          {
+            "name": "localStorage",
+            "message": "Only repositories/ (and platform/) may touch browser storage. Go through a repository (RULES.md \u00a77)."
+          },
+          {
+            "name": "sessionStorage",
+            "message": "Only repositories/ (and platform/) may touch browser storage. Go through a repository (RULES.md \u00a77)."
+          },
+          {
+            "name": "indexedDB",
+            "message": "Only repositories/ (and platform/) may touch browser storage. Go through a repository (RULES.md \u00a77)."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/engine/**"],
+      "rules": {
+        "no-restricted-globals": [
+          "error",
+          {
+            "name": "window",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "document",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "navigator",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "localStorage",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "sessionStorage",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "indexedDB",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "fetch",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "XMLHttpRequest",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "performance",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "crypto",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "requestAnimationFrame",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "setTimeout",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          },
+          {
+            "name": "setInterval",
+            "message": "engine/ must be pure and run in Node, the worker and the main thread. Inject what you need (RULES.md \u00a72)."
+          }
+        ],
+        "no-restricted-properties": [
+          "error",
+          {
+            "object": "Math",
+            "property": "random",
+            "message": "Use the injected seeded RNG (engine/math). Everything random must be seeded (RULES.md \u00a72)."
+          },
+          {
+            "object": "Date",
+            "property": "now",
+            "message": "Use the injected clock. The engine never reads time implicitly (RULES.md \u00a72)."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/repositories/**", "src/platform/**"],
+      "rules": {
+        "no-restricted-globals": "off"
       }
     },
     {

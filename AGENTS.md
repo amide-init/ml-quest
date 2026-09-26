@@ -8,7 +8,7 @@ Instructions for AI coding agents (Claude Code, Codex, Cursor, Copilot, etc.) wo
 
 **Repo:** https://github.com/amide-init/ml-quest (default branch `main`, every push deploys to https://amide-init.github.io/ml-quest/, Vite `base` = `/ml-quest/`).
 
-**Status:** pre-code. The docs exist and the engine does not yet. The current phase is **Phase 0 – Prototype** (level runner + World 1 Level 3 "Roll Downhill").
+**Status:** Phase 0 – Prototype. The foundation is in place: Vite app in `client/`, the layered folder skeleton, strict TypeScript, lint and layer-boundary checks, and Vitest. The game features (app shell, engine, the first level W1-L3 "Roll Downhill") are next.
 
 ## Read these first
 
@@ -25,7 +25,7 @@ If a request conflicts with these docs, point out the conflict before writing co
 React + TypeScript (strict) + Vite · Zustand · Zod · Web Worker training · SVG/Canvas plots, PixiJS (lazy) for scenes · Vitest + Playwright · pnpm · GitHub Actions → GitHub Pages · `vite-plugin-pwa`.
 TensorFlow.js is only for World 4+ and **must not** enter the v1 bundle.
 
-## Commands (planned; update this section once the scaffold exists)
+## Commands
 
 **Node 24 LTS** (`.nvmrc` at the repo root, so run `nvm use`) and **pnpm only** (pinned via `packageManager`; `npm install`/`yarn` are blocked). Enable pnpm once with `corepack enable`.
 
@@ -43,9 +43,11 @@ pnpm format           # prettier --write · format:check in CI
 pnpm test             # vitest run: "node" project (engine, services, repos, lib, tests/) + "dom" project (app, pages, components, hooks)
 pnpm test:watch       # vitest in watch mode
 pnpm test:coverage    # v8 coverage → client/coverage/
-pnpm test:passbot     # replay every level solution through the engine
-pnpm test:e2e         # playwright
-pnpm levels:validate  # schema + cross-registry checks on content/levels
+
+# Planned, NOT available yet (don't run until they exist in package.json):
+# pnpm test:passbot     # replay every level solution through the engine
+# pnpm test:e2e         # playwright
+# pnpm levels:validate  # schema + cross-registry checks on content/levels
 ```
 
 ## Layout: layered architecture
@@ -89,7 +91,7 @@ Dependencies only point down: `pages → components/hooks → stores → service
 
 ## Things that are easy to get wrong here
 
-- **`engine` is pure.** Don't use `Math.random()`, `Date.now()`, DOM or React inside `client/src/engine`. Take an injected `rng`/clock instead.
+- **`engine` is pure.** Don't use `Math.random()`, `Date.now()`, `new Date()`, DOM, timers or React inside `client/src/engine`. Take an injected `rng`/clock instead. oxlint blocks most of these; `new Date()` isn't caught automatically, so reviewers must check for it.
 - **"Model" means two things.** `src/models/` holds domain models (Level, Progress). ML models are **algorithms** in `src/engine/ml/algorithms/`.
 - **Business logic goes in services only.** Pages and components never compute stars, unlocks or hints, and never touch `localStorage` or the engine.
 - **Components are presentational.** They take props and emit callbacks. Only hooks call `useServices()`.

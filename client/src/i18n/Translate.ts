@@ -6,6 +6,9 @@ export type MessageKey = keyof typeof en
 export type MessageParams = Readonly<Record<string, string | number>>
 
 const PLACEHOLDER = /\{(\w+)\}/g
+/** ICU-style plural: {count, plural, one {# step} other {# steps}}. "#" becomes the number. */
+const PLURAL = /\{(\w+), plural, one \{([^{}]*)\} other \{([^{}]*)\}\}/g
+const pluralRules = new Intl.PluralRules('en')
 
 /**
  * Look up a player-facing string and fill `{placeholders}`.
@@ -16,8 +19,17 @@ export function t(key: MessageKey, params?: MessageParams): string {
   if (!params) {
     return message
   }
-  return message.replace(PLACEHOLDER, (match, name: string) => {
-    const value = params[name]
-    return value === undefined ? match : String(value)
-  })
+  return message
+    .replace(PLURAL, (match, name: string, one: string, other: string) => {
+      const value = params[name]
+      if (value === undefined) {
+        return match
+      }
+      const form = pluralRules.select(Number(value)) === 'one' ? one : other
+      return form.replaceAll('#', String(value))
+    })
+    .replace(PLACEHOLDER, (match, name: string) => {
+      const value = params[name]
+      return value === undefined ? match : String(value)
+    })
 }

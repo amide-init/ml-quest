@@ -51,9 +51,11 @@ export interface TrainingScene {
   readonly view: RegressionScene['view']
   readonly learningRate: { readonly min: number; readonly max: number; readonly step: number }
   readonly maxEpochs: number
-  /** Training loss that counts as "converged" (best possible + the level's gap). */
-  readonly targetLoss: number
   readonly initialLoss: number
+  /** Extra tools some training levels allow (the W1-L8 boss combines them). */
+  readonly allowCleaning: boolean
+  readonly allowScaling: boolean
+  readonly minPoints: number
 }
 
 /** A data-cleaning level: all training points (outliers included, unmarked) and the removal limit. */

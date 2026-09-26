@@ -48,6 +48,12 @@ export interface TrainingSnapshot {
   /** Loss and parameters before training, so the plot has something to show at first. */
   readonly initial: { readonly w: number; readonly b: number; readonly loss: number }
   readonly run: TrainingRun | null
+  /** Removed training points (only when the level allows cleaning). */
+  readonly removed: readonly number[]
+  /** Whether the feature is standardized for training (only when the level allows scaling). */
+  readonly scaled: boolean
+  /** "Converged" loss for the points currently kept: best possible on them + the level's gap. */
+  readonly targetLoss: number
 }
 
 /** A data-cleaning level's state: which points are removed and the line refit on the rest (W1-L6). */

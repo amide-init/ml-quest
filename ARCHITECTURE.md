@@ -493,6 +493,8 @@ Persistence is split across three layers. **Repositories** read and write storag
 | Accessibility | axe (Playwright) | No critical violations on map, level, codex | every PR |
 | Performance | Lighthouse CI + bundle budget | Lighthouse ≥ 90, initial JS within budget | `main` |
 
+**Vitest projects** (`client/vitest.config.ts`): **`node`** runs every test outside the UI layers, including `tests/` (pass-bot), in plain Node. That proves engine, service and repository code has no hidden DOM dependency. **`dom`** runs `app/`, `pages/`, `components/` and `hooks/` tests in jsdom with Testing Library and jest-dom (`tests/setup/DomSetup.ts`). Coverage uses v8 and excludes barrels. Coverage thresholds get introduced per layer once each layer has real code.
+
 The PRD says "Playwright pass-bot". We split it deliberately. **Winnability is proven at the engine level**: that's fast, deterministic, and covers all 16 levels in seconds. **Playwright proves the UI can express the solution.** Running all 16 levels through a browser on every PR would be slow and flaky, and it wouldn't prove anything more.
 
 ---

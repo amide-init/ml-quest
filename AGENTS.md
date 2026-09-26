@@ -27,6 +27,8 @@ TensorFlow.js is only for World 4+ and **must not** enter the v1 bundle.
 
 ## Commands (planned; update this section once the scaffold exists)
 
+**Package manager: pnpm only** (pinned via `packageManager`; `npm install`/`yarn` are blocked). Enable it once with `corepack enable`.
+
 The app lives in **`client/`**. Run every command from there (`cd client`), or from the root with `pnpm --dir client <script>`.
 
 ```bash

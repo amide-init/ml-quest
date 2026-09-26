@@ -22,6 +22,10 @@ interface LineFitPlotProps {
   readonly disabled: boolean
   /** Hide the handles entirely (the optimizer, not the player, moves the line). */
   readonly readOnly?: boolean
+  /** Data cleaning (W1-L6): indices of removed points, drawn hollow and ignored by the residuals. */
+  readonly removed?: readonly number[]
+  /** When set, points can be clicked (or focused + Enter/Space) to remove or restore them. */
+  readonly onTogglePoint?: (index: number) => void
   /** Widgets never call services: they emit commands (ARCHITECTURE §3). */
   readonly onCommand: (command: Command) => void
 }
@@ -38,6 +42,8 @@ export function LineFitPlot({
   b,
   disabled,
   readOnly = false,
+  removed = [],
+  onTogglePoint,
   onCommand,
 }: LineFitPlotProps) {
   const svgRef = useRef<SVGSVGElement>(null)
@@ -167,16 +173,18 @@ export function LineFitPlot({
             y2={sy(yMax)}
           />
 
-          {scene.points.map(([x, y]) => (
-            <line
-              key={`r${x},${y}`}
-              className={styles['residual']}
-              x1={sx(x)}
-              x2={sx(x)}
-              y1={sy(y)}
-              y2={sy(clampY(lineY(x)))}
-            />
-          ))}
+          {scene.points.map(([x, y], index) =>
+            removed.includes(index) ? null : (
+              <line
+                key={`r${x},${y}`}
+                className={styles['residual']}
+                x1={sx(x)}
+                x2={sx(x)}
+                y1={sy(y)}
+                y2={sy(clampY(lineY(x)))}
+              />
+            ),
+          )}
           <line
             className={styles['line']}
             x1={sx(xMin)}
@@ -184,9 +192,41 @@ export function LineFitPlot({
             x2={sx(xMax)}
             y2={sy(clampY(lineY(xMax)))}
           />
-          {scene.points.map(([x, y]) => (
-            <circle key={`p${x},${y}`} className={styles['point']} cx={sx(x)} cy={sy(y)} r={4.5} />
-          ))}
+          {scene.points.map(([x, y], index) => {
+            const isRemoved = removed.includes(index)
+            const dot = (
+              <circle
+                className={isRemoved ? styles['pointRemoved'] : styles['point']}
+                cx={sx(x)}
+                cy={sy(y)}
+                r={4.5}
+              />
+            )
+            if (!onTogglePoint) {
+              return <g key={`p${x},${y}`}>{dot}</g>
+            }
+            return (
+              <g
+                key={`p${x},${y}`}
+                className={styles['toggle']}
+                role="checkbox"
+                aria-checked={!isRemoved}
+                aria-label={t('level.cleaning.point', { x: x.toFixed(1), y: y.toFixed(1) })}
+                tabIndex={disabled ? -1 : 0}
+                aria-disabled={disabled}
+                onClick={() => (disabled ? undefined : onTogglePoint(index))}
+                onKeyDown={(event) => {
+                  if (!disabled && (event.key === 'Enter' || event.key === ' ')) {
+                    event.preventDefault()
+                    onTogglePoint(index)
+                  }
+                }}
+              >
+                <circle className={styles['toggleHit']} cx={sx(x)} cy={sy(y)} r={14} />
+                {dot}
+              </g>
+            )
+          })}
 
           {(readOnly ? [] : ([0, 1] as const)).map((index) => (
             <g

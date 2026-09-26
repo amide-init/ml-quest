@@ -74,6 +74,12 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         /** "Converged" = training loss within this much of the best possible loss. */
         convergenceGap: z.number().positive(),
       }),
+      z.object({
+        /** The line is refit exactly after every data change; the player edits the data (W1-L6). */
+        id: z.literal('least-squares'),
+        /** The player can't remove points below this count (a line needs at least 2). */
+        minPoints: z.number().int().min(2),
+      }),
     ]),
   }),
 ])

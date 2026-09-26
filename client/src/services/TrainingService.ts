@@ -2,6 +2,7 @@ import type { LandscapeMap, LevelConfig, LevelOf, Point } from '@/models'
 import { contourLines, createLandscape2D, findLandscapeMinimum, xy } from '@/engine'
 import { assertNever } from '@/lib'
 import type { EvaluationService } from './EvaluationService'
+import { CleaningRunner } from './training/CleaningRunner'
 import { DescentRunner } from './training/DescentRunner'
 import { GradientDescentRunner } from './training/GradientDescentRunner'
 import { LandscapeRunner } from './training/LandscapeRunner'
@@ -59,6 +60,11 @@ export class TrainingService {
             )
           case 'gradient-descent':
             return new GradientDescentRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              this.#evaluation,
+            )
+          case 'least-squares':
+            return new CleaningRunner(
               { ...level, algorithm: { ...algorithm, optimizer } },
               this.#evaluation,
             )

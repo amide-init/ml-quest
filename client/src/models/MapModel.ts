@@ -56,4 +56,12 @@ export interface TrainingScene {
   readonly initialLoss: number
 }
 
-export type LevelScene = LandscapeMap | RegressionScene | TrainingScene
+/** A data-cleaning level: all training points (outliers included, unmarked) and the removal limit. */
+export interface CleaningScene {
+  readonly kind: 'cleaning'
+  readonly points: readonly Point[]
+  readonly view: RegressionScene['view']
+  readonly minPoints: number
+}
+
+export type LevelScene = LandscapeMap | RegressionScene | TrainingScene | CleaningScene

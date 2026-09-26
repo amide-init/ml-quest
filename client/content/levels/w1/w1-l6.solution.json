@@ -1,0 +1,202 @@
+{
+  "level": "w1-l6",
+  "runs": [
+    {
+      "name": "removes exactly the four outliers",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 22
+        },
+        {
+          "type": "toggle-point",
+          "index": 23
+        },
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "removes the outliers and one good point",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 22
+        },
+        {
+          "type": "toggle-point",
+          "index": 23
+        },
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 0
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "removes the outliers and three good points",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 22
+        },
+        {
+          "type": "toggle-point",
+          "index": 23
+        },
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 0
+        },
+        {
+          "type": "toggle-point",
+          "index": 1
+        },
+        {
+          "type": "toggle-point",
+          "index": 2
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "changes its mind: removes a good point, then puts it back",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 5
+        },
+        {
+          "type": "toggle-point",
+          "index": 22
+        },
+        {
+          "type": "toggle-point",
+          "index": 23
+        },
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "toggle-point",
+          "index": 25
+        },
+        {
+          "type": "toggle-point",
+          "index": 5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: keeps all the data",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: one outlier left still ruins the fit",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 22
+        },
+        {
+          "type": "toggle-point",
+          "index": 23
+        },
+        {
+          "type": "toggle-point",
+          "index": 24
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: removes good points instead of outliers",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "toggle-point",
+          "index": 0
+        },
+        {
+          "type": "toggle-point",
+          "index": 1
+        },
+        {
+          "type": "toggle-point",
+          "index": 2
+        },
+        {
+          "type": "toggle-point",
+          "index": 3
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

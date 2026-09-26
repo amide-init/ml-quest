@@ -43,6 +43,7 @@ export type {
   RegressionLevelWith,
 } from './LevelModel'
 export type {
+  CleaningScene,
   ContourLine,
   LandscapeMap,
   LevelScene,
@@ -51,6 +52,7 @@ export type {
 } from './MapModel'
 export type { PlayReward, PlayView } from './PlayModel'
 export type {
+  CleaningSnapshot,
   LandscapeSnapshot,
   LevelSnapshot,
   RegressionSnapshot,

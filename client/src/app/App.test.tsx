@@ -225,10 +225,35 @@ describe('App', () => {
     expect(screen.getByText('Next star: get it on your first roll.')).toBeInTheDocument()
   }, 15_000)
 
+  it('Dirty Data: keeping the outliers fails; removing exactly them earns three stars', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/6')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText('Removed 0 of 26 points')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Check against new data' }))
+    expect(screen.getByRole('heading', { name: 'The fit is still off' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    // The four planted outliers sit at the right end, far below the trend.
+    for (const name of [
+      'Point at x 8.2, y 8.1',
+      'Point at x 7.6, y 8.2',
+      'Point at x 7.8, y 7.3',
+      'Point at x 9.1, y 8.2',
+    ]) {
+      await user.click(screen.getByRole('checkbox', { name }))
+    }
+    expect(screen.getByText('Removed 4 of 26 points')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check against new data' }))
+    expect(screen.getByRole('heading', { name: 'Clean fit' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(5)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(6)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

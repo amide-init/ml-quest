@@ -11,6 +11,8 @@ export interface DatasetSplit<TData> {
   readonly train: TData
   /** Never rendered or sent to UI components; only metrics computed from it are shown. */
   readonly test: TData
+  /** Indices of deliberately corrupted training points (W1-L6). Ground truth for scoring only. */
+  readonly outlierIndices: readonly number[]
 }
 
 /** y = slope · x + intercept + Gaussian noise, x uniform in [xMin, xMax]. */
@@ -24,6 +26,19 @@ export const linearNoisySpecSchema = z
     noise: z.number().nonnegative(),
     xMin: z.number(),
     xMax: z.number(),
+    /**
+     * Extra corrupted points added to the TRAINING set only (the test set stays clean): each sits
+     * `offset` away from the true line (± 25% jitter). A signed offset pulls the fit one way.
+     * Their x values are drawn from [outlierXMin, outlierXMax] so they can be placed for leverage.
+     */
+    outliers: z
+      .object({
+        count: z.number().int().min(1).max(50),
+        offset: z.number(),
+        xMin: z.number(),
+        xMax: z.number(),
+      })
+      .optional(),
   })
   .refine((spec) => spec.xMin < spec.xMax, { message: 'xMin must be below xMax' })
 export type LinearNoisySpec = z.infer<typeof linearNoisySpecSchema>

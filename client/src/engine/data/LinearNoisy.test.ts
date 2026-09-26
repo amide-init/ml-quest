@@ -56,4 +56,24 @@ describe('generateLinearNoisy', () => {
     expect(rms).toBeGreaterThan(0.8)
     expect(rms).toBeLessThan(2.4)
   })
+
+  it('adds outliers to the training set only, and reports which points they are', () => {
+    const split = generateLinearNoisy(
+      { ...SPEC, outliers: { count: 4, offset: -8, xMin: 7, xMax: 10 } },
+      { train: createSeededRandom(1), test: createSeededRandom(2) },
+    )
+    expect(split.train.x).toHaveLength(34)
+    expect(split.test.x).toHaveLength(20)
+    expect(split.outlierIndices).toEqual([30, 31, 32, 33])
+    for (const index of split.outlierIndices) {
+      const x = split.train.x[index] ?? 0
+      const residual = (split.train.y[index] ?? 0) - (2 * x + 3)
+      expect(x).toBeGreaterThanOrEqual(7)
+      expect(residual).toBeLessThan(-5)
+    }
+  })
+
+  it('reports no outliers when none are requested', () => {
+    expect(generate(1, 2).outlierIndices).toEqual([])
+  })
 })

@@ -23,3 +23,9 @@ export {
   logisticRegression,
   sigmoid,
 } from './algorithms/LogisticRegression'
+export {
+  MULTI_LOGISTIC_REGRESSION_ID,
+  multiLogisticRegression,
+  tabularAccuracy,
+  tabularScore,
+} from './algorithms/MultiLogisticRegression'

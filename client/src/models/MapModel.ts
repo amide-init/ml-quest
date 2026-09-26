@@ -1,3 +1,4 @@
+import type { PolynomialFeature } from './DatasetModel'
 import type { Point } from './LandscapeModel'
 
 /** One contour line of a loss surface, in the surface's own coordinates. */
@@ -117,6 +118,14 @@ export interface SigmoidScene {
   readonly threshold: { readonly min: number; readonly max: number; readonly step: number }
 }
 
+/** A feature-builder level (W2-L3): labelled training points and the features on offer. */
+export interface FeatureScene {
+  readonly kind: 'features'
+  readonly points: readonly LabelledPoint[]
+  readonly view: RegressionScene['view']
+  readonly available: readonly PolynomialFeature[]
+}
+
 export type LevelScene =
   | LandscapeMap
   | RegressionScene
@@ -125,3 +134,4 @@ export type LevelScene =
   | ScalingScene
   | BoundaryScene
   | SigmoidScene
+  | FeatureScene

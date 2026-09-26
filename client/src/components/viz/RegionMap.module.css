@@ -1,0 +1,45 @@
+.sheet {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.region1 {
+  fill: color-mix(in oklab, var(--color-contour) 20%, transparent);
+}
+
+.region0 {
+  fill: color-mix(in oklab, var(--color-ridge) 16%, transparent);
+}
+
+.border {
+  fill: none;
+  stroke: var(--color-beacon);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.class1 {
+  fill: var(--color-contour);
+  stroke: var(--color-paper-raised);
+  stroke-width: 1.5;
+}
+
+.class0 {
+  fill: var(--color-ridge);
+  stroke: var(--color-paper-raised);
+  stroke-width: 1.5;
+}
+
+.empty {
+  fill: var(--color-ink-muted);
+  font-size: 15px;
+  font-family: var(--font-text);
+}

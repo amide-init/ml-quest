@@ -1,3 +1,4 @@
+import type { PolynomialFeature } from './DatasetModel'
 import type { Point } from './LandscapeModel'
 
 /** Hyperparameters a widget can set. Grows with later levels (lambda, threshold, degree…). */
@@ -30,5 +31,7 @@ export type Command =
   | { readonly type: 'set-boundary'; readonly p: Point; readonly q: Point }
   /** Swap which side of the boundary is which class. */
   | { readonly type: 'flip-sides' }
+  /** Give the model a feature, or take it away (W2-L3 feature builder). */
+  | { readonly type: 'toggle-feature'; readonly feature: PolynomialFeature }
 
 export type CommandType = Command['type']

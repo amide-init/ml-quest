@@ -4,6 +4,7 @@ import { useDocumentTitle, useLevelSession } from '@/hooks'
 import { t } from '@/i18n'
 import { BoundaryLevelView } from './level/BoundaryLevelView'
 import { CleaningLevelView } from './level/CleaningLevelView'
+import { FeatureLevelView } from './level/FeatureLevelView'
 import { LandscapeLevelView } from './level/LandscapeLevelView'
 import { RegressionLevelView } from './level/RegressionLevelView'
 import { ScalingLevelView } from './level/ScalingLevelView'
@@ -106,6 +107,11 @@ function LevelScreen({ levelId, world, level }: { levelId: string; world: number
   if (scene.kind === 'sigmoid' && snapshot.kind === 'sigmoid') {
     return (
       <SigmoidLevelView game={game} scene={scene} snapshot={snapshot} world={world} level={level} />
+    )
+  }
+  if (scene.kind === 'features' && snapshot.kind === 'features') {
+    return (
+      <FeatureLevelView game={game} scene={scene} snapshot={snapshot} world={world} level={level} />
     )
   }
   throw new Error(

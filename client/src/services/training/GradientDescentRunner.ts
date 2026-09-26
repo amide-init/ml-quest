@@ -142,6 +142,7 @@ export class GradientDescentRunner implements LevelRunner {
       case 'check':
       case 'set-boundary':
       case 'flip-sides':
+      case 'toggle-feature':
         break
     }
     return this.#snapshot

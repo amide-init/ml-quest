@@ -29,6 +29,8 @@ export interface MetricInput<TData = void> {
   readonly testAccuracy?: number
   /** The lowest probability any training point gets for its TRUE class (W2-L2). */
   readonly minConfidence?: number
+  /** How many input features the model used (W2-L3). */
+  readonly featureCount?: number
 }
 
 export interface MetricDefinition {
@@ -100,6 +102,10 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   test_accuracy: {
     better: 'higher',
     compute: (input) => input.testAccuracy ?? Number.NaN,
+  },
+  feature_count: {
+    better: 'lower',
+    compute: (input) => input.featureCount ?? Number.NaN,
   },
   min_confidence: {
     better: 'higher',

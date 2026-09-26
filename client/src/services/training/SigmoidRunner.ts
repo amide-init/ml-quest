@@ -11,7 +11,7 @@ import type {
 import {
   accuracy,
   createSeededRandom,
-  generateTwoBlobs,
+  generateClassification,
   hashSeed,
   logisticRegression,
   sigmoid,
@@ -36,7 +36,7 @@ export class SigmoidRunner implements LevelRunner {
   constructor(level: LogisticLevelWith<'manual-sigmoid'>, evaluation: EvaluationService) {
     this.#level = level
     this.#evaluation = evaluation
-    this.#data = generateTwoBlobs(level.algorithm.dataset, {
+    this.#data = generateClassification(level.algorithm.dataset, {
       train: createSeededRandom(hashSeed(level.id, level.seed, 'train')),
       test: createSeededRandom(hashSeed(level.id, level.seed, 'test')),
     })
@@ -83,6 +83,7 @@ export class SigmoidRunner implements LevelRunner {
       case 'toggle-point':
       case 'set-boundary':
       case 'flip-sides':
+      case 'toggle-feature':
         break
     }
     return this.#snapshot

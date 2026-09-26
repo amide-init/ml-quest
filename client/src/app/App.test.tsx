@@ -376,10 +376,27 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   })
 
+  it('Not a Straight Line: straight features fail; x1² and x2² alone split the rings for three stars', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/2/l/3')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(screen.getByRole('heading', { name: 'Still not split' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    for (const name of ['x₁', 'x₂', 'x₁²', 'x₂²']) {
+      await user.click(screen.getByRole('checkbox', { name }))
+    }
+    expect(screen.getByText('2 features selected')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(screen.getByRole('heading', { name: 'Split' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(10)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(11)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

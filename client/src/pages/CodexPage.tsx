@@ -19,6 +19,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   preprocessing: 'level.w1-l8.title',
   classification: 'level.w2-l1.title',
   sigmoid: 'level.w2-l2.title',
+  'feature-engineering': 'level.w2-l3.title',
 }
 
 export function CodexPage() {

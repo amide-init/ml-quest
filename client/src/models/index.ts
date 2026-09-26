@@ -48,6 +48,7 @@ export type {
   CleaningScene,
   ContourLine,
   FeatureRange,
+  FeatureScene,
   LabelledPoint,
   LandscapeMap,
   LevelScene,
@@ -60,6 +61,8 @@ export type { PlayReward, PlayView } from './PlayModel'
 export type {
   BoundarySnapshot,
   CleaningSnapshot,
+  DecisionRegions,
+  FeatureSnapshot,
   LandscapeSnapshot,
   LevelSnapshot,
   LossRun,
@@ -76,13 +79,21 @@ export {
   progressSchema,
 } from './ProgressModel'
 export type { ConceptId, LevelProgress, Progress } from './ProgressModel'
-export { linearMultiSpecSchema, linearNoisySpecSchema, twoBlobsSpecSchema } from './DatasetModel'
+export {
+  linearMultiSpecSchema,
+  linearNoisySpecSchema,
+  polynomialFeatureSchema,
+  ringsSpecSchema,
+  twoBlobsSpecSchema,
+} from './DatasetModel'
 export type {
   ClassificationData,
   DatasetSplit,
   LinearMultiSpec,
   LinearNoisySpec,
+  PolynomialFeature,
   RegressionData,
+  RingsSpec,
   TabularData,
   TwoBlobsSpec,
 } from './DatasetModel'

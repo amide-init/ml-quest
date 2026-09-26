@@ -1,0 +1,69 @@
+.sheet {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.axis {
+  stroke: var(--color-line);
+  stroke-width: 1.5;
+}
+
+.band {
+  stroke: var(--color-contour);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.threshold {
+  stroke: var(--color-ink-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+}
+
+.tick {
+  fill: var(--color-ink-muted);
+  font-size: 12px;
+  font-family: var(--font-text);
+}
+
+.curve {
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 2.5;
+}
+
+.link {
+  stroke: var(--color-contour);
+  stroke-width: 1.5;
+}
+
+.weak {
+  stroke: var(--color-beacon);
+  stroke-width: 2.5;
+}
+
+.class1 {
+  fill: var(--color-contour);
+  stroke: var(--color-paper-raised);
+  stroke-width: 1.5;
+}
+
+.class0 {
+  fill: var(--color-ridge);
+  stroke: var(--color-paper-raised);
+  stroke-width: 1.5;
+}
+
+.weakMarker {
+  fill: none;
+  stroke: var(--color-beacon);
+  stroke-width: 2.5;
+}

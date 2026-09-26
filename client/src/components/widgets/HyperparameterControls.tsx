@@ -11,9 +11,9 @@ interface HyperparameterControlsProps {
   readonly min: number
   readonly max: number
   readonly step: number
-  /** The button next to the slider, e.g. "Take a step" (W1-L3) or "Train" (W1-L4). */
-  readonly actionLabel: string
-  readonly action: Command
+  /** Optional button next to the slider, e.g. "Take a step" (W1-L3) or "Train" (W1-L4). */
+  readonly actionLabel?: string
+  readonly action?: Command
   readonly disabled: boolean
   /** Widgets never call services: they emit commands (ARCHITECTURE §3). */
   readonly onCommand: (command: Command) => void
@@ -66,9 +66,11 @@ export function HyperparameterControls({
           {hint}
         </p>
       </div>
-      <Button variant="primary" disabled={disabled} onClick={() => onCommand(action)}>
-        {actionLabel}
-      </Button>
+      {action && actionLabel ? (
+        <Button variant="primary" disabled={disabled} onClick={() => onCommand(action)}>
+          {actionLabel}
+        </Button>
+      ) : null}
     </div>
   )
 }

@@ -5,7 +5,7 @@ import type {
   Command,
   DatasetSplit,
   EvalResult,
-  LevelOf,
+  LogisticLevelWith,
   Point,
   SessionState,
 } from '@/models'
@@ -27,12 +27,12 @@ import type { LevelRunner } from './LevelRunner'
  */
 export class BoundaryRunner implements LevelRunner {
   readonly scene: BoundaryScene
-  readonly #level: LevelOf<'logistic-regression'>
+  readonly #level: LogisticLevelWith<'manual-boundary'>
   readonly #evaluation: EvaluationService
   readonly #data: DatasetSplit<ClassificationData>
   #snapshot: BoundarySnapshot
 
-  constructor(level: LevelOf<'logistic-regression'>, evaluation: EvaluationService) {
+  constructor(level: LogisticLevelWith<'manual-boundary'>, evaluation: EvaluationService) {
     this.#level = level
     this.#evaluation = evaluation
     this.#data = generateTwoBlobs(level.algorithm.dataset, {

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "w2-l2",
+  "world": 2,
+  "level": 2,
+  "seed": 204,
+  "algorithm": {
+    "id": "logistic-regression",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 12,
+      "testPerClass": 40,
+      "centers": [
+        [-1.2, 0],
+        [1.2, 0]
+      ],
+      "spread": 0.6
+    },
+    "view": {
+      "xMin": -3,
+      "xMax": 3,
+      "yMin": 0,
+      "yMax": 1
+    },
+    "optimizer": {
+      "id": "manual-sigmoid",
+      "slope": {
+        "min": 0.2,
+        "max": 15,
+        "step": 0.1,
+        "initial": 0.6
+      },
+      "threshold": {
+        "min": -2,
+        "max": 2,
+        "step": 0.05,
+        "initial": -1.2
+      }
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "min_confidence",
+      "op": ">=",
+      "value": 0.8
+    },
+    "two": {
+      "metric": "test_loss",
+      "op": "<=",
+      "value": 0.16
+    },
+    "three": {
+      "all": [
+        {
+          "metric": "min_confidence",
+          "op": ">=",
+          "value": 0.85
+        },
+        {
+          "metric": "test_loss",
+          "op": "<=",
+          "value": 0.16
+        }
+      ]
+    }
+  },
+  "text": {
+    "title": "level.w2-l2.title",
+    "mission": "level.w2-l2.mission",
+    "hints": ["level.w2-l2.hint1", "level.w2-l2.hint2", "level.w2-l2.hint3"],
+    "debrief": "level.w2-l2.debrief",
+    "concept": "sigmoid"
+  },
+  "authors": ["amide-init"]
+}

@@ -27,6 +27,8 @@ export interface MetricInput<TData = void> {
   /** Share of points classified correctly, on the training set and the hidden test set (World 2). */
   readonly trainAccuracy?: number
   readonly testAccuracy?: number
+  /** The lowest probability any training point gets for its TRUE class (W2-L2). */
+  readonly minConfidence?: number
 }
 
 export interface MetricDefinition {
@@ -98,6 +100,10 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   test_accuracy: {
     better: 'higher',
     compute: (input) => input.testAccuracy ?? Number.NaN,
+  },
+  min_confidence: {
+    better: 'higher',
+    compute: (input) => input.minConfidence ?? Number.NaN,
   },
   points_removed: {
     better: 'lower',

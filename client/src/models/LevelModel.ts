@@ -109,11 +109,22 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
     dataset: twoBlobsSpecSchema,
     /** Visible window of the 2D feature space. */
     view: z.object({ xMin: z.number(), xMax: z.number(), yMin: z.number(), yMax: z.number() }),
-    optimizer: z.object({
-      /** The player places the boundary by dragging two handles (W2-L1 Split the Kingdom). */
-      id: z.literal('manual-boundary'),
-      initial: z.object({ p: pointSchema, q: pointSchema }),
-    }),
+    optimizer: z.discriminatedUnion('id', [
+      z.object({
+        /** The player places the boundary by dragging two handles (W2-L1 Split the Kingdom). */
+        id: z.literal('manual-boundary'),
+        initial: z.object({ p: pointSchema, q: pointSchema }),
+      }),
+      z.object({
+        /**
+         * 1D: p(class 1) = sigmoid(slope · (x − threshold)); the player tunes both (W2-L2 Confidence).
+         * Only the first feature is used.
+         */
+        id: z.literal('manual-sigmoid'),
+        slope: rangeControlSchema,
+        threshold: rangeControlSchema,
+      }),
+    ]),
   }),
 ])
 export type LevelAlgorithm = z.infer<typeof levelAlgorithmSchema>
@@ -170,5 +181,14 @@ export type OptimizerId = RegressionAlgorithm['optimizer']['id']
 export type RegressionLevelWith<Id extends OptimizerId> = LevelConfig & {
   readonly algorithm: RegressionAlgorithm & {
     readonly optimizer: Extract<RegressionAlgorithm['optimizer'], { id: Id }>
+  }
+}
+
+type LogisticAlgorithm = Extract<LevelAlgorithm, { id: 'logistic-regression' }>
+
+/** A logistic-regression level narrowed to one optimizer, e.g. LogisticLevelWith<'manual-sigmoid'>. */
+export type LogisticLevelWith<Id extends LogisticAlgorithm['optimizer']['id']> = LevelConfig & {
+  readonly algorithm: LogisticAlgorithm & {
+    readonly optimizer: Extract<LogisticAlgorithm['optimizer'], { id: Id }>
   }
 }

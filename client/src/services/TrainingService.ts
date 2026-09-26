@@ -10,6 +10,7 @@ import { LandscapeRunner } from './training/LandscapeRunner'
 import type { LevelRunner } from './training/LevelRunner'
 import { RegressionRunner } from './training/RegressionRunner'
 import { ScalingRunner } from './training/ScalingRunner'
+import { SigmoidRunner } from './training/SigmoidRunner'
 
 const CONTOUR_LEVELS = [
   0.02, 0.06, 0.12, 0.2, 0.3, 0.42, 0.56, 0.72, 0.9, 1.1, 1.35, 1.65, 2, 2.45, 3,
@@ -76,8 +77,23 @@ export class TrainingService {
       }
       case 'multi-linear-regression':
         return new ScalingRunner({ ...level, algorithm }, this.#evaluation)
-      case 'logistic-regression':
-        return new BoundaryRunner({ ...level, algorithm }, this.#evaluation)
+      case 'logistic-regression': {
+        const optimizer = algorithm.optimizer
+        switch (optimizer.id) {
+          case 'manual-boundary':
+            return new BoundaryRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              this.#evaluation,
+            )
+          case 'manual-sigmoid':
+            return new SigmoidRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              this.#evaluation,
+            )
+          default:
+            return assertNever(optimizer)
+        }
+      }
       default:
         return assertNever(algorithm)
     }

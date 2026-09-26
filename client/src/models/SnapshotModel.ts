@@ -99,6 +99,16 @@ export interface BoundarySnapshot {
   readonly moves: number
 }
 
+/** A 1D confidence level's state (W2-L2): the curve's slope and threshold, and how sure it is. */
+export interface SigmoidSnapshot {
+  readonly kind: 'sigmoid'
+  readonly slope: number
+  readonly threshold: number
+  /** Probability of the TRUE class for each training point, in scene order. */
+  readonly confidences: readonly number[]
+  readonly minConfidence: number
+}
+
 export type LevelSnapshot =
   | LandscapeSnapshot
   | RegressionSnapshot
@@ -106,3 +116,4 @@ export type LevelSnapshot =
   | CleaningSnapshot
   | ScalingSnapshot
   | BoundarySnapshot
+  | SigmoidSnapshot

@@ -16,3 +16,4 @@ export {
 } from './Polynomial'
 export { generateRings } from './Rings'
 export { generateClassification } from './Classification'
+export { oversampleMinority } from './Oversample'

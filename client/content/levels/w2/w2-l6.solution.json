@@ -1,0 +1,132 @@
+{
+  "level": "w2-l6",
+  "runs": [
+    {
+      "name": "balances the classes (x10: nine hill folk count like ninety lowlanders)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "oversample",
+          "value": 10
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "first check falls for 94% accuracy, second one rebalances",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "oversample",
+          "value": 8
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "finds them on the third check",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "oversample",
+          "value": 4
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "oversample",
+          "value": 9
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "over-corrects: finds the hill folk but flags too many lowlanders",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "oversample",
+          "value": 15
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): 94% accuracy, but only 40% of the hill folk found",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: rebalancing half-way is not enough",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "oversample",
+          "value": 5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

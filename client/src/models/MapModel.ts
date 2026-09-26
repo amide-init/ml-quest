@@ -144,6 +144,8 @@ export interface ComplexityScene {
     readonly max: number
     readonly step: number
   } | null
+  /** The minority-oversampling slider (W2-L6), or null when the level has none. */
+  readonly oversample: { readonly min: number; readonly max: number; readonly step: number } | null
 }
 
 export type LevelScene =

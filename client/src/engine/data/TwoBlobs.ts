@@ -2,13 +2,17 @@ import type { ClassificationData, DatasetSplit, Rng, TwoBlobsSpec } from '@/mode
 import { gaussian } from './LinearNoisy'
 
 function sample(spec: TwoBlobsSpec, perClass: number, rng: Rng): ClassificationData {
-  const count = perClass * 2
+  const minority =
+    spec.minorityShare === undefined
+      ? perClass
+      : Math.max(1, Math.round(perClass * spec.minorityShare))
+  const count = perClass + minority
   const x1 = new Float64Array(count)
   const x2 = new Float64Array(count)
   const label = new Uint8Array(count)
   for (let i = 0; i < count; i++) {
-    // Interleave classes so any prefix of the data is balanced.
-    const cls = i % 2
+    // Interleave classes while both have points left (a balanced set stays balanced in any prefix).
+    const cls = i < minority * 2 ? i % 2 : 0
     const [cx, cy] = spec.centers[cls] ?? [0, 0]
     x1[i] = cx + spec.spread * gaussian(rng)
     x2[i] = cy + spec.spread * gaussian(rng)

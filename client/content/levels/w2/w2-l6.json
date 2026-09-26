@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "id": "w2-l6",
+  "world": 2,
+  "level": 6,
+  "seed": 610,
+  "algorithm": {
+    "id": "logistic-regression",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 90,
+      "testPerClass": 300,
+      "minorityShare": 0.1,
+      "centers": [
+        [-0.8, -0.4],
+        [0.8, 0.4]
+      ],
+      "spread": 0.7
+    },
+    "view": {
+      "xMin": -3.25,
+      "xMax": 3.25,
+      "yMin": -2.6,
+      "yMax": 2.6
+    },
+    "optimizer": {
+      "id": "complexity",
+      "degree": 1,
+      "oversample": {
+        "min": 1,
+        "max": 15,
+        "step": 1,
+        "initial": 1
+      },
+      "learningRate": 0.5,
+      "maxEpochs": 2000
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_recall",
+      "op": ">=",
+      "value": 0.8
+    },
+    "two": {
+      "all": [
+        {
+          "metric": "test_recall",
+          "op": ">=",
+          "value": 0.8
+        },
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.86
+        }
+      ]
+    },
+    "three": {
+      "all": [
+        {
+          "metric": "test_recall",
+          "op": ">=",
+          "value": 0.8
+        },
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.86
+        },
+        {
+          "metric": "attempt",
+          "op": "<=",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "text": {
+    "title": "level.w2-l6.title",
+    "mission": "level.w2-l6.mission",
+    "hints": ["level.w2-l6.hint1", "level.w2-l6.hint2", "level.w2-l6.hint3"],
+    "debrief": "level.w2-l6.debrief",
+    "concept": "class-imbalance"
+  },
+  "authors": ["amide-init"]
+}

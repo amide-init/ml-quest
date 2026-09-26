@@ -151,6 +151,8 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         degree: z.union([rangeControlSchema, z.number().int().min(1).max(8)]),
         /** L2 strength slider (W2-L5 Tame It). Absent = no regularization. */
         regularization: rangeControlSchema.optional(),
+        /** Minority oversampling slider, ×1 upward (W2-L6 Unfair Data). Absent = no rebalancing. */
+        oversample: rangeControlSchema.optional(),
         learningRate: z.number().positive(),
         maxEpochs: z.number().int().positive().max(5000),
       }),

@@ -7,4 +7,5 @@
  * See ARCHITECTURE.md §4.
  */
 export type { LevelRepository } from './LevelRepository'
+export type { ProgressRepository } from './ProgressRepository'
 export type { SettingsRepository } from './SettingsRepository'

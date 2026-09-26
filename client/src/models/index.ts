@@ -33,5 +33,12 @@ export type { SessionEvent, SessionPhase, SessionState, TracedCommand } from './
 export { levelAlgorithmSchema, levelConfigSchema, levelIdSchema } from './LevelModel'
 export type { LevelAlgorithm, LevelConfig, LevelId } from './LevelModel'
 export type { ContourLine, LandscapeMap } from './MapModel'
-export type { PlayView } from './PlayModel'
+export type { PlayReward, PlayView } from './PlayModel'
 export type { LandscapeSnapshot } from './SnapshotModel'
+export {
+  conceptIdSchema,
+  DEFAULT_PROGRESS,
+  levelProgressSchema,
+  progressSchema,
+} from './ProgressModel'
+export type { ConceptId, LevelProgress, Progress } from './ProgressModel'

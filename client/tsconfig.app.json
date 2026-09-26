@@ -20,7 +20,8 @@
     /* Path aliases (mirrored in vite.config.ts) */
     "paths": {
       "@/*": ["./src/*"],
-      "@content/*": ["./content/*"]
+      "@content/*": ["./content/*"],
+      "@tests/*": ["./tests/*"]
     },
 
     /* Strictness (RULES.md §4) */

@@ -17,3 +17,11 @@
   fill: none;
   stroke: var(--color-line);
 }
+.small {
+  gap: var(--space-1);
+}
+
+.small .star {
+  width: 1.125rem;
+  height: 1.125rem;
+}

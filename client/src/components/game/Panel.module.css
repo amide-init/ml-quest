@@ -50,3 +50,13 @@
 .statWarning {
   color: var(--color-beacon);
 }
+.unlock {
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-beacon);
+  background: color-mix(in oklab, var(--color-beacon) 10%, transparent);
+  font-weight: 700;
+}
+
+.unlock a {
+  font-weight: 700;
+}

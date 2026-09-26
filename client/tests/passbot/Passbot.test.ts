@@ -6,7 +6,8 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { BundledLevelRepository } from '@/repositories/bundled/BundledLevelRepository'
-import { EvaluationService, LevelService, TrainingService } from '@/services'
+import { InMemoryProgressRepository } from '@/repositories/in-memory/InMemoryProgressRepository'
+import { EvaluationService, LevelService, ProgressService, TrainingService } from '@/services'
 import type { Command } from '@/models'
 
 const solutionFileSchema = z.object({
@@ -43,6 +44,7 @@ function createLevelService() {
     repository,
     new TrainingService(),
     new EvaluationService(),
+    new ProgressService(new InMemoryProgressRepository()),
     () => (time += 1000),
   )
 }

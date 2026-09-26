@@ -1,10 +1,13 @@
 import { getLocalStorage } from '@/platform'
 import { BundledLevelRepository } from '@/repositories/bundled/BundledLevelRepository'
+import { InMemoryProgressRepository } from '@/repositories/in-memory/InMemoryProgressRepository'
 import { InMemorySettingsRepository } from '@/repositories/in-memory/InMemorySettingsRepository'
+import { LocalStorageProgressRepository } from '@/repositories/local-storage/LocalStorageProgressRepository'
 import { LocalStorageSettingsRepository } from '@/repositories/local-storage/LocalStorageSettingsRepository'
 import {
   EvaluationService,
   LevelService,
+  ProgressService,
   SettingsService,
   TrainingService,
   type Services,
@@ -25,13 +28,19 @@ export function createServices(options: ContainerOptions = { storage: 'browser' 
   const settingsRepository = storage
     ? new LocalStorageSettingsRepository(storage, () => Date.now())
     : new InMemorySettingsRepository()
+  const progressRepository = storage
+    ? new LocalStorageProgressRepository(storage, () => Date.now())
+    : new InMemoryProgressRepository()
 
+  const progress = new ProgressService(progressRepository)
   return {
     settings: new SettingsService(settingsRepository),
+    progress,
     levels: new LevelService(
       new BundledLevelRepository(),
       new TrainingService(),
       new EvaluationService(),
+      progress,
       () => performance.now(),
     ),
   }

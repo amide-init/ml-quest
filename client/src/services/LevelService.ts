@@ -3,6 +3,7 @@ import { contourLines, createLandscape2D, findLandscapeMinimum, xy } from '@/eng
 import type { LevelRepository } from '@/repositories'
 import type { EvaluationService } from './EvaluationService'
 import { PlaySession } from './PlaySession'
+import type { ProgressService } from './ProgressService'
 import type { TrainingService } from './TrainingService'
 
 const CONTOUR_LEVELS = [
@@ -10,11 +11,15 @@ const CONTOUR_LEVELS = [
 ]
 const CONTOUR_RESOLUTION = 90
 
-/** Finds levels and starts play sessions. Map geometry is computed once per level and cached. */
+/**
+ * Finds levels and starts play sessions. Map geometry is computed once per level and cached.
+ * A passed attempt is recorded in ProgressService (best stars, Codex unlock).
+ */
 export class LevelService {
   readonly #levels: LevelRepository
   readonly #training: TrainingService
   readonly #evaluation: EvaluationService
+  readonly #progress: ProgressService
   readonly #now: () => number
   readonly #maps = new Map<string, LandscapeMap>()
 
@@ -22,11 +27,13 @@ export class LevelService {
     levels: LevelRepository,
     training: TrainingService,
     evaluation: EvaluationService,
+    progress: ProgressService,
     now: () => number,
   ) {
     this.#levels = levels
     this.#training = training
     this.#evaluation = evaluation
+    this.#progress = progress
     this.#now = now
   }
 
@@ -46,6 +53,7 @@ export class LevelService {
       () => this.#training.createRunner(level),
       this.#evaluation,
       this.#now,
+      (result) => this.#progress.recordResult(level.id, result, level.text.concept),
     )
   }
 

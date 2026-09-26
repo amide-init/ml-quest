@@ -26,5 +26,9 @@ export type Command =
   | { readonly type: 'toggle-point'; readonly index: number }
   /** Turn feature scaling (standardization) on or off (W1-L7). */
   | { readonly type: 'set-scaling'; readonly enabled: boolean }
+  /** Place a straight decision boundary through two points (W2-L1). */
+  | { readonly type: 'set-boundary'; readonly p: Point; readonly q: Point }
+  /** Swap which side of the boundary is which class. */
+  | { readonly type: 'flip-sides' }
 
 export type CommandType = Command['type']

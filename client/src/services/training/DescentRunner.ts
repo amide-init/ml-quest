@@ -90,6 +90,8 @@ export class DescentRunner implements LevelRunner {
       case 'check':
       case 'toggle-point':
       case 'set-scaling':
+      case 'set-boundary':
+      case 'flip-sides':
         break
     }
     return this.#snapshot

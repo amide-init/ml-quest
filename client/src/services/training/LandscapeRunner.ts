@@ -92,6 +92,8 @@ export class LandscapeRunner implements LevelRunner {
       case 'check':
       case 'toggle-point':
       case 'set-scaling':
+      case 'set-boundary':
+      case 'flip-sides':
       case 'train':
         // Not used by landscape levels: the ball only moves by gradient steps.
         break

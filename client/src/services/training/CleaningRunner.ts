@@ -68,6 +68,8 @@ export class CleaningRunner implements LevelRunner {
       case 'set-params':
       case 'set-hyperparameter':
       case 'set-scaling':
+      case 'set-boundary':
+      case 'flip-sides':
         break
     }
     return this.#snapshot

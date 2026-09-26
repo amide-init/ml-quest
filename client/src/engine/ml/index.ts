@@ -16,3 +16,10 @@ export { trainGradientDescent } from './Train'
 export type { TrainOptions, TrainResult } from './Train'
 export { LOG_LEARNING_RATES, searchLearningRate } from './Tuning'
 export type { LearningRateSearch } from './Tuning'
+export {
+  accuracy,
+  boundaryThrough,
+  LOGISTIC_REGRESSION_ID,
+  logisticRegression,
+  sigmoid,
+} from './algorithms/LogisticRegression'

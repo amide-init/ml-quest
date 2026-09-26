@@ -1,5 +1,5 @@
-// Placeholder shell. Moves to src/app/App.tsx in #3; routing arrives in #10.
-function App() {
+// Root component. Routing (#10), providers and the DI container (#11) are wired here.
+export function App() {
   return (
     <main>
       <h1>ML Quest</h1>
@@ -7,5 +7,3 @@ function App() {
     </main>
   )
 }
-
-export default App

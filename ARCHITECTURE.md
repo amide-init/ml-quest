@@ -150,14 +150,17 @@ src/
     ExportService.ts         # progress export/import codes
     AnalyticsService.ts      # the only network egress (cookieless)
     AudioService.ts
-  repositories/           # Data access only. Interface + implementations. No business rules.
-    LevelRepository.ts                 # interface
-    BundledLevelRepository.ts         # loads per-world JSON chunks (import.meta.glob)
-    ProgressRepository.ts              # interface
-    LocalStorageProgressRepository.ts
-    SettingsRepository.ts / LocalStorageSettingsRepository.ts
-    ConceptRepository.ts / LocaleRepository.ts
-    in-memory/                          # InMemory* implementations for tests and storage-less mode
+  repositories/           # Data access only. No business rules.
+    LevelRepository.ts                  # interfaces at the top level (exported from index.ts)
+    ProgressRepository.ts
+    SettingsRepository.ts
+    ConceptRepository.ts · LocaleRepository.ts
+    bundled/                            # implementations, one subfolder per source (never exported from index.ts)
+      BundledLevelRepository.ts         #   loads per-world JSON chunks (import.meta.glob)
+    local-storage/
+      LocalStorageProgressRepository.ts
+      LocalStorageSettingsRepository.ts
+    in-memory/                          #   InMemory* implementations for tests and storage-less mode
     migrations/                         # versioned migrations for persisted data
   models/                 # Domain entities, types and Zod schemas (no logic beyond validation)
     LevelModel.ts        # LevelConfig, Condition, StarRules, WidgetRef
@@ -208,7 +211,7 @@ tests/
 | `models/` | Types, entities, Zod schemas | lib (rarely) | Import anything else |
 | `workers/` | Hosting the engine off-thread | engine, models, lib | Import services, stores or React |
 
-**Allowed dependency direction** (enforced in CI with `dependency-cruiser`):
+**Allowed dependency direction** (enforced in CI with `dependency-cruiser`; rules in `client/.dependency-cruiser.cjs`, run by `pnpm lint:boundaries`):
 
 ```
 app ──▶ pages ──▶ components
@@ -224,7 +227,7 @@ Hard rules:
 1. `engine/**` must not import from any other `src/` layer except `models` and `lib`, and must not use React or browser globals. It has to run unchanged in Node (Vitest), in the worker, and on the main thread.
 2. `engine/**` must not read time or randomness implicitly. RNG and clocks are **injected**.
 3. UI (`pages`, `components`, `hooks`) reaches the engine **only through services**.
-4. Services depend on repository **interfaces**, never concrete classes. Only `app/Container.ts` knows concrete implementations.
+4. Services depend on repository **interfaces**, never concrete classes. Only `app/Container.ts` knows concrete implementations. Interfaces sit at the top of `repositories/`, and implementations sit in source subfolders (`local-storage/`, `bundled/`, `in-memory/`), which makes this rule enforceable by path.
 5. Solutions (`*.solution.json`) must never be reachable from the app bundle graph.
 
 ### 4.3 Dependency injection: the composition root
@@ -505,6 +508,7 @@ main:  all of the above → Lighthouse CI → deploy to GitHub Pages
 nightly: Playwright WebKit + mobile viewports
 ```
 
+- **Runtime:** Node 24 LTS (`.nvmrc` at the repo root; `engines.node >= 22`, the minimum dependency-cruiser supports).
 - **Tooling:** Vite + React + TypeScript (`strict`), pnpm, oxlint + Prettier, dependency-cruiser, Vitest, Playwright, `vite-plugin-pwa` (Workbox). All commands run inside `client/`, and the workflow sets `working-directory: client`.
 - **Repo:** [github.com/amide-init/ml-quest](https://github.com/amide-init/ml-quest). **Live URL:** `https://amide-init.github.io/ml-quest/`.
 - **Base path:** `vite.config.base = "/ml-quest/"` for GitHub Pages, set from an env var in the deploy workflow so local dev stays at `/`. It moves to `/` if we add a custom domain. If the repo is renamed, update this value too.

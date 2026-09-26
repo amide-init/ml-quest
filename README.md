@@ -29,6 +29,8 @@ Every level is a puzzle. You tweak the data, parameters or architecture, watch t
 The app lives in [`client/`](./client) (Vite + React + TypeScript).
 
 ```bash
+nvm use            # Node 24 (see .nvmrc)
+corepack enable    # once; provides the pinned pnpm
 cd client
 pnpm install
 pnpm dev

@@ -9,7 +9,11 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
-    "lint": "oxlint"
+    "lint": "pnpm lint:code && pnpm lint:boundaries",
+    "lint:code": "oxlint --deny-warnings",
+    "lint:boundaries": "depcruise src --config .dependency-cruiser.cjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "react": "^19.2.8",
@@ -23,14 +27,16 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "dependency-cruiser": "^18.4.0",
     "oxlint": "^1.81.0",
+    "prettier": "^3.9.9",
     "typescript": "~6.0.2",
     "vite": "^8.3.0"
   },
   "description": "ML Quest \u2014 learn machine learning by training real models to beat levels.",
   "license": "MIT",
   "engines": {
-    "node": ">=20",
+    "node": ">=22",
     "pnpm": ">=10"
   },
   "packageManager": "pnpm@10.29.2"

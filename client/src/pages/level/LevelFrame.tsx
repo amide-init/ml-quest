@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import type { ConditionFailure } from '@/models'
 import { DebriefCard, HintPanel, MissionCard, ResultPanel } from '@/components/game'
 import { useDocumentTitle, type UseLevelSession } from '@/hooks'
 import { t } from '@/i18n'
@@ -17,6 +18,8 @@ interface LevelFrameProps {
   readonly resultText: { readonly title: string; readonly body: string } | null
   /** Shown instead of the result while it isn't ready yet (e.g. a training run is replaying). */
   readonly pending?: ReactNode
+  /** Level-specific wording for the next-star goal. */
+  readonly describeNext?: (condition: ConditionFailure) => string
 }
 
 /** What every level shares: header, briefing, result, hints and debrief, driven by the session phase. */
@@ -28,6 +31,7 @@ export function LevelFrame({
   controls,
   resultText,
   pending,
+  describeNext,
 }: LevelFrameProps) {
   const { session, reward } = game.view
   const config = game.view.level
@@ -66,6 +70,7 @@ export function LevelFrame({
               body={resultText.body}
               onRetry={game.retry}
               onContinue={game.openDebrief}
+              {...(describeNext ? { describeNext } : {})}
             />
           ) : null}
 

@@ -24,7 +24,8 @@
     },
     "start": [-0.78, 0.45],
     "targetRadius": 0.06,
-    "controls": {
+    "optimizer": {
+      "id": "manual-steps",
       "learningRate": {
         "min": 0.02,
         "max": 0.3,

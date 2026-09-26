@@ -407,7 +407,8 @@ The level lifecycle is an explicit, typed reducer in `engine/session/`. `useLeve
 
 | Algorithm | Runner | Scene / snapshot | Ends when |
 |---|---|---|---|
-| `landscape-2d` (W1-L3) | `LandscapeRunner` | contour map (cached per level) / ball, trail, preview | the ball reaches the valley, leaves the map, or the steps run out |
+| `landscape-2d` + `manual-steps` optimizer (W1-L3) | `LandscapeRunner` | contour map (cached per level) / ball, trail, preview | the ball reaches the valley, leaves the map, or the steps run out |
+| `landscape-2d` + `auto-descent` optimizer (W1-L5) | `DescentRunner` | contour map / the start, then the recorded roll | every roll is judged: deepest valley or a local minimum |
 | `linear-regression` + `manual` optimizer (W1-L1, W1-L2) | `RegressionRunner` | training points only / `w`, `b`, loss, best loss, moves | the player presses Check, or the move budget runs out |
 | `linear-regression` + `gradient-descent` optimizer (W1-L4) | `GradientDescentRunner` | training points, learning-rate range, target loss / the recorded run, epoch by epoch | every Train press is judged: converged, too slow, or diverged |
 

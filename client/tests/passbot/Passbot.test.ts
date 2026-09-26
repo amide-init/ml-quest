@@ -21,8 +21,9 @@ const solutionFileSchema = z.object({
           stars: z.number().int().min(0).max(3).optional(),
           status: z.enum(['ok', 'diverged']).optional(),
         }),
+        /** Player commands, plus "retry" to start a new attempt (e.g. to test first-try stars). */
         commands: z.array(
-          z.custom<Command>(
+          z.custom<Command | { type: 'retry' }>(
             (value) => typeof value === 'object' && value !== null && 'type' in value,
           ),
         ),
@@ -73,7 +74,11 @@ describe('pass-bot', () => {
         expect(session, `level ${solution.level} from ${file} not found`).not.toBeNull()
         session?.start()
         for (const command of run.commands) {
-          session?.dispatch(command)
+          if (command.type === 'retry') {
+            session?.retry()
+          } else {
+            session?.dispatch(command)
+          }
         }
         const view = session?.getView()
         expect(view?.session.phase).toBe(run.expect.passed ? 'passed' : 'failed')

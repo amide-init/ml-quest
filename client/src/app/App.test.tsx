@@ -111,7 +111,13 @@ describe('App', () => {
   it('lists every World 1 level on the map in order', () => {
     renderApp('/map')
     const levels = screen.getAllByRole('listitem').map((item) => item.textContent ?? '')
-    const titles = ['Draw the Line', 'Feel the Loss', 'Roll Downhill', 'Too Fast, Too Slow']
+    const titles = [
+      'Draw the Line',
+      'Feel the Loss',
+      'Roll Downhill',
+      'Too Fast, Too Slow',
+      'Bumpy Terrain',
+    ]
     const positions = titles.map((title) => levels.findIndex((text) => text.includes(title)))
     expect(positions.every((position) => position >= 0)).toBe(true)
     expect(positions.toSorted((a, b) => a - b)).toEqual(positions)
@@ -194,10 +200,35 @@ describe('App', () => {
     expect(screen.getByText(/converged in 4 epochs/)).toBeInTheDocument()
   }, 15_000)
 
+  it('Bumpy Terrain: the default start gets stuck; a start picked with the keyboard reaches the deepest valley', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/5')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+
+    await user.click(screen.getByRole('button', { name: 'Roll the ball' }))
+    expect(
+      await screen.findByRole('heading', { name: 'Stuck in a local minimum' }, { timeout: 4000 }),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    const map = screen.getByRole('application')
+    // Default start (-0.8, 0.5) → (0.4, -0.2): 24 steps right, 14 steps down (0.05 each).
+    for (let i = 0; i < 24; i++) fireEvent.keyDown(map, { key: 'ArrowRight' })
+    for (let i = 0; i < 14; i++) fireEvent.keyDown(map, { key: 'ArrowDown' })
+    await user.click(screen.getByRole('button', { name: 'Roll the ball' }))
+
+    expect(
+      await screen.findByRole('heading', { name: 'Deepest valley' }, { timeout: 4000 }),
+    ).toBeInTheDocument()
+    // Second attempt: two stars, and the next star asks for a first-try success.
+    expect(screen.getByRole('img', { name: '2 of 3 stars' })).toBeInTheDocument()
+    expect(screen.getByText('Next star: get it on your first roll.')).toBeInTheDocument()
+  }, 15_000)
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(4)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(5)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

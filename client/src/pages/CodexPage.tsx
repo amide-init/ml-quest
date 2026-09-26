@@ -13,6 +13,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   'loss-function': 'level.w1-l2.title',
   'gradient-descent': 'level.w1-l3.title',
   'learning-rate': 'level.w1-l4.title',
+  'local-minimum': 'level.w1-l5.title',
 }
 
 export function CodexPage() {

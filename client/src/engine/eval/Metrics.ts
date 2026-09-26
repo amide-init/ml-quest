@@ -17,6 +17,8 @@ export interface MetricInput<TData = void> {
   readonly optimalLoss?: number
   /** For training levels: the epoch at which training converged (null = never). */
   readonly convergedAt?: number | null
+  /** Which attempt this is (1 = first try). */
+  readonly attempt?: number
 }
 
 export interface MetricDefinition {
@@ -68,6 +70,10 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   hints_used: {
     better: 'lower',
     compute: (input) => input.hintsRevealed,
+  },
+  attempt: {
+    better: 'lower',
+    compute: (input) => input.attempt ?? Number.NaN,
   },
 }
 

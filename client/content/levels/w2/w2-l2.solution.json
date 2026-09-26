@@ -1,0 +1,124 @@
+{
+  "level": "w2-l2",
+  "runs": [
+    {
+      "name": "sweet spot: slope 6, threshold 0.5",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "slope",
+          "value": 6
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "sure enough, a little cautious: slope 5",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "slope",
+          "value": 5
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "overconfident: slope 12 is sure of everything, and pays for it on new points",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "slope",
+          "value": 12
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: checks the starting curve",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: right threshold, too gentle to be sure",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "slope",
+          "value": 3
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: steep but in the wrong place, confidently wrong",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "slope",
+          "value": 12
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 1.2
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

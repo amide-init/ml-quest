@@ -16,6 +16,7 @@ export const metricIdSchema = z.enum([
   'speedup',
   'accuracy',
   'test_accuracy',
+  'min_confidence',
 ])
 export type MetricId = z.infer<typeof metricIdSchema>
 

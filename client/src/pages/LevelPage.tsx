@@ -7,6 +7,7 @@ import { CleaningLevelView } from './level/CleaningLevelView'
 import { LandscapeLevelView } from './level/LandscapeLevelView'
 import { RegressionLevelView } from './level/RegressionLevelView'
 import { ScalingLevelView } from './level/ScalingLevelView'
+import { SigmoidLevelView } from './level/SigmoidLevelView'
 import { TrainingLevelView } from './level/TrainingLevelView'
 import { NotFoundPage } from './NotFoundPage'
 import noticeStyles from './NoticePage.module.css'
@@ -100,6 +101,11 @@ function LevelScreen({ levelId, world, level }: { levelId: string; world: number
         world={world}
         level={level}
       />
+    )
+  }
+  if (scene.kind === 'sigmoid' && snapshot.kind === 'sigmoid') {
+    return (
+      <SigmoidLevelView game={game} scene={scene} snapshot={snapshot} world={world} level={level} />
     )
   }
   throw new Error(

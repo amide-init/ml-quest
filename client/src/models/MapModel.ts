@@ -107,5 +107,21 @@ export interface BoundaryScene {
   readonly view: RegressionScene['view']
 }
 
+/** A 1D confidence level (W2-L2): labelled training points along x and the slider ranges. */
+export interface SigmoidScene {
+  readonly kind: 'sigmoid'
+  readonly points: readonly { readonly x: number; readonly label: number }[]
+  readonly xMin: number
+  readonly xMax: number
+  readonly slope: { readonly min: number; readonly max: number; readonly step: number }
+  readonly threshold: { readonly min: number; readonly max: number; readonly step: number }
+}
+
 export type LevelScene =
-  LandscapeMap | RegressionScene | TrainingScene | CleaningScene | ScalingScene | BoundaryScene
+  | LandscapeMap
+  | RegressionScene
+  | TrainingScene
+  | CleaningScene
+  | ScalingScene
+  | BoundaryScene
+  | SigmoidScene

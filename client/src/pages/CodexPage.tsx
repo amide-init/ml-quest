@@ -18,6 +18,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   'feature-scaling': 'level.w1-l7.title',
   preprocessing: 'level.w1-l8.title',
   classification: 'level.w2-l1.title',
+  sigmoid: 'level.w2-l2.title',
 }
 
 export function CodexPage() {

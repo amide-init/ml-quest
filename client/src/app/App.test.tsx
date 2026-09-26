@@ -345,10 +345,41 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   })
 
+  it('Confidence: too gentle fails, too steep is overconfident, the sweet spot earns three stars', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/2/l/2')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    const threshold = screen.getByRole('slider', { name: 'Threshold' })
+    const slope = screen.getByRole('slider', { name: 'Slope' })
+
+    fireEvent.change(threshold, { target: { value: '0.5' } })
+    fireEvent.change(slope, { target: { value: '3' } })
+    await user.click(screen.getByRole('button', { name: 'Check the confidence' }))
+    expect(screen.getByRole('heading', { name: 'Not sure enough' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Threshold' }), {
+      target: { value: '0.5' },
+    })
+    fireEvent.change(screen.getByRole('slider', { name: 'Slope' }), { target: { value: '12' } })
+    await user.click(screen.getByRole('button', { name: 'Check the confidence' }))
+    expect(screen.getByRole('img', { name: '1 of 3 stars' })).toBeInTheDocument()
+    expect(screen.getByText(/less overconfident/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Threshold' }), {
+      target: { value: '0.5' },
+    })
+    fireEvent.change(screen.getByRole('slider', { name: 'Slope' }), { target: { value: '6' } })
+    await user.click(screen.getByRole('button', { name: 'Check the confidence' }))
+    expect(screen.getByRole('heading', { name: 'Confident' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(9)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(10)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

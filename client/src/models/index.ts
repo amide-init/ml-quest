@@ -39,6 +39,7 @@ export type {
   LevelConfig,
   LevelId,
   LevelOf,
+  LogisticLevelWith,
   OptimizerId,
   RegressionLevelWith,
 } from './LevelModel'
@@ -52,6 +53,7 @@ export type {
   LevelScene,
   RegressionScene,
   ScalingScene,
+  SigmoidScene,
   TrainingScene,
 } from './MapModel'
 export type { PlayReward, PlayView } from './PlayModel'
@@ -62,6 +64,7 @@ export type {
   LevelSnapshot,
   LossRun,
   ScalingSnapshot,
+  SigmoidSnapshot,
   RegressionSnapshot,
   TrainingRun,
   TrainingSnapshot,

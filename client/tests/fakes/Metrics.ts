@@ -20,6 +20,7 @@ export function makeMetrics(overrides: Partial<Metrics> = {}): Metrics {
     speedup: Number.NaN,
     accuracy: Number.NaN,
     test_accuracy: Number.NaN,
+    min_confidence: Number.NaN,
     ...overrides,
   }
 }

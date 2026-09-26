@@ -45,4 +45,39 @@ describe('computeMetrics', () => {
     expect(metrics.distance_to_global_min).toBeNaN()
     expect(metrics.steps).toBe(0)
   })
+
+  it('derives recall, precision and F1 from the confusion counts (class 1 positive)', () => {
+    const algorithm = createLandscape2D(SPEC)
+    const metrics = computeMetrics({
+      algorithm,
+      data: undefined,
+      params: vector(0, 0),
+      trace: [],
+      hintsRevealed: 0,
+      // 30 found, 10 missed, 20 false alarms: recall 0.75, precision 0.6, F1 = 60 / 90.
+      testConfusion: {
+        truePositives: 30,
+        falseNegatives: 10,
+        falsePositives: 20,
+        trueNegatives: 140,
+      },
+    })
+    expect(metrics.test_recall).toBeCloseTo(0.75, 12)
+    expect(metrics.test_precision).toBeCloseTo(0.6, 12)
+    expect(metrics.test_f1).toBeCloseTo(2 / 3, 12)
+    expect(metrics.f1).toBeNaN()
+  })
+
+  it('scores a model that finds nobody F1 = 0, not NaN', () => {
+    const metrics = computeMetrics({
+      algorithm: createLandscape2D(SPEC),
+      data: undefined,
+      params: vector(0, 0),
+      trace: [],
+      hintsRevealed: 0,
+      testConfusion: { truePositives: 0, falseNegatives: 25, falsePositives: 0, trueNegatives: 75 },
+    })
+    expect(metrics.test_f1).toBe(0)
+    expect(metrics.test_precision).toBeNaN()
+  })
 })

@@ -96,12 +96,14 @@ export type TwoBlobsSpec = z.infer<typeof twoBlobsSpecSchema>
 export const ringsSpecSchema = z.object({
   generator: z.literal('rings'),
   trainPerClass: z.number().int().min(2).max(250),
-  testPerClass: z.number().int().min(1).max(250),
+  testPerClass: z.number().int().min(1).max(400),
   /** Mean radius of the inner disc (class 1) and the outer ring (class 0). */
   innerRadius: z.number().positive(),
   outerRadius: z.number().positive(),
   /** Radial spread of each band. */
   spread: z.number().positive(),
+  /** The disc (class 1) gets this share of the ring's count (W2-L8 boss). Absent = balanced. */
+  minorityShare: z.number().gt(0).lt(1).optional(),
 })
 export type RingsSpec = z.infer<typeof ringsSpecSchema>
 

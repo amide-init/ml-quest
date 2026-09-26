@@ -20,16 +20,18 @@ interface ComplexityLevelViewProps {
 const percent = (share: number) => Math.round(share * 100)
 
 /** What the level is about, from the controls it offers: each talks about its result differently. */
-type Focus = 'overfit' | 'gap' | 'minority' | 'matrix'
+type Focus = 'overfit' | 'gap' | 'minority' | 'matrix' | 'boss'
 
 const focusOf = (scene: ComplexityScene): Focus =>
-  scene.threshold
-    ? 'matrix'
-    : scene.oversample
-      ? 'minority'
-      : scene.regularization
-        ? 'gap'
-        : 'overfit'
+  scene.threshold && scene.degree
+    ? 'boss'
+    : scene.threshold
+      ? 'matrix'
+      : scene.oversample
+        ? 'minority'
+        : scene.regularization
+          ? 'gap'
+          : 'overfit'
 
 const describeNext = (focus: Focus) => (condition: ConditionFailure) => {
   if (condition.metric === 'attempt') {
@@ -39,6 +41,9 @@ const describeNext = (focus: Focus) => (condition: ConditionFailure) => {
   }
   if (condition.metric === 'accuracy_gap') {
     return t('level.result.next.accuracy_gap')
+  }
+  if (condition.metric === 'test_f1') {
+    return t('level.result.next.test_f1', { value: condition.expected })
   }
   if (condition.metric === 'test_accuracy' && focus === 'minority') {
     return t('level.result.next.test_accuracy.minority', { value: percent(condition.expected) })
@@ -53,6 +58,7 @@ function describeResult(result: EvalResult, focus: Focus) {
     gap: percent(result.metrics.accuracy_gap),
     recall: percent(result.metrics.test_recall),
     precision: percent(result.metrics.test_precision),
+    f1: result.metrics.test_f1.toFixed(2),
   }
   switch (focus) {
     case 'overfit':
@@ -102,6 +108,13 @@ function describeResult(result: EvalResult, focus: Focus) {
       // Name the target that was missed, with the level's own number.
       const failure = result.failedConditions[0]
       const target = percent(failure?.expected ?? Number.NaN)
+      // Nobody invited: precision is undefined (0 ÷ 0), and recall is simply 0.
+      if (Number.isNaN(result.metrics.test_precision)) {
+        return {
+          title: t('level.result.matrix.recall.title'),
+          body: t('level.result.matrix.none.body', { target }),
+        }
+      }
       return failure?.metric === 'test_precision'
         ? {
             title: t('level.result.matrix.precision.title'),
@@ -112,6 +125,27 @@ function describeResult(result: EvalResult, focus: Focus) {
             body: t('level.result.matrix.recall.body', { ...values, target }),
           }
     }
+    case 'boss':
+      return result.passed
+        ? {
+            title: t('level.result.boss.passed.title'),
+            body: t('level.result.boss.passed.body', values),
+          }
+        : Number.isNaN(result.metrics.test_precision)
+          ? {
+              title: t('level.result.boss.failed.title'),
+              body: t('level.result.boss.none.body', {
+                ...values,
+                target: result.failedConditions[0]?.expected ?? Number.NaN,
+              }),
+            }
+          : {
+              title: t('level.result.boss.failed.title'),
+              body: t('level.result.boss.failed.body', {
+                ...values,
+                target: result.failedConditions[0]?.expected ?? Number.NaN,
+              }),
+            }
     default:
       return assertNever(focus)
   }
@@ -122,6 +156,7 @@ function describeResult(result: EvalResult, focus: Focus) {
  * W2-L5 Tame It: the degree is fixed and high; a regularization slider tames it instead.
  * W2-L6 Unfair Data: a straight border on imbalanced data; an oversampling slider rebalances it.
  * W2-L7 Read the Matrix: a trained model; the threshold slider moves the border and the matrix.
+ * W2-L8 Boss: Border War: every control at once, judged on hidden F1.
  */
 export function ComplexityLevelView({
   game,
@@ -137,6 +172,13 @@ export function ComplexityLevelView({
   const oversample = scene.oversample
   const threshold = scene.threshold
   const focus = focusOf(scene)
+  // The boss reuses every control, in its own words: its keys mirror the single-lesson ones.
+  const word = (key: string) =>
+    (focus === 'boss' ? `level.boss.${key}` : `level.${key}`) as MessageKey
+  // One Train button, on the last slider that changes the model (the threshold only re-reads it).
+  const trainsOn = oversample ? 'oversample' : regularization ? 'regularization' : 'degree'
+  const train = (name: string) =>
+    name === trainsOn ? { actionLabel: t('level.train'), action: { type: 'train' } as const } : {}
   const resultText = result ? describeResult(result, focus) : null
 
   return (
@@ -177,9 +219,7 @@ export function ComplexityLevelView({
               min={scene.degree.min}
               max={scene.degree.max}
               step={scene.degree.step}
-              {...(regularization || oversample
-                ? {}
-                : { actionLabel: t('level.train'), action: { type: 'train' } })}
+              {...train('degree')}
               disabled={false}
               onCommand={game.dispatch}
             />
@@ -203,8 +243,7 @@ export function ComplexityLevelView({
               min={regularization.min}
               max={regularization.max}
               step={regularization.step}
-              actionLabel={t('level.train')}
-              action={{ type: 'train' }}
+              {...train('regularization')}
               disabled={false}
               onCommand={game.dispatch}
             />
@@ -212,14 +251,13 @@ export function ComplexityLevelView({
           {oversample ? (
             <HyperparameterControls
               name="oversample"
-              label={t('level.oversample.label')}
-              hint={t('level.oversample.hint')}
+              label={t(word('oversample.label'))}
+              hint={t(word('oversample.hint'))}
               value={snapshot.oversample}
               min={oversample.min}
               max={oversample.max}
               step={oversample.step}
-              actionLabel={t('level.train')}
-              action={{ type: 'train' }}
+              {...train('oversample')}
               disabled={false}
               onCommand={game.dispatch}
             />
@@ -227,8 +265,8 @@ export function ComplexityLevelView({
           {threshold ? (
             <HyperparameterControls
               name="threshold"
-              label={t('level.matrix.threshold')}
-              hint={t('level.matrix.threshold.hint')}
+              label={t(word('matrix.threshold'))}
+              hint={t(word('matrix.threshold.hint'))}
               value={snapshot.threshold}
               min={threshold.min}
               max={threshold.max}
@@ -242,25 +280,32 @@ export function ComplexityLevelView({
               <ConfusionMatrix
                 confusion={trained.confusion}
                 caption={t('level.matrix.caption', { total: trained.total })}
-                actual={[t('level.matrix.actual.positive'), t('level.matrix.actual.negative')]}
+                actual={[t(word('matrix.actual.positive')), t(word('matrix.actual.negative'))]}
                 predicted={[
-                  t('level.matrix.predicted.positive'),
-                  t('level.matrix.predicted.negative'),
+                  t(word('matrix.predicted.positive')),
+                  t(word('matrix.predicted.negative')),
                 ]}
                 cells={{
-                  truePositives: t('level.matrix.cell.tp'),
-                  falseNegatives: t('level.matrix.cell.fn'),
-                  falsePositives: t('level.matrix.cell.fp'),
-                  trueNegatives: t('level.matrix.cell.tn'),
+                  truePositives: t(word('matrix.cell.tp')),
+                  falseNegatives: t(word('matrix.cell.fn')),
+                  falsePositives: t(word('matrix.cell.fp')),
+                  trueNegatives: t(word('matrix.cell.tn')),
                 }}
               />
               <p className={styles['stats']} aria-live="polite">
                 <span>{t('level.matrix.recall', { value: percent(trained.recall) })}</span>
-                <span>{t('level.matrix.precision', { value: percent(trained.precision) })}</span>
+                <span>
+                  {Number.isNaN(trained.precision)
+                    ? t('level.matrix.precision.none')
+                    : t('level.matrix.precision', { value: percent(trained.precision) })}
+                </span>
+                {focus === 'boss' ? (
+                  <span>{t('level.boss.f1', { value: trained.f1.toFixed(2) })}</span>
+                ) : null}
               </p>
             </>
           ) : null}
-          {focus === 'matrix' ? null : (
+          {focus === 'matrix' || focus === 'boss' ? null : (
             <p className={styles['mission']} aria-live="polite">
               {!trained
                 ? t('level.complexity.none')

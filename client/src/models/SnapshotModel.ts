@@ -157,6 +157,7 @@ export interface ComplexitySnapshot {
     /** Training-set recall and precision from those counts (NaN when undefined). */
     readonly recall: number
     readonly precision: number
+    readonly f1: number
     /** Number of polynomial terms (model inputs) at that degree. */
     readonly featureCount: number
     readonly regions: DecisionRegions

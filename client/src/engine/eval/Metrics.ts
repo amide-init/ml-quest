@@ -13,6 +13,17 @@ export const precisionOf = (confusion: Confusion | undefined) =>
     ? confusion.truePositives / (confusion.truePositives + confusion.falsePositives)
     : Number.NaN
 
+/**
+ * F1 = 2·TP / (2·TP + FP + FN), the harmonic mean of precision and recall. Written this way it is
+ * 0 (not NaN) for a model that finds nobody, which is exactly how bad that model is.
+ */
+export const f1Of = (confusion: Confusion | undefined) => {
+  if (!confusion) return Number.NaN
+  const { truePositives, falsePositives, falseNegatives } = confusion
+  const denominator = 2 * truePositives + falsePositives + falseNegatives
+  return denominator === 0 ? Number.NaN : (2 * truePositives) / denominator
+}
+
 /** Everything a metric may look at. Grows as later worlds add datasets and test splits. */
 export interface MetricInput<TData = void> {
   readonly algorithm: Algorithm<TData>
@@ -130,6 +141,15 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
     better: 'higher',
     // W2-L7: of the people the model called class 1, how many really were.
     compute: (input) => precisionOf(input.testConfusion),
+  },
+  f1: {
+    better: 'higher',
+    compute: (input) => f1Of(input.trainConfusion),
+  },
+  test_f1: {
+    better: 'higher',
+    // W2-L8 boss: one number that needs both precision and recall (their harmonic mean).
+    compute: (input) => f1Of(input.testConfusion),
   },
   test_recall: {
     better: 'higher',

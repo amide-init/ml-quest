@@ -20,6 +20,7 @@ import {
   hashSeed,
   multiLogisticRegression,
   oversampleMinority,
+  f1Of,
   precisionOf,
   recallOf,
   polynomialTerms,
@@ -73,7 +74,8 @@ const sliderOf = (control: { min: number; max: number; step: number }) => ({
  * set. High degrees memorize the training points (100%) and fail on new ones: the trap.
  * W2-L5 Tame It fixes a high degree and adds an L2 regularization slider instead; W2-L6 Unfair
  * Data adds a minority-oversampling slider on imbalanced data; W2-L7 Read the Matrix comes
- * pre-trained and only moves the decision threshold (the border shifts; no retraining).
+ * pre-trained and only moves the decision threshold (the border shifts; no retraining); the W2-L8
+ * boss offers every control at once.
  */
 export class ComplexityRunner implements LevelRunner {
   readonly scene: ComplexityScene
@@ -291,6 +293,7 @@ export class ComplexityRunner implements LevelRunner {
       confusion,
       recall: recallOf(confusion),
       precision: precisionOf(confusion),
+      f1: f1Of(confusion),
       featureCount: terms.length,
       regions: sampleRegions(this.scene.view, score),
       boundary: borderOf(this.scene.view, score),

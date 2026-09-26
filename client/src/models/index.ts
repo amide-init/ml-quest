@@ -20,3 +20,13 @@ export type {
 export type { Algorithm, Rng, StepResult, StepStatus, Vector } from './EngineModel'
 export { landscapeSpecSchema } from './LandscapeModel'
 export type { LandscapeSpec, Point } from './LandscapeModel'
+export type { Command, CommandType, HyperparameterName } from './CommandModel'
+export {
+  comparisonSchema,
+  conditionSchema,
+  metricIdSchema,
+  starRulesSchema,
+} from './ConditionModel'
+export type { Comparison, Condition, LeafCondition, MetricId, StarRules } from './ConditionModel'
+export type { ConditionFailure, EvalResult, Metrics, StarCount } from './EvalResultModel'
+export type { SessionEvent, SessionPhase, SessionState, TracedCommand } from './SessionModel'

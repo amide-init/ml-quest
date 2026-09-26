@@ -101,6 +101,11 @@ export interface LabelledPoint {
   readonly label: number
 }
 
+/** A hidden test point, revealed only after it has been judged (D6): was the model right about it? */
+export interface CheckedPoint extends LabelledPoint {
+  readonly correct: boolean
+}
+
 /** A classification level (World 2): training points only, never the hidden test set. */
 export interface BoundaryScene {
   readonly kind: 'boundary'

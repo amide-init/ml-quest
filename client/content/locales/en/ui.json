@@ -340,5 +340,7 @@
   "level.result.complexity.passed.body": "{test}% of new people right (training: {train}%).",
   "level.result.complexity.failed.title": "Overfitted",
   "level.result.complexity.failed.body": "{train}% on the training points, but only {test}% of new people; you need at least 85%.",
-  "level.result.next.attempt.overfitter": "Next star: get it on your first check."
+  "level.result.next.attempt.overfitter": "Next star: get it on your first check.",
+  "level.features.plot.checked": "Map of {count} people from two kingdoms and {total} new people checked against the trained model; {wrong} of the new people are on the wrong side.",
+  "level.complexity.checked": "Hollow marks are the {total} new people. The {wrong} crossed out landed on the wrong side of your border."
 }

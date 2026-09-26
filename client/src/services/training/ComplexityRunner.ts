@@ -1,4 +1,5 @@
 import type {
+  CheckedPoint,
   ClassificationData,
   Command,
   ComplexityScene,
@@ -64,7 +65,7 @@ export class ComplexityRunner implements LevelRunner {
       view: level.algorithm.view,
       degree,
     }
-    this.#snapshot = { kind: 'complexity', degree: degree.initial, trained: null }
+    this.#snapshot = { kind: 'complexity', degree: degree.initial, trained: null, checked: null }
   }
 
   get snapshot(): ComplexitySnapshot {
@@ -77,23 +78,29 @@ export class ComplexityRunner implements LevelRunner {
       case 'set-hyperparameter':
         if (command.name === 'degree') {
           const { min, max } = this.scene.degree
-          this.#snapshot = { ...current, degree: Math.round(clamp(command.value, min, max)) }
+          this.#snapshot = {
+            ...current,
+            degree: Math.round(clamp(command.value, min, max)),
+            checked: null,
+          }
         }
         break
       case 'train':
         this.#model = this.#train(current.degree)
-        this.#snapshot = { ...current, trained: this.#describe(this.#model) }
+        this.#snapshot = { ...current, trained: this.#describe(this.#model), checked: null }
         break
       case 'check':
         // Checking an untrained (or changed) degree trains it first, so Check always judges what you chose.
         if (!this.#model || this.#model.degree !== current.degree) {
           this.#model = this.#train(current.degree)
-          this.#snapshot = { ...current, trained: this.#describe(this.#model) }
+          this.#snapshot = { ...this.#snapshot, trained: this.#describe(this.#model) }
         }
+        // Check is always judged, so the hidden points may now be shown (D6).
+        this.#snapshot = { ...this.#snapshot, checked: this.#checkedPoints(this.#model) }
         break
       case 'reset':
         this.#model = null
-        this.#snapshot = { ...current, trained: null }
+        this.#snapshot = { ...current, trained: null, checked: null }
         break
       case 'step':
       case 'set-start':
@@ -126,6 +133,17 @@ export class ComplexityRunner implements LevelRunner {
       trainAccuracy: tabularAccuracy(model.params, train),
       testAccuracy: tabularAccuracy(model.params, test),
       featureCount: polynomialTerms(model.degree).length,
+    })
+  }
+
+  #checkedPoints(model: TrainedModel): CheckedPoint[] {
+    const { x1, x2, label } = this.#data.test
+    const prepared = this.#prepare(this.#data.test, model)
+    return Array.from(x1, (x, i) => {
+      const features = prepared.columns.map((column) => column[i] ?? 0)
+      const predicted = tabularScore(model.params, features) > 0 ? 1 : 0
+      const actual = label[i] ?? 0
+      return { x, y: x2[i] ?? 0, label: actual, correct: predicted === actual }
     })
   }
 

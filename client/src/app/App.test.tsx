@@ -401,10 +401,19 @@ describe('App', () => {
 
     await user.click(screen.getByRole('button', { name: 'Train' }))
     expect(screen.getByText('Degree 6: 20 of 20 training points right')).toBeInTheDocument()
+    // The new people stay hidden until they have been checked (D6)...
+    expect(screen.queryByText(/Hollow marks/)).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Check on new people' }))
     expect(screen.getByRole('heading', { name: 'Overfitted' })).toBeInTheDocument()
+    // ...then appear on the map, with the misclassified ones crossed out (77% of 120 right).
+    expect(
+      screen.getByText(
+        'Hollow marks are the 120 new people. The 28 crossed out landed on the wrong side of your border.',
+      ),
+    ).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(screen.queryByText(/Hollow marks/)).not.toBeInTheDocument()
     fireEvent.change(screen.getByRole('slider', { name: 'Complexity (polynomial degree)' }), {
       target: { value: '1' },
     })

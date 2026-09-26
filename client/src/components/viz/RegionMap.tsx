@@ -1,5 +1,11 @@
 import { t } from '@/i18n'
-import type { ContourLine, DecisionRegions, LabelledPoint, RegressionScene } from '@/models'
+import type {
+  CheckedPoint,
+  ContourLine,
+  DecisionRegions,
+  LabelledPoint,
+  RegressionScene,
+} from '@/models'
 import styles from './RegionMap.module.css'
 
 const WIDTH = 600
@@ -11,13 +17,15 @@ interface RegionMapProps {
   /** The trained model's decision regions, or null before training. */
   readonly regions: DecisionRegions | null
   readonly boundary: readonly ContourLine[]
+  /** Hidden test points revealed after a check (W2-L4): hollow, and crossed out when misclassified. */
+  readonly checked?: readonly CheckedPoint[] | null
 }
 
 /**
  * Labelled points over a trained classifier's decision regions and border (W2-L3). Regions are
  * drawn as horizontal runs of same-class cells, so a 60×48 grid stays a few hundred shapes.
  */
-export function RegionMap({ points, view, regions, boundary }: RegionMapProps) {
+export function RegionMap({ points, view, regions, boundary, checked = null }: RegionMapProps) {
   const { xMin, xMax, yMin, yMax } = view
   const sx = (x: number) => ((x - xMin) / (xMax - xMin)) * WIDTH
   const sy = (y: number) => HEIGHT - ((y - yMin) / (yMax - yMin)) * HEIGHT
@@ -57,7 +65,15 @@ export function RegionMap({ points, view, regions, boundary }: RegionMapProps) {
         className={styles['svg']}
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         role="img"
-        aria-label={t('level.features.plot', { count: points.length })}
+        aria-label={
+          checked
+            ? t('level.features.plot.checked', {
+                count: points.length,
+                total: checked.length,
+                wrong: checked.filter((point) => !point.correct).length,
+              })
+            : t('level.features.plot', { count: points.length })
+        }
       >
         {[0, 1].map((cls) => (
           <path
@@ -76,6 +92,29 @@ export function RegionMap({ points, view, regions, boundary }: RegionMapProps) {
             }
           />
         ))}
+        {checked?.map((point) => {
+          const x = sx(point.x)
+          const y = sy(point.y)
+          const cls = point.label === 1 ? styles['checked1'] : styles['checked0']
+          return (
+            <g
+              key={`${point.x},${point.y}`}
+              className={point.correct ? undefined : styles['wrong']}
+            >
+              {point.label === 1 ? (
+                <circle className={cls} cx={x} cy={y} r={4.5} />
+              ) : (
+                <rect className={cls} x={x - 4} y={y - 4} width={8} height={8} />
+              )}
+              {point.correct ? null : (
+                <path
+                  className={styles['cross']}
+                  d={`M${x - 6} ${y - 6}L${x + 6} ${y + 6}M${x + 6} ${y - 6}L${x - 6} ${y + 6}`}
+                />
+              )}
+            </g>
+          )
+        })}
         {points.map((point) =>
           point.label === 1 ? (
             <circle

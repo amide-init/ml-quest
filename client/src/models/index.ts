@@ -45,6 +45,7 @@ export type {
 } from './LevelModel'
 export type {
   BoundaryScene,
+  CheckedPoint,
   CleaningScene,
   ComplexityScene,
   ContourLine,

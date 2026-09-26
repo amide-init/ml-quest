@@ -59,12 +59,23 @@ export function ComplexityLevelView({
       resultText={resultText}
       describeNext={describeNext}
       visual={
-        <RegionMap
-          points={scene.points}
-          view={scene.view}
-          regions={trained?.regions ?? null}
-          boundary={trained?.boundary ?? []}
-        />
+        <div className={styles['visualStack']}>
+          <RegionMap
+            points={scene.points}
+            view={scene.view}
+            regions={trained?.regions ?? null}
+            boundary={trained?.boundary ?? []}
+            checked={snapshot.checked}
+          />
+          {snapshot.checked ? (
+            <p className={styles['mission']}>
+              {t('level.complexity.checked', {
+                total: snapshot.checked.length,
+                wrong: snapshot.checked.filter((point) => !point.correct).length,
+              })}
+            </p>
+          ) : null}
+        </div>
       }
       controls={
         <>

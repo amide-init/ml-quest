@@ -17,3 +17,6 @@ export type {
   SettingsPatch,
   ThemePreference,
 } from './SettingsModel'
+export type { Algorithm, Rng, StepResult, StepStatus, Vector } from './EngineModel'
+export { landscapeSpecSchema } from './LandscapeModel'
+export type { LandscapeSpec, Point } from './LandscapeModel'

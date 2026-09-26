@@ -1,4 +1,18 @@
 /**
- * Vector/matrix helpers and the seeded random number generator.
- * See ARCHITECTURE.md §4.
+ * Vector helpers, the seeded random number generator, and numerical gradients.
+ * See ARCHITECTURE.md §4 and §5.1.
  */
+export { createSeededRandom, hashSeed } from './SeededRandom'
+export { numericalGradient } from './NumericalGradient'
+export {
+  add,
+  component,
+  distance,
+  dot,
+  isFiniteVector,
+  norm,
+  scale,
+  subtract,
+  vector,
+  xy,
+} from './Vector'

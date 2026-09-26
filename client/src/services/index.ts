@@ -3,6 +3,7 @@
  * May import: repository interfaces, engine, models, lib, config, platform. Never React.
  * See ARCHITECTURE.md §4.
  */
+export { AudioService } from './AudioService'
 export { EvaluationService } from './EvaluationService'
 export { ExportService } from './ExportService'
 export { LevelService } from './LevelService'

@@ -1,3 +1,4 @@
+import type { AudioService } from './AudioService'
 import type { ExportService } from './ExportService'
 import type { LevelService } from './LevelService'
 import type { ProgressService } from './ProgressService'
@@ -10,4 +11,6 @@ export interface Services {
   readonly progress: ProgressService
   /** Progress export/import codes (PRD F8). */
   readonly progressCodes: ExportService
+  /** Sound effects, gated by the player's setting. */
+  readonly audio: AudioService
 }

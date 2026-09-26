@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from './App'
 import { hydrateStores } from './Bootstrap'
 import { createServices } from './Container'
@@ -40,6 +40,34 @@ const setSlider = (name: string, value: string) =>
 
 /** The map row (list item) of a level, found by its title. */
 const mapRow = (title: string) => screen.getByText(title).closest('li')!
+
+/** A stand-in for Web Audio (jsdom has none) that counts the notes the chime starts. */
+class FakeAudioContext {
+  static notes = 0
+  readonly state = 'running'
+  readonly currentTime = 0
+  readonly destination = {}
+  createOscillator() {
+    return {
+      type: 'sine',
+      frequency: { value: 0 },
+      connect: (node: unknown) => node,
+      start: () => (FakeAudioContext.notes += 1),
+      stop: () => undefined,
+    }
+  }
+  createGain() {
+    const param = {
+      setValueAtTime: () => param,
+      linearRampToValueAtTime: () => param,
+      exponentialRampToValueAtTime: () => param,
+    }
+    return { gain: param, connect: (node: unknown) => node }
+  }
+  resume() {
+    return Promise.resolve()
+  }
+}
 
 describe('App', () => {
   beforeEach(() => {
@@ -661,6 +689,25 @@ describe('App', () => {
       screen.getByText('Hints unlock after a failed attempt, or after a minute without a move.'),
     ).toBeInTheDocument()
     expect(screen.getByText('Field notes: Regularization')).toBeInTheDocument()
+  })
+
+  it('chimes on a pass only once the player turns sound on, with a preview when they do', async () => {
+    vi.stubGlobal('AudioContext', FakeAudioContext)
+    FakeAudioContext.notes = 0
+    const user = userEvent.setup()
+    await renderApp('/settings')
+    await user.click(screen.getByRole('switch', { name: /Sound effects/ }))
+    expect(FakeAudioContext.notes).toBe(2) // the preview: two notes
+
+    await user.click(screen.getByRole('link', { name: 'Map' }))
+    window.location.hash = '#/w/1/l/3'
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Roll Downhill' }),
+    ).toBeInTheDocument()
+    await playToTwoStars(user)
+    expect(screen.getByRole('heading', { name: 'In the valley' })).toBeInTheDocument()
+    expect(FakeAudioContext.notes).toBe(4) // and the chime on passing
+    vi.unstubAllGlobals()
   })
 
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {

@@ -103,6 +103,14 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
     better: 'higher',
     compute: (input) => input.testAccuracy ?? Number.NaN,
   },
+  accuracy_gap: {
+    better: 'lower',
+    // How far training and hidden accuracy are apart (W2-L5): a big gap means memorizing, not learning.
+    compute: (input) =>
+      input.trainAccuracy === undefined || input.testAccuracy === undefined
+        ? Number.NaN
+        : Math.abs(input.trainAccuracy - input.testAccuracy),
+  },
   feature_count: {
     better: 'lower',
     compute: (input) => input.featureCount ?? Number.NaN,

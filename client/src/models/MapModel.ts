@@ -136,7 +136,14 @@ export interface ComplexityScene {
   readonly kind: 'complexity'
   readonly points: readonly LabelledPoint[]
   readonly view: RegressionScene['view']
-  readonly degree: { readonly min: number; readonly max: number; readonly step: number }
+  /** The degree slider, or null when the level fixes the degree. */
+  readonly degree: { readonly min: number; readonly max: number; readonly step: number } | null
+  /** The L2 strength slider (W2-L5), or null when the level has none. */
+  readonly regularization: {
+    readonly min: number
+    readonly max: number
+    readonly step: number
+  } | null
 }
 
 export type LevelScene =

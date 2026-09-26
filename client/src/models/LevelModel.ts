@@ -147,7 +147,10 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
          * checks when happy; only Check reveals hidden accuracy (W2-L4 The Overfitter).
          */
         id: z.literal('complexity'),
-        degree: rangeControlSchema,
+        /** A slider (W2-L4), or a fixed degree when the level is about something else (W2-L5). */
+        degree: z.union([rangeControlSchema, z.number().int().min(1).max(8)]),
+        /** L2 strength slider (W2-L5 Tame It). Absent = no regularization. */
+        regularization: rangeControlSchema.optional(),
         learningRate: z.number().positive(),
         maxEpochs: z.number().int().positive().max(5000),
       }),

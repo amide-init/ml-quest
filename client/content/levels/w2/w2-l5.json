@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "w2-l5",
+  "world": 2,
+  "level": 5,
+  "seed": 211,
+  "algorithm": {
+    "id": "logistic-regression",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 12,
+      "testPerClass": 60,
+      "centers": [
+        [-0.7, -0.4],
+        [0.7, 0.4]
+      ],
+      "spread": 0.75
+    },
+    "view": {
+      "xMin": -3.25,
+      "xMax": 3.25,
+      "yMin": -2.6,
+      "yMax": 2.6
+    },
+    "optimizer": {
+      "id": "complexity",
+      "degree": 6,
+      "regularization": {
+        "min": 0,
+        "max": 0.3,
+        "step": 0.01,
+        "initial": 0
+      },
+      "learningRate": 0.5,
+      "maxEpochs": 2000
+    }
+  },
+  "stars": {
+    "pass": {
+      "all": [
+        {
+          "metric": "accuracy_gap",
+          "op": "<",
+          "value": 0.05
+        },
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.85
+        }
+      ]
+    },
+    "two": {
+      "metric": "accuracy_gap",
+      "op": "<=",
+      "value": 0.01
+    },
+    "three": {
+      "all": [
+        {
+          "metric": "accuracy_gap",
+          "op": "<=",
+          "value": 0.01
+        },
+        {
+          "metric": "attempt",
+          "op": "<=",
+          "value": 2
+        }
+      ]
+    }
+  },
+  "text": {
+    "title": "level.w2-l5.title",
+    "mission": "level.w2-l5.mission",
+    "hints": ["level.w2-l5.hint1", "level.w2-l5.hint2", "level.w2-l5.hint3"],
+    "debrief": "level.w2-l5.debrief",
+    "concept": "regularization"
+  },
+  "authors": ["amide-init"]
+}

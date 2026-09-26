@@ -1,0 +1,142 @@
+{
+  "level": "w2-l5",
+  "runs": [
+    {
+      "name": "finds the sweet spot: training and new people agree exactly",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.02
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "sweet spot on the second check",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.1
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.01
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "sweet spot, but only on the third check",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.1
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.2
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.02
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "closes the gap under 5% without the perfect match",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.08
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: no regularization, the model memorizes (96% vs 82%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: too strong, it underfits and the gap reopens",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "regularization",
+          "value": 0.3
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

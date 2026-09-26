@@ -9,8 +9,9 @@
   --color-ink: #15314a;
   --color-ink-muted: #4a6173;
   --color-line: #c3d3cc;
-  --color-contour: #6f9a8a;
-  --color-ridge: #c7a36b;
+  /* Class colours double as chart marks: both keep at least 3:1 on paper and panels (WCAG 1.4.11). */
+  --color-contour: #628b7c;
+  --color-ridge: #a37b3e;
   --color-beacon: #f07d1a;
   --color-on-beacon: #15314a;
   --color-focus: #15314a;

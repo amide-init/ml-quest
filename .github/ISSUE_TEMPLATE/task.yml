@@ -1,0 +1,35 @@
+name: Task
+description: One reviewable change, usually one pull request (maintainers).
+labels: ['type: task']
+body:
+  - type: input
+    id: story
+    attributes:
+      label: Part of
+      description: The parent story, e.g. "#14".
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Why this is needed.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What changes, and which layers (models, engine, services, hooks, pages, components, content).
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References

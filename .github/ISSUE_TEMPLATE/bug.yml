@@ -1,0 +1,34 @@
+name: Bug report
+description: Something in the game doesn't work as it should.
+labels: ['bug']
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, and what you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The page or level, e.g. "Level 2-5 Tame It", or the URL.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser
+      description: e.g. "Pixel 7, Chrome 140" or "MacBook, Safari 19".
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshot or anything else
+      description: Paste a screenshot if you can. Your progress code (Settings) helps us reproduce level bugs.

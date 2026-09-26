@@ -5,6 +5,8 @@ export interface LevelSummary {
   readonly level: number
   /** Locale key of the title. */
   readonly title: string
+  /** The concept this level teaches (its Codex card id). */
+  readonly concept: string
 }
 
 /** Where a level stands for the player (PRD F1): locked, open to play, or passed. */

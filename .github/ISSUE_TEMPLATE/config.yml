@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Play ML Quest
+    url: https://amide-init.github.io/ml-quest/
+    about: The live game. Please check a bug still happens there before reporting it.

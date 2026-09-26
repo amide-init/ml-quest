@@ -46,7 +46,7 @@ These rules apply to every change: code, level content, docs. They're here so th
 
 ## 3. Level content rules
 
-1. **MUST** — Level files are **JSON data only**: `content/levels/<world>/<id>.json` with a `"$schema"` and `"schemaVersion"`. They contain no code, functions or expressions beyond the condition DSL.
+1. **MUST** — Level files are **JSON data only**: `content/levels/<world>/<id>.json` with a `"schemaVersion"`, validated by the Zod schema in `models/LevelModel.ts`. They contain no code, functions or expressions beyond the condition DSL.
 2. **MUST** — Every level has a `*.solution.json` that the pass-bot replays to reach at least 1 star. Levels with a misconception trap also ship an **anti-solution** that must *not* reach 3 stars.
 3. **MUST** — All player-facing text is a locale key (`w1.l4.mission`), never a literal string in the level file.
 4. **MUST** — Each level has: mission (≤ 25 words, readable in about 10 s), 3 hint tiers (nudge → concept → near-solution), a 2–3 sentence debrief that names the ML term, and a linked concept card.
@@ -103,9 +103,9 @@ These rules apply to every change: code, level content, docs. They're here so th
 
 ## 9. Git & PRs
 
-1. **MUST** — Branch from `main`. `main` is always deployable, because every push deploys.
+1. **MUST** — `main` is always deployable, because every push deploys. Contributors branch from `main` and open a pull request. The maintainer may push small changes straight to `main`, only after the full local suite below passes.
 2. **MUST** — Use Conventional Commits: `feat(engine): …`, `feat(services): …`, `fix(level/w1-l4): …`, `content(w2): …`, `docs: …`, `chore: …`.
-3. **MUST** — CI is green before merge: typecheck, lint, unit, level validation, pass-bot, build, budgets, Playwright.
+3. **MUST** — CI is green before merge: typecheck, lint (incl. layer rules), format, tests (incl. the accessibility audit of every level), level validation, pass-bot, build, bundle budgets. (Playwright end-to-end tests are planned.)
 4. **SHOULD** — Keep PRs small and single-purpose. A new level is one PR: config, solution, strings and concept card.
 5. **SHOULD** — Update ARCHITECTURE.md or an ADR in the same PR that changes the architecture.
 

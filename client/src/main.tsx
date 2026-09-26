@@ -13,7 +13,12 @@ if (!rootElement) {
   throw new Error('Root element #root not found in index.html')
 }
 
-const services = createServices()
+// Development opens every level so a new one can be tried straight away; players get the
+// one-by-one unlocks (PRD F1).
+const services = createServices({
+  storage: 'browser',
+  unlocks: import.meta.env.DEV ? 'all' : 'sequential',
+})
 hydrateStores(services)
 
 createRoot(rootElement).render(

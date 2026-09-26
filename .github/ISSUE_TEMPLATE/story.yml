@@ -1,0 +1,24 @@
+name: Story
+description: A user-visible outcome, split into task sub-issues (maintainers).
+title: 'Story: '
+labels: ['type: story']
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What players (or contributors) can do when this is done, and why it matters.
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: The task issues, added as sub-issues. Each task is one pull request.
+      value: |
+        - [ ] #
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: PRD requirement (F-id or level), ARCHITECTURE and RULES sections.

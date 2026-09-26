@@ -47,7 +47,13 @@ export class LevelService {
   listLevels(): readonly LevelSummary[] {
     return this.#levels
       .list()
-      .map(({ id, world, level, text }) => ({ id, world, level, title: text.title }))
+      .map(({ id, world, level, text }) => ({
+        id,
+        world,
+        level,
+        title: text.title,
+        concept: text.concept,
+      }))
       .toSorted((a, b) => a.world - b.world || a.level - b.level)
   }
 

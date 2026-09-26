@@ -8,7 +8,7 @@ Instructions for AI coding agents (Claude Code, Codex, Cursor, Copilot, etc.) wo
 
 **Repo:** https://github.com/amide-init/ml-quest (default branch `main`, every push deploys to https://amide-init.github.io/ml-quest/, Vite `base` = `/ml-quest/`).
 
-**Status:** Phase 0 – Prototype. The foundation is in place: Vite app in `client/`, the layered folder skeleton, strict TypeScript, lint and layer-boundary checks, and Vitest. The app shell and the first playable level, W1-L3 "Roll Downhill", are built (engine, evaluator, session, pass-bot). **Copy the Settings feature when adding a feature** (ARCHITECTURE §4.5).
+**Status:** v1 is complete and live: all 16 levels of Worlds 1–2, level unlocking, progress codes, field notes, sound, offline play (PWA), and accessibility checks on every level. Next are the v2 worlds (see PRD → Roadmap). **Copy the Settings feature when adding a feature** (ARCHITECTURE §4.5); for a new level, follow [docs/CREATE_A_LEVEL.md](./docs/CREATE_A_LEVEL.md).
 
 ## Read these first
 
@@ -113,12 +113,11 @@ Dependencies only point down: `pages → components/hooks → stores → service
 Follow these in order. Each step names the layer it belongs to.
 
 ### Add a new level
-1. `content/levels/<world>/<id>.json`: config with `$schema`, `schemaVersion`, seed, dataset, algorithm, widgets, conditions, hint and debrief keys.
+1. `content/levels/<world>/<id>.json`: config with `schemaVersion`, seed, algorithm (dataset, view, optimizer), star conditions and text keys. The full walkthrough is [docs/CREATE_A_LEVEL.md](./docs/CREATE_A_LEVEL.md).
 2. `content/levels/<world>/<id>.solution.json`: a scripted solution that reaches at least 1 star (ideally also a 3-star one). Add an anti-solution if the level has a misconception trap.
-3. `content/locales/en/levels.json`: mission, 3 hints, debrief and the three field notes (`idea`, `controls`, `reading`: explain the concept and the controls, never the answer). `ui.json`: the title and the concept's term and definition.
-4. `content/concepts/<concept>.md`: the codex card, if the concept is new.
-5. Run `pnpm levels:validate && pnpm test:passbot`.
-6. **Don't touch `client/src/`.** If you have to, you're missing a registry entry (see below).
+3. `content/locales/en/levels.json`: mission, 3 hints, debrief and the three field notes (`idea`, `controls`, `reading`: explain the concept and the controls, never the answer). `ui.json`: the title, and for a new concept its Codex card (`concept.<id>.term`, `concept.<id>.definition`). The Codex finds the level that teaches a concept from the level data.
+4. Run `pnpm levels:validate && pnpm test:passbot`, then play it (`pnpm dev` opens every level).
+5. **Don't touch `client/src/`.** If you have to, the level needs a new mechanic (a runner, scene and view): propose it first.
 
 ### Add a metric, dataset generator or ML algorithm
 1. Put the implementation in `engine/eval/metrics/`, `engine/data/generators/` or `engine/ml/algorithms/`, and register it in that folder's registry.

@@ -1,0 +1,51 @@
+name: Level proposal
+description: Pitch a new level. Levels are data (JSON), so no coding is needed to build most of them.
+labels: ['area: content', 'enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for pitching a level! Read [Create a level](https://github.com/amide-init/ml-quest/blob/main/docs/CREATE_A_LEVEL.md) first: it lists the mechanics the game already supports.
+  - type: input
+    id: concept
+    attributes:
+      label: The one idea it teaches
+      description: One ML concept per level (bosses combine earlier ones), e.g. "early stopping".
+    validations:
+      required: true
+  - type: input
+    id: world
+    attributes:
+      label: World
+      description: Which world it belongs to, and roughly where in it.
+    validations:
+      required: true
+  - type: textarea
+    id: action
+    attributes:
+      label: What the player does
+      description: The controls and the goal, in game language ("get the ball into the valley").
+    validations:
+      required: true
+  - type: textarea
+    id: pass
+    attributes:
+      label: How it's judged
+      description: The pass condition and the star ladder (for example "hidden accuracy at least 85%; 3 stars on the first check").
+    validations:
+      required: true
+  - type: textarea
+    id: trap
+    attributes:
+      label: The trap (optional)
+      description: The obvious move that fails, and what the player learns from it.
+  - type: dropdown
+    id: mechanic
+    attributes:
+      label: Can it use an existing mechanic?
+      options:
+        - Yes, it reuses an existing mechanic (data only)
+        - It needs a new mechanic (code)
+        - Not sure
+    validations:
+      required: true

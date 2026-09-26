@@ -1,4 +1,5 @@
 import type { PolynomialFeature } from './DatasetModel'
+import type { Confusion } from './EngineModel'
 import type { Point } from './LandscapeModel'
 import type { CheckedPoint, ContourLine } from './MapModel'
 
@@ -140,6 +141,8 @@ export interface ComplexitySnapshot {
   readonly regularization: number
   /** How many times each minority (class 1) training point counts (1 = not rebalanced). */
   readonly oversample: number
+  /** Decision threshold on p(class 1) (0.5 unless the level has a threshold slider, W2-L7). */
+  readonly threshold: number
   readonly trained: {
     readonly degree: number
     readonly regularization: number
@@ -149,6 +152,11 @@ export interface ComplexitySnapshot {
       { readonly correct: number; readonly total: number },
       { readonly correct: number; readonly total: number },
     ]
+    /** Training-set confusion counts at the current threshold (the W2-L7 matrix). */
+    readonly confusion: Confusion
+    /** Training-set recall and precision from those counts (NaN when undefined). */
+    readonly recall: number
+    readonly precision: number
     /** Number of polynomial terms (model inputs) at that degree. */
     readonly featureCount: number
     readonly regions: DecisionRegions

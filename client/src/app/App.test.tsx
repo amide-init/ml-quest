@@ -61,11 +61,11 @@ describe('App', () => {
   })
 
   it('shows the placeholder for a level that is not built yet', () => {
-    renderApp('/w/2/l/7')
+    renderApp('/w/2/l/8')
     expect(
       screen.getByRole('heading', { level: 1, name: 'This level is being built' }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('Level 2-7 – ML Quest')
+    expect(document.title).toBe('Level 2-8 – ML Quest')
   })
 
   it('plays Roll Downhill from briefing to debrief', async () => {
@@ -483,10 +483,42 @@ describe('App', () => {
     ).toBeInTheDocument()
   }, 30_000)
 
+  it('Read the Matrix: the threshold trades recall for precision, read off the matrix', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/2/l/7')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    // The model comes trained: the matrix is there before any button is pressed.
+    expect(
+      screen.getByRole('table', { name: 'The 300 training people at this threshold' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Train' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'Elders left out' })).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Only 67% of the new hill folk were invited; you need 75%. (Precision: 78%.)',
+      ),
+    ).toBeInTheDocument()
+
+    const threshold = 'Invite when the model is at least this sure'
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: threshold }), { target: { value: '0.15' } })
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'Riders wasted' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: threshold }), { target: { value: '0.3' } })
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'Council called' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '1 of 3 stars' })).toBeInTheDocument()
+    expect(screen.getByText('Next star: get it within 2 checks.')).toBeInTheDocument()
+  }, 30_000)
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(14)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(15)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

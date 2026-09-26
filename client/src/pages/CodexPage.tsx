@@ -23,6 +23,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   overfitting: 'level.w2-l4.title',
   regularization: 'level.w2-l5.title',
   'class-imbalance': 'level.w2-l6.title',
+  'precision-recall': 'level.w2-l7.title',
 }
 
 export function CodexPage() {

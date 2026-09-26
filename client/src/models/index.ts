@@ -17,7 +17,7 @@ export type {
   SettingsPatch,
   ThemePreference,
 } from './SettingsModel'
-export type { Algorithm, Rng, StepResult, StepStatus, Vector } from './EngineModel'
+export type { Algorithm, Confusion, Rng, StepResult, StepStatus, Vector } from './EngineModel'
 export { landscapeSpecSchema, pointSchema } from './LandscapeModel'
 export type { LandscapeSpec, Point } from './LandscapeModel'
 export type { Command, CommandType, HyperparameterName } from './CommandModel'

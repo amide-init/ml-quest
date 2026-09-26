@@ -1,4 +1,4 @@
-import type { Algorithm, TabularData, Vector } from '@/models'
+import type { Algorithm, Confusion, TabularData, Vector } from '@/models'
 import { sigmoid } from './LogisticRegression'
 
 export const MULTI_LOGISTIC_REGRESSION_ID = 'multi-logistic-regression'
@@ -65,21 +65,14 @@ export function tabularScore(params: Vector, features: readonly number[]): numbe
   return value
 }
 
-/** Confusion counts with class 1 as "positive" (the class the level asks you to find). */
-export interface Confusion {
-  readonly truePositives: number
-  readonly falsePositives: number
-  readonly trueNegatives: number
-  readonly falseNegatives: number
-}
-
-export function tabularConfusion(params: Vector, data: TabularData): Confusion {
+/** `cutoff` is the score above which a point is called class 1 (0 = probability 0.5). */
+export function tabularConfusion(params: Vector, data: TabularData, cutoff = 0): Confusion {
   let truePositives = 0
   let falsePositives = 0
   let trueNegatives = 0
   let falseNegatives = 0
   for (let row = 0; row < data.y.length; row++) {
-    const predicted = score(params, data, row) > 0
+    const predicted = score(params, data, row) > cutoff
     const actual = data.y[row] === 1
     if (predicted && actual) truePositives++
     else if (predicted) falsePositives++

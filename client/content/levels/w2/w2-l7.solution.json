@@ -1,0 +1,133 @@
+{
+  "level": "w2-l7",
+  "runs": [
+    {
+      "name": "reads the matrix and invites more widely (threshold 0.3)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.4
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.3
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "the other edge of the window works too (0.35)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.35
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "checks the default first, then lowers the threshold",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.25
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "swings too far, then too little, then lands",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.1
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.45
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.35
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): the default 0.5 misses a third of the hill folk",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: invite nearly everyone, and precision collapses",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "threshold",
+          "value": 0.15
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

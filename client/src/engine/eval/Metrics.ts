@@ -1,11 +1,16 @@
-import type { Algorithm, MetricId, Metrics, TracedCommand, Vector } from '@/models'
+import type { Algorithm, Confusion, MetricId, Metrics, TracedCommand, Vector } from '@/models'
 import { distance } from '@/engine/math'
-import type { Confusion } from '@/engine/ml/algorithms/MultiLogisticRegression'
 
 /** Share of class-1 points found (true positives over all real positives). NaN without positives. */
-const recallOf = (confusion: Confusion | undefined) =>
+export const recallOf = (confusion: Confusion | undefined) =>
   confusion && confusion.truePositives + confusion.falseNegatives > 0
     ? confusion.truePositives / (confusion.truePositives + confusion.falseNegatives)
+    : Number.NaN
+
+/** Share of class-1 calls that were right (true positives over all positive calls). NaN if none. */
+export const precisionOf = (confusion: Confusion | undefined) =>
+  confusion && confusion.truePositives + confusion.falsePositives > 0
+    ? confusion.truePositives / (confusion.truePositives + confusion.falsePositives)
     : Number.NaN
 
 /** Everything a metric may look at. Grows as later worlds add datasets and test splits. */
@@ -116,6 +121,15 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   recall: {
     better: 'higher',
     compute: (input) => recallOf(input.trainConfusion),
+  },
+  precision: {
+    better: 'higher',
+    compute: (input) => precisionOf(input.trainConfusion),
+  },
+  test_precision: {
+    better: 'higher',
+    // W2-L7: of the people the model called class 1, how many really were.
+    compute: (input) => precisionOf(input.testConfusion),
   },
   test_recall: {
     better: 'higher',

@@ -1,6 +1,7 @@
 import type {
   CheckedPoint,
   ClassificationData,
+  Confusion,
   Command,
   ComplexityScene,
   ComplexitySnapshot,
@@ -19,8 +20,9 @@ import {
   hashSeed,
   multiLogisticRegression,
   oversampleMinority,
+  precisionOf,
+  recallOf,
   polynomialTerms,
-  tabularAccuracy,
   tabularConfusion,
   tabularScore,
   termValue,
@@ -41,6 +43,16 @@ interface Settings {
   readonly oversample: number
 }
 
+/** The score above which a point is called class 1, for a threshold on p(class 1): its logit. */
+const cutoffOf = (threshold: number) => Math.log(threshold / (1 - threshold))
+
+const accuracyOf = (confusion: Confusion) =>
+  (confusion.truePositives + confusion.trueNegatives) /
+  (confusion.truePositives +
+    confusion.trueNegatives +
+    confusion.falsePositives +
+    confusion.falseNegatives)
+
 const sameSettings = (a: Settings, b: Settings) =>
   a.degree === b.degree && a.regularization === b.regularization && a.oversample === b.oversample
 
@@ -60,7 +72,8 @@ const sliderOf = (control: { min: number; max: number; step: number }) => ({
  * Train fits the model and shows the border with TRAINING accuracy only; Check judges on the hidden
  * set. High degrees memorize the training points (100%) and fail on new ones: the trap.
  * W2-L5 Tame It fixes a high degree and adds an L2 regularization slider instead; W2-L6 Unfair
- * Data adds a minority-oversampling slider on imbalanced data.
+ * Data adds a minority-oversampling slider on imbalanced data; W2-L7 Read the Matrix comes
+ * pre-trained and only moves the decision threshold (the border shifts; no retraining).
  */
 export class ComplexityRunner implements LevelRunner {
   readonly scene: ComplexityScene
@@ -78,7 +91,7 @@ export class ComplexityRunner implements LevelRunner {
       test: createSeededRandom(hashSeed(level.id, level.seed, 'test')),
     })
     const { x1, x2, label } = this.#data.train
-    const { degree, regularization, oversample } = level.algorithm.optimizer
+    const { degree, regularization, oversample, threshold } = level.algorithm.optimizer
     this.scene = {
       kind: 'complexity',
       points: Array.from(x1, (x, i) => ({ x, y: x2[i] ?? 0, label: label[i] ?? 0 })),
@@ -86,14 +99,21 @@ export class ComplexityRunner implements LevelRunner {
       degree: typeof degree === 'number' ? null : sliderOf(degree),
       regularization: regularization ? sliderOf(regularization) : null,
       oversample: oversample ? sliderOf(oversample) : null,
+      threshold: threshold ? sliderOf(threshold) : null,
     }
     this.#snapshot = {
       kind: 'complexity',
       degree: typeof degree === 'number' ? degree : degree.initial,
       regularization: regularization?.initial ?? 0,
       oversample: oversample?.initial ?? 1,
+      threshold: threshold?.initial ?? 0.5,
       trained: null,
       checked: null,
+    }
+    if (threshold) {
+      // Read the Matrix is about the threshold alone: the model is ready from the start.
+      this.#model = this.#train(this.#snapshot)
+      this.#snapshot = { ...this.#snapshot, trained: this.#describe(this.#model) }
     }
   }
 
@@ -119,6 +139,14 @@ export class ComplexityRunner implements LevelRunner {
             ...current,
             regularization: clamp(command.value, min, max),
             checked: null,
+          }
+        }
+        if (command.name === 'threshold' && this.scene.threshold) {
+          const { min, max } = this.scene.threshold
+          this.#snapshot = { ...current, threshold: clamp(command.value, min, max), checked: null }
+          // Moving the threshold re-reads the same model: new border and matrix, no retraining.
+          if (this.#model) {
+            this.#snapshot = { ...this.#snapshot, trained: this.#describe(this.#model) }
           }
         }
         if (command.name === 'oversample' && this.scene.oversample) {
@@ -168,6 +196,9 @@ export class ComplexityRunner implements LevelRunner {
     }
     const train = this.#prepare(this.#data.train, model)
     const test = this.#prepare(this.#data.test, model)
+    const cutoff = cutoffOf(this.#snapshot.threshold)
+    const trainConfusion = tabularConfusion(model.params, train, cutoff)
+    const testConfusion = tabularConfusion(model.params, test, cutoff)
     return this.#evaluation.evaluate(this.#level, {
       algorithm: multiLogisticRegression,
       data: train,
@@ -175,27 +206,27 @@ export class ComplexityRunner implements LevelRunner {
       trace: session.trace,
       hintsRevealed: session.hintsRevealed,
       attempt: session.attempt,
-      trainAccuracy: tabularAccuracy(model.params, train),
-      testAccuracy: tabularAccuracy(model.params, test),
+      trainAccuracy: accuracyOf(trainConfusion),
+      testAccuracy: accuracyOf(testConfusion),
       featureCount: polynomialTerms(model.degree).length,
-      trainConfusion: tabularConfusion(model.params, train),
-      testConfusion: tabularConfusion(model.params, test),
+      trainConfusion,
+      testConfusion,
     })
   }
 
   #checkedPoints(model: TrainedModel): CheckedPoint[] {
     const { x1, x2, label } = this.#data.test
     const prepared = this.#prepare(this.#data.test, model)
+    const cutoff = cutoffOf(this.#snapshot.threshold)
     return Array.from(x1, (x, i) => {
       const features = prepared.columns.map((column) => column[i] ?? 0)
-      const predicted = tabularScore(model.params, features) > 0 ? 1 : 0
+      const predicted = tabularScore(model.params, features) > cutoff ? 1 : 0
       const actual = label[i] ?? 0
       return { x, y: x2[i] ?? 0, label: actual, correct: predicted === actual }
     })
   }
 
-  #perClass(model: TrainedModel): NonNullable<ComplexitySnapshot['trained']>['perClass'] {
-    const confusion = tabularConfusion(model.params, this.#prepare(this.#data.train, model))
+  #perClass(confusion: Confusion): NonNullable<ComplexitySnapshot['trained']>['perClass'] {
     return [
       {
         correct: confusion.trueNegatives,
@@ -238,7 +269,11 @@ export class ComplexityRunner implements LevelRunner {
 
   #describe(model: TrainedModel): NonNullable<ComplexitySnapshot['trained']> {
     const terms = polynomialTerms(model.degree)
+    const cutoff = cutoffOf(this.#snapshot.threshold)
+    const confusion = tabularConfusion(model.params, this.#prepare(this.#data.train, model), cutoff)
+    // Shifted by the cutoff, so the regions and the border (score 0) follow the threshold.
     const score = (x: number, y: number) =>
+      -cutoff +
       tabularScore(
         model.params,
         terms.map(
@@ -252,13 +287,14 @@ export class ComplexityRunner implements LevelRunner {
       degree: model.degree,
       regularization: model.regularization,
       oversample: model.oversample,
-      perClass: this.#perClass(model),
+      perClass: this.#perClass(confusion),
+      confusion,
+      recall: recallOf(confusion),
+      precision: precisionOf(confusion),
       featureCount: terms.length,
       regions: sampleRegions(this.scene.view, score),
       boundary: borderOf(this.scene.view, score),
-      correct: Math.round(
-        tabularAccuracy(model.params, this.#prepare(this.#data.train, model)) * total,
-      ),
+      correct: confusion.truePositives + confusion.trueNegatives,
       total,
     }
   }

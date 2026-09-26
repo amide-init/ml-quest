@@ -153,6 +153,15 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         regularization: rangeControlSchema.optional(),
         /** Minority oversampling slider, ×1 upward (W2-L6 Unfair Data). Absent = no rebalancing. */
         oversample: rangeControlSchema.optional(),
+        /**
+         * Decision-threshold slider on p(class 1) (W2-L7 Read the Matrix). When present the model
+         * comes pre-trained and the player only moves the threshold. Absent = 0.5.
+         */
+        threshold: rangeControlSchema
+          .refine((control) => control.min > 0 && control.max < 1, {
+            message: 'A probability threshold must stay strictly between 0 and 1',
+          })
+          .optional(),
         learningRate: z.number().positive(),
         maxEpochs: z.number().int().positive().max(5000),
       }),

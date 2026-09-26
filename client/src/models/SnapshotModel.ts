@@ -138,9 +138,17 @@ export interface ComplexitySnapshot {
   readonly degree: number
   /** L2 strength (0 when the level has no regularization slider). */
   readonly regularization: number
+  /** How many times each minority (class 1) training point counts (1 = not rebalanced). */
+  readonly oversample: number
   readonly trained: {
     readonly degree: number
     readonly regularization: number
+    readonly oversample: number
+    /** Training points right per class; class 1 is the minority the level is about (W2-L6). */
+    readonly perClass: readonly [
+      { readonly correct: number; readonly total: number },
+      { readonly correct: number; readonly total: number },
+    ]
     /** Number of polynomial terms (model inputs) at that degree. */
     readonly featureCount: number
     readonly regions: DecisionRegions

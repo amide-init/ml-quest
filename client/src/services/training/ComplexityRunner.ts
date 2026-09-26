@@ -18,8 +18,10 @@ import {
   generateClassification,
   hashSeed,
   multiLogisticRegression,
+  oversampleMinority,
   polynomialTerms,
   tabularAccuracy,
+  tabularConfusion,
   tabularScore,
   termValue,
   trainGradientDescent,
@@ -32,9 +34,17 @@ import { borderOf, sampleRegions } from './Regions'
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
 
-interface TrainedModel {
+/** What the player controls; a trained model remembers them so Check can tell if it is stale. */
+interface Settings {
   readonly degree: number
   readonly regularization: number
+  readonly oversample: number
+}
+
+const sameSettings = (a: Settings, b: Settings) =>
+  a.degree === b.degree && a.regularization === b.regularization && a.oversample === b.oversample
+
+interface TrainedModel extends Settings {
   readonly params: Vector
   readonly scaling: Standardization
 }
@@ -49,7 +59,8 @@ const sliderOf = (control: { min: number; max: number; step: number }) => ({
  * W2-L4 The Overfitter: a small, noisy dataset and a model-complexity slider (polynomial degree).
  * Train fits the model and shows the border with TRAINING accuracy only; Check judges on the hidden
  * set. High degrees memorize the training points (100%) and fail on new ones: the trap.
- * W2-L5 Tame It fixes a high degree and adds an L2 regularization slider instead.
+ * W2-L5 Tame It fixes a high degree and adds an L2 regularization slider instead; W2-L6 Unfair
+ * Data adds a minority-oversampling slider on imbalanced data.
  */
 export class ComplexityRunner implements LevelRunner {
   readonly scene: ComplexityScene
@@ -67,18 +78,20 @@ export class ComplexityRunner implements LevelRunner {
       test: createSeededRandom(hashSeed(level.id, level.seed, 'test')),
     })
     const { x1, x2, label } = this.#data.train
-    const { degree, regularization } = level.algorithm.optimizer
+    const { degree, regularization, oversample } = level.algorithm.optimizer
     this.scene = {
       kind: 'complexity',
       points: Array.from(x1, (x, i) => ({ x, y: x2[i] ?? 0, label: label[i] ?? 0 })),
       view: level.algorithm.view,
       degree: typeof degree === 'number' ? null : sliderOf(degree),
       regularization: regularization ? sliderOf(regularization) : null,
+      oversample: oversample ? sliderOf(oversample) : null,
     }
     this.#snapshot = {
       kind: 'complexity',
       degree: typeof degree === 'number' ? degree : degree.initial,
       regularization: regularization?.initial ?? 0,
+      oversample: oversample?.initial ?? 1,
       trained: null,
       checked: null,
     }
@@ -108,19 +121,23 @@ export class ComplexityRunner implements LevelRunner {
             checked: null,
           }
         }
+        if (command.name === 'oversample' && this.scene.oversample) {
+          const { min, max } = this.scene.oversample
+          this.#snapshot = {
+            ...current,
+            oversample: Math.round(clamp(command.value, min, max)),
+            checked: null,
+          }
+        }
         break
       case 'train':
-        this.#model = this.#train(current.degree, current.regularization)
+        this.#model = this.#train(current)
         this.#snapshot = { ...current, trained: this.#describe(this.#model), checked: null }
         break
       case 'check':
-        // Checking an untrained (or changed) degree trains it first, so Check always judges what you chose.
-        if (
-          !this.#model ||
-          this.#model.degree !== current.degree ||
-          this.#model.regularization !== current.regularization
-        ) {
-          this.#model = this.#train(current.degree, current.regularization)
+        // Checking untrained (or changed) settings trains them first, so Check always judges what you chose.
+        if (!this.#model || !sameSettings(this.#model, current)) {
+          this.#model = this.#train(current)
           this.#snapshot = { ...this.#snapshot, trained: this.#describe(this.#model) }
         }
         // Check is always judged, so the hidden points may now be shown (D6).
@@ -161,6 +178,8 @@ export class ComplexityRunner implements LevelRunner {
       trainAccuracy: tabularAccuracy(model.params, train),
       testAccuracy: tabularAccuracy(model.params, test),
       featureCount: polynomialTerms(model.degree).length,
+      trainConfusion: tabularConfusion(model.params, train),
+      testConfusion: tabularConfusion(model.params, test),
     })
   }
 
@@ -175,14 +194,29 @@ export class ComplexityRunner implements LevelRunner {
     })
   }
 
+  #perClass(model: TrainedModel): NonNullable<ComplexitySnapshot['trained']>['perClass'] {
+    const confusion = tabularConfusion(model.params, this.#prepare(this.#data.train, model))
+    return [
+      {
+        correct: confusion.trueNegatives,
+        total: confusion.trueNegatives + confusion.falsePositives,
+      },
+      {
+        correct: confusion.truePositives,
+        total: confusion.truePositives + confusion.falseNegatives,
+      },
+    ]
+  }
+
   #prepare(data: ClassificationData, model: TrainedModel) {
     return applyStandardization(expandPolynomial(data, model.degree), model.scaling)
   }
 
-  #train(degree: number, regularization: number): TrainedModel {
+  #train({ degree, regularization, oversample }: Settings): TrainedModel {
     const raw = expandPolynomial(this.#data.train, degree)
+    // Scaling is fitted on the real points; oversampling only changes how much each one weighs.
     const scaling = fitStandardization(raw)
-    const data = applyStandardization(raw, scaling)
+    const data = oversampleMinority(applyStandardization(raw, scaling), oversample)
     const { learningRate, maxEpochs } = this.#level.algorithm.optimizer
     const size = data.columns.length + 1
     const result = trainGradientDescent({
@@ -196,6 +230,7 @@ export class ComplexityRunner implements LevelRunner {
     return {
       degree,
       regularization,
+      oversample,
       params: result.epochs.at(-1)?.params ?? new Float64Array(size),
       scaling,
     }
@@ -216,6 +251,8 @@ export class ComplexityRunner implements LevelRunner {
     return {
       degree: model.degree,
       regularization: model.regularization,
+      oversample: model.oversample,
+      perClass: this.#perClass(model),
       featureCount: terms.length,
       regions: sampleRegions(this.scene.view, score),
       boundary: borderOf(this.scene.view, score),

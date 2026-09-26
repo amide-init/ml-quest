@@ -28,5 +28,7 @@ export {
   MULTI_LOGISTIC_REGRESSION_ID,
   multiLogisticRegression,
   tabularAccuracy,
+  tabularConfusion,
   tabularScore,
 } from './algorithms/MultiLogisticRegression'
+export type { Confusion } from './algorithms/MultiLogisticRegression'

@@ -64,3 +64,27 @@ export function tabularScore(params: Vector, features: readonly number[]): numbe
   for (let i = 0; i < k; i++) value += (params[i] ?? 0) * (features[i] ?? 0)
   return value
 }
+
+/** Confusion counts with class 1 as "positive" (the class the level asks you to find). */
+export interface Confusion {
+  readonly truePositives: number
+  readonly falsePositives: number
+  readonly trueNegatives: number
+  readonly falseNegatives: number
+}
+
+export function tabularConfusion(params: Vector, data: TabularData): Confusion {
+  let truePositives = 0
+  let falsePositives = 0
+  let trueNegatives = 0
+  let falseNegatives = 0
+  for (let row = 0; row < data.y.length; row++) {
+    const predicted = score(params, data, row) > 0
+    const actual = data.y[row] === 1
+    if (predicted && actual) truePositives++
+    else if (predicted) falsePositives++
+    else if (actual) falseNegatives++
+    else trueNegatives++
+  }
+  return { truePositives, falsePositives, trueNegatives, falseNegatives }
+}

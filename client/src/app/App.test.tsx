@@ -61,11 +61,11 @@ describe('App', () => {
   })
 
   it('shows the placeholder for a level that is not built yet', () => {
-    renderApp('/w/2/l/6')
+    renderApp('/w/2/l/7')
     expect(
       screen.getByRole('heading', { level: 1, name: 'This level is being built' }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('Level 2-6 – ML Quest')
+    expect(document.title).toBe('Level 2-7 – ML Quest')
   })
 
   it('plays Roll Downhill from briefing to debrief', async () => {
@@ -449,15 +449,44 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Tamed' })).toBeInTheDocument()
     expect(screen.getByText('Training 88%, new people 88%: a gap of 0 points.')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: '2 of 3 stars' })).toBeInTheDocument()
+    expect(screen.getByText('Next star: get it within 2 checks.')).toBeInTheDocument()
+  }, 30_000)
+
+  it('Unfair Data: 94% accuracy hides the missed minority; weighting it finds them', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/2/l/6')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+
+    await user.click(screen.getByRole('button', { name: 'Train' }))
     expect(
-      screen.getByText('Next star: find that exact match within 2 checks.'),
+      screen.getByText('Training: found 5 of 9 hill folk, 87 of 90 lowlanders right'),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'Accuracy lied' })).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        '94% of new people right, but it found only 40% of the hill folk; you need at least 80%.',
+      ),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Weight of each hill-clan point' }), {
+      target: { value: '15' },
+    })
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'Hill folk found' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '1 of 3 stars' })).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Next star: flag fewer lowlanders by mistake: keep at least 86% of everyone right.',
+      ),
     ).toBeInTheDocument()
   }, 30_000)
 
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(13)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(14)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

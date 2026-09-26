@@ -4,7 +4,11 @@ import { expandFeatures } from '@/engine/data/Polynomial'
 import { generateRings } from '@/engine/data/Rings'
 import { createSeededRandom, distance, numericalGradient, vector } from '@/engine/math'
 import { trainGradientDescent } from '@/engine/ml/Train'
-import { multiLogisticRegression, tabularAccuracy } from './MultiLogisticRegression'
+import {
+  multiLogisticRegression,
+  tabularAccuracy,
+  tabularConfusion,
+} from './MultiLogisticRegression'
 
 const rings = generateRings(
   {
@@ -66,5 +70,16 @@ describe('expandFeatures', () => {
       [10, -3],
     ])
     expect([...data.y]).toEqual([0, 1])
+  })
+
+  it('counts the confusion matrix with class 1 as positive', () => {
+    // One feature, score = x: positive when x > 0.
+    const data = { columns: [Float64Array.of(1, 2, -1, -2, 3)], y: Float64Array.of(1, 0, 1, 0, 1) }
+    expect(tabularConfusion(Float64Array.of(1, 0), data)).toEqual({
+      truePositives: 2,
+      falsePositives: 1,
+      trueNegatives: 1,
+      falseNegatives: 1,
+    })
   })
 })

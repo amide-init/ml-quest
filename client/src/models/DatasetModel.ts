@@ -78,11 +78,17 @@ export const twoBlobsSpecSchema = z.object({
   generator: z.literal('two-blobs'),
   /** Points per class in the training set; the test set is the same size per class. */
   trainPerClass: z.number().int().min(2).max(250),
-  testPerClass: z.number().int().min(1).max(250),
+  /** Up to 400 so an imbalanced level still has enough minority points to measure recall. */
+  testPerClass: z.number().int().min(1).max(400),
   /** Cluster centres for class 0 and class 1. */
   centers: z.tuple([z.tuple([z.number(), z.number()]), z.tuple([z.number(), z.number()])]),
   /** Standard deviation of each cluster. */
   spread: z.number().positive(),
+  /**
+   * Class 1 gets this share of class 0's count in both splits (W2-L6 Unfair Data: 0.1 = one
+   * minority point per ten). Absent = balanced.
+   */
+  minorityShare: z.number().gt(0).lt(1).optional(),
 })
 export type TwoBlobsSpec = z.infer<typeof twoBlobsSpecSchema>
 

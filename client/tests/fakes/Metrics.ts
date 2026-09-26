@@ -23,6 +23,8 @@ export function makeMetrics(overrides: Partial<Metrics> = {}): Metrics {
     min_confidence: Number.NaN,
     feature_count: Number.NaN,
     accuracy_gap: Number.NaN,
+    recall: Number.NaN,
+    test_recall: Number.NaN,
     ...overrides,
   }
 }

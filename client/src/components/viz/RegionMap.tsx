@@ -19,13 +19,24 @@ interface RegionMapProps {
   readonly boundary: readonly ContourLine[]
   /** Hidden test points revealed after a check (W2-L4): hollow, and crossed out when misclassified. */
   readonly checked?: readonly CheckedPoint[] | null
+  /** How much each class-1 point weighs in training (W2-L6 oversampling): heavier points draw larger. */
+  readonly class1Weight?: number
 }
 
 /**
  * Labelled points over a trained classifier's decision regions and border (W2-L3). Regions are
  * drawn as horizontal runs of same-class cells, so a 60×48 grid stays a few hundred shapes.
  */
-export function RegionMap({ points, view, regions, boundary, checked = null }: RegionMapProps) {
+export function RegionMap({
+  points,
+  view,
+  regions,
+  boundary,
+  checked = null,
+  class1Weight = 1,
+}: RegionMapProps) {
+  // Area grows sub-linearly, so ×10 reads as clearly heavier without covering its neighbours.
+  const class1Radius = 6 * class1Weight ** 0.35
   const { xMin, xMax, yMin, yMax } = view
   const sx = (x: number) => ((x - xMin) / (xMax - xMin)) * WIDTH
   const sy = (y: number) => HEIGHT - ((y - yMin) / (yMax - yMin)) * HEIGHT
@@ -122,7 +133,7 @@ export function RegionMap({ points, view, regions, boundary, checked = null }: R
               className={styles['class1']}
               cx={sx(point.x)}
               cy={sy(point.y)}
-              r={6}
+              r={class1Radius}
             />
           ) : (
             <rect

@@ -1,39 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_SETTINGS, type Settings } from '@/models'
+import { FakeStorage } from '@tests/fakes/FakeStorage'
 import {
   LocalStorageSettingsRepository,
   SETTINGS_STORAGE_KEY,
 } from './LocalStorageSettingsRepository'
-
-/** Minimal in-memory Storage so this test runs in plain Node. */
-class FakeStorage implements Storage {
-  readonly #items = new Map<string, string>()
-  failWrites = false
-  get length() {
-    return this.#items.size
-  }
-  clear() {
-    this.#items.clear()
-  }
-  getItem(key: string) {
-    return this.#items.get(key) ?? null
-  }
-  key(index: number) {
-    return [...this.#items.keys()][index] ?? null
-  }
-  removeItem(key: string) {
-    this.#items.delete(key)
-  }
-  setItem(key: string, value: string) {
-    if (this.failWrites) {
-      throw new Error('QuotaExceededError')
-    }
-    this.#items.set(key, value)
-  }
-  keys() {
-    return [...this.#items.keys()]
-  }
-}
 
 const DARK: Settings = { ...DEFAULT_SETTINGS, theme: 'dark', soundEnabled: true }
 

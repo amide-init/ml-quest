@@ -16,9 +16,15 @@ describe('level content', () => {
   })
 
   for (const level of repository.list()) {
-    it(`${level.id}: every text key exists in ui.json`, () => {
+    it(`${level.id}: every text and concept key exists in ui.json`, () => {
       const { title, mission, hints, debrief } = level.text
-      const missing = [title, mission, ...hints, debrief].filter((key) => !(key in strings))
+      const conceptKeys = [
+        `concept.${level.text.concept}.term`,
+        `concept.${level.text.concept}.definition`,
+      ]
+      const missing = [title, mission, ...hints, debrief, ...conceptKeys].filter(
+        (key) => !(key in strings),
+      )
       expect(missing).toEqual([])
     })
   }

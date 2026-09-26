@@ -470,6 +470,7 @@ Persistence is split across three layers. **Repositories** read and write storag
 
 - The **unlock state is derived, not stored**. `LevelService` computes world and level locks from `progress` plus the static world graph. That way a content update (a new level inserted) can't leave a save in an impossible state.
 - **Schema versioning:** each persisted blob is `{ v: number, data }`. On load the repository runs a migration chain (`repositories/migrations/`, `migrations[v] → v+1`), then Zod validation. If validation fails, we keep the old blob under `mlq:progress:corrupt:<ts>` and start fresh. **Player progress is never silently deleted.**
+- **One helper for every stored document:** `repositories/local-storage/VersionedStore.ts` implements the `{ v, data }` envelope, fills missing fields from defaults, backs up unreadable data, and reports write failures. Settings and Progress repositories are thin wrappers around it.
 - **Cross-tab safety:** we listen to `storage` events and re-hydrate, so two open tabs don't overwrite each other.
 
 ### 8.2 Export / import code (F8), handled by `ExportService`

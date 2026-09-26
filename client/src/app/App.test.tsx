@@ -1,21 +1,37 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
 import { hydrateStores } from './Bootstrap'
 import { createServices } from './Container'
 
-function renderApp(path = '/') {
+const cleanups: (() => void)[] = []
+
+function renderApp(path = '/', storage: 'memory' | 'browser' = 'memory') {
   window.location.hash = `#${path}`
-  const services = createServices({ storage: 'memory' })
-  hydrateStores(services)
-  render(<App services={services} />)
+  const services = createServices({ storage })
+  cleanups.push(hydrateStores(services))
+  const view = render(<App services={services} />)
+  cleanups.push(view.unmount)
   return services
+}
+
+async function playToTwoStars(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole('button', { name: 'Start the level' }))
+  fireEvent.change(screen.getByRole('slider', { name: 'Step size' }), { target: { value: '0.18' } })
+  for (let i = 0; i < 7; i++) {
+    await user.click(screen.getByRole('button', { name: 'Take a step' }))
+  }
 }
 
 describe('App', () => {
   beforeEach(() => {
     delete document.documentElement.dataset['theme']
+    window.localStorage.clear()
+  })
+
+  afterEach(() => {
+    cleanups.splice(0).forEach((cleanup) => cleanup())
   })
 
   it('renders the home page with the main heading and navigation', () => {
@@ -72,6 +88,32 @@ describe('App', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }))
     expect(screen.getByRole('heading', { name: 'What you just did' })).toBeInTheDocument()
     expect(screen.getByText(/That was gradient descent/)).toBeInTheDocument()
+    expect(screen.getByText(/New in your Codex: Gradient descent/)).toBeInTheDocument()
+    expect(screen.getByText('New best for this level.')).toBeInTheDocument()
+  })
+
+  it('saves progress: after a reload the map shows the stars and the Codex shows the card', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/3', 'browser')
+    await playToTwoStars(user)
+    cleanups.splice(0).forEach((cleanup) => cleanup())
+
+    // A brand-new set of services reading the same browser storage, like a page reload.
+    renderApp('/map', 'browser')
+    expect(screen.getByRole('img', { name: '2 of 3 stars' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Play again' })).toHaveAttribute('href', '#/w/1/l/3')
+
+    await user.click(screen.getByRole('link', { name: 'Codex' }))
+    expect(screen.getByRole('heading', { level: 2, name: 'Gradient descent' })).toBeInTheDocument()
+    expect(screen.getByText('Unlocked in Roll Downhill')).toBeInTheDocument()
+  })
+
+  it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
+    const user = userEvent.setup()
+    renderApp('/map')
+    expect(screen.getByText('Not played yet')).toBeInTheDocument()
+    await user.click(screen.getByRole('link', { name: 'Codex' }))
+    expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })
 
   it('explains a reckless run that flies off the map, then allows a free retry', async () => {

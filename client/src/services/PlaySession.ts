@@ -1,9 +1,20 @@
-import type { Command, LandscapeMap, LevelConfig, PlayView, SessionEvent } from '@/models'
+import type {
+  Command,
+  EvalResult,
+  LandscapeMap,
+  LevelConfig,
+  PlayReward,
+  PlayView,
+  SessionEvent,
+} from '@/models'
 import { createSession, sessionReducer } from '@/engine'
 import type { EvaluationService } from './EvaluationService'
 import type { LandscapeRunner } from './training/LandscapeRunner'
 
 type Listener = () => void
+
+/** Called once when an attempt passes; returns what the pass earned (see ProgressService). */
+export type OnPassed = (result: EvalResult) => PlayReward
 
 /**
  * One play-through of one level: session reducer + runner + evaluator.
@@ -15,6 +26,7 @@ export class PlaySession {
   readonly #evaluation: EvaluationService
   readonly #createRunner: () => LandscapeRunner
   readonly #now: () => number
+  readonly #onPassed: OnPassed
   readonly #startedAt: number
   readonly #listeners = new Set<Listener>()
   #runner: LandscapeRunner
@@ -26,15 +38,23 @@ export class PlaySession {
     createRunner: () => LandscapeRunner,
     evaluation: EvaluationService,
     now: () => number,
+    onPassed: OnPassed,
   ) {
     this.#level = level
     this.#map = map
     this.#createRunner = createRunner
     this.#evaluation = evaluation
     this.#now = now
+    this.#onPassed = onPassed
     this.#startedAt = now()
     this.#runner = createRunner()
-    this.#view = { level, map, session: createSession(level.id), snapshot: this.#runner.snapshot }
+    this.#view = {
+      level,
+      map,
+      session: createSession(level.id),
+      snapshot: this.#runner.snapshot,
+      reward: null,
+    }
   }
 
   readonly getView = (): PlayView => this.#view
@@ -71,13 +91,16 @@ export class PlaySession {
       const outOfSteps = snapshot.steps >= this.#level.controls.stepBudget
       if (result.passed || snapshot.status === 'diverged' || outOfSteps) {
         this.#send({ type: 'evaluated', result, at })
+        if (result.passed) {
+          this.#set({ reward: this.#onPassed(result) })
+        }
       }
     }
   }
 
   retry(): void {
     this.#runner = this.#createRunner()
-    this.#set({ snapshot: this.#runner.snapshot })
+    this.#set({ snapshot: this.#runner.snapshot, reward: null })
     this.#send({ type: 'retry', at: this.#elapsed() })
   }
 
@@ -105,7 +128,7 @@ export class PlaySession {
     }
   }
 
-  #set(patch: Partial<Pick<PlayView, 'session' | 'snapshot'>>): void {
+  #set(patch: Partial<Pick<PlayView, 'session' | 'snapshot' | 'reward'>>): void {
     this.#view = { ...this.#view, ...patch }
     for (const listener of this.#listeners) {
       listener()

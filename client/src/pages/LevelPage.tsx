@@ -117,6 +117,12 @@ function PlayableLevel({
             <DebriefCard
               stars={result.stars}
               body={text(config.text.debrief)}
+              unlockedTerm={
+                view.reward?.unlockedConcept
+                  ? text(`concept.${view.reward.unlockedConcept}.term`)
+                  : null
+              }
+              newBest={view.reward?.newBest ?? false}
               onReplay={game.retry}
             />
           ) : null}

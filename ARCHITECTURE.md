@@ -531,7 +531,7 @@ Persistence is split across three layers. **Repositories** read and write storag
 | **Anti-solutions** | Vitest | The "obvious wrong move" (e.g. max complexity in The Overfitter, LR = 10 in Too Fast) does **not** get 3 stars. This guards the misconception traps. | every PR |
 | Runner parity | Vitest | InlineRunner and WorkerRunner (via worker shim) produce identical metrics for sample levels | every PR |
 | UI wiring | Playwright | For one level per widget type: load → perform solution via real pointer/keyboard → pass screen | every PR (Chromium), nightly (WebKit, mobile viewport) |
-| Accessibility | axe (Playwright) | No critical violations on map, level, codex | every PR |
+| Accessibility | axe-core in Vitest (`src/app/Accessibility.test.tsx`) + Lighthouse | Zero WCAG 2.1 A/AA violations on Home, Map, Codex, Settings and **all 16 levels in play** (field notes open); keyboard-only point removal. Contrast (which jsdom can't compute) is checked with Lighthouse and the token ratios | every CI run (axe); Lighthouse before releases |
 | Performance | Lighthouse CI + bundle budget | Lighthouse ≥ 90, initial JS within budget | `main` |
 
 **Vitest projects** (`client/vitest.config.ts`): **`node`** runs every test outside the UI layers, including `tests/` (pass-bot), in plain Node. That proves engine, service and repository code has no hidden DOM dependency. **`dom`** runs `app/`, `pages/`, `components/` and `hooks/` tests in jsdom with Testing Library and jest-dom (`tests/setup/DomSetup.ts`). Coverage uses v8 and excludes barrels. Coverage thresholds get introduced per layer once each layer has real code.
@@ -576,7 +576,7 @@ nightly: Playwright WebKit + mobile viewports
 
 **Privacy & analytics.** `AnalyticsService` is the **only** place that may send network requests after load. It is cookieless (GoatCounter or Plausible), sends no identifiers, is disabled in dev and when DNT or opt-out is set, and uses a fixed event vocabulary: `level_start`, `level_pass{stars}`, `level_fail`, `hint_used{tier}`, `world_complete`. These map directly to the PRD success metrics. Adding a new event requires an update to this doc.
 
-**Accessibility.** WCAG 2.1 AA target: full keyboard play, visible focus, and screen-reader text for plots (a "data table" alternative and live-region metric announcements, throttled to 1/s). Colour is never the only signal.
+**Accessibility.** WCAG 2.1 AA target: full keyboard play, visible focus, and screen-reader text for plots (a "data table" alternative and live-region metric announcements, throttled to 1/s). Colour is never the only signal. Class colours double as chart marks, so both themes keep them at 3:1 or more against paper and panels (WCAG 1.4.11). Last measured (2026-09-27, Lighthouse mobile on the live site): Performance 95, Accessibility 100, Best practices 100, SEO 100.
 
 **Error handling.**
 - Every route has a React error boundary. Inside a level, the fallback offers "Restart level" and keeps progress.

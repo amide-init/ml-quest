@@ -3,10 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "preinstall": "npx --yes only-allow@1.2.2 pnpm",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "size": "node scripts/check-bundle-budget.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "test": "vitest run",

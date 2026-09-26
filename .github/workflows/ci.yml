@@ -58,6 +58,9 @@ jobs:
         env:
           VITE_BASE: /ml-quest/
 
+      - name: Bundle budget (ARCHITECTURE §11)
+        run: pnpm size
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v7

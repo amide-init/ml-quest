@@ -35,6 +35,7 @@ The app lives in **`client/`**. Run every command from there (`cd client`), or f
 pnpm install
 pnpm dev              # local dev server
 pnpm build            # production build
+pnpm size             # after build: gzip bundle budgets (initial JS ≤ 170 kB, lazy chunks ≤ 40 kB); runs in CI
 pnpm typecheck        # tsc -b
 pnpm lint             # lint:code + lint:boundaries
 pnpm lint:code        # oxlint --deny-warnings (zero warnings allowed)

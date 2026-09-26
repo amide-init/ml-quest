@@ -7,12 +7,14 @@ import { createServices } from './Container'
 
 const cleanups: (() => void)[] = []
 
-function renderApp(path = '/', storage: 'memory' | 'browser' = 'memory') {
+/** Renders the app at a route and waits until a lazily loaded screen (the level player) is in. */
+async function renderApp(path = '/', storage: 'memory' | 'browser' = 'memory') {
   window.location.hash = `#${path}`
   const services = createServices({ storage })
   cleanups.push(hydrateStores(services))
   const view = render(<App services={services} />)
   cleanups.push(view.unmount)
+  await waitFor(() => expect(screen.queryByText('Loading the level…')).not.toBeInTheDocument())
   return services
 }
 
@@ -38,8 +40,8 @@ describe('App', () => {
     cleanups.splice(0).forEach((cleanup) => cleanup())
   })
 
-  it('renders the home page with the main heading and navigation', () => {
-    renderApp('/')
+  it('renders the home page with the main heading and navigation', async () => {
+    await renderApp('/')
     expect(
       screen.getByRole('heading', { level: 1, name: 'Learn machine learning by making it work.' }),
     ).toBeInTheDocument()
@@ -56,7 +58,7 @@ describe('App', () => {
 
   it('navigates to Settings and applies the chosen theme to the document', async () => {
     const user = userEvent.setup()
-    const services = renderApp('/')
+    const services = await renderApp('/')
 
     await user.click(screen.getByRole('link', { name: 'Settings' }))
     expect(screen.getByRole('heading', { level: 1, name: 'Settings' })).toBeInTheDocument()
@@ -67,13 +69,13 @@ describe('App', () => {
     expect(services.settings.getSettings().theme).toBe('dark')
   })
 
-  it('shows the not-found page for unknown routes and out-of-range levels', () => {
-    renderApp('/w/9/l/1')
+  it('shows the not-found page for unknown routes and out-of-range levels', async () => {
+    await renderApp('/w/9/l/1')
     expect(screen.getByRole('heading', { level: 1, name: 'Nothing here' })).toBeInTheDocument()
   })
 
-  it('shows the placeholder for a level that is not built yet', () => {
-    renderApp('/w/3/l/1')
+  it('shows the placeholder for a level that is not built yet', async () => {
+    await renderApp('/w/3/l/1')
     expect(
       screen.getByRole('heading', { level: 1, name: 'This level is being built' }),
     ).toBeInTheDocument()
@@ -82,7 +84,7 @@ describe('App', () => {
 
   it('plays Roll Downhill from briefing to debrief', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/3')
+    await renderApp('/w/1/l/3')
     expect(screen.getByRole('heading', { level: 1, name: 'Roll Downhill' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
@@ -106,12 +108,12 @@ describe('App', () => {
 
   it('saves progress: after a reload the map shows the stars and the Codex shows the card', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/3', 'browser')
+    await renderApp('/w/1/l/3', 'browser')
     await playToTwoStars(user)
     cleanups.splice(0).forEach((cleanup) => cleanup())
 
     // A brand-new set of services reading the same browser storage, like a page reload.
-    renderApp('/map', 'browser')
+    await renderApp('/map', 'browser')
     expect(screen.getByRole('img', { name: '2 of 3 stars' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Play again' })).toHaveAttribute('href', '#/w/1/l/3')
 
@@ -120,8 +122,8 @@ describe('App', () => {
     expect(screen.getByText('Unlocked in Roll Downhill')).toBeInTheDocument()
   })
 
-  it('lists every World 1 level on the map in order', () => {
-    renderApp('/map')
+  it('lists every World 1 level on the map in order', async () => {
+    await renderApp('/map')
     const levels = screen.getAllByRole('listitem').map((item) => item.textContent ?? '')
     const titles = [
       'Draw the Line',
@@ -137,7 +139,7 @@ describe('App', () => {
 
   it('Draw the Line: explains a bad fit, then passes after moving the line with the keyboard', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/1')
+    await renderApp('/w/1/l/1')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
 
     await user.click(screen.getByRole('button', { name: 'Check my line' }))
@@ -164,7 +166,7 @@ describe('App', () => {
 
   it('Feel the Loss: every move updates the loss meter and the move count', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/2')
+    await renderApp('/w/1/l/2')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     expect(screen.getByText('Moves 0 of 20')).toBeInTheDocument()
     const before = screen.getByText('Loss (mean squared error)').nextElementSibling?.textContent
@@ -181,7 +183,7 @@ describe('App', () => {
 
   it('Too Fast, Too Slow: a tiny rate is too slow, a huge one blows up, the sweet spot converges', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/4')
+    await renderApp('/w/1/l/4')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     expect(screen.getByText('Press Train to see the loss curve.')).toBeInTheDocument()
 
@@ -214,7 +216,7 @@ describe('App', () => {
 
   it('Bumpy Terrain: the default start gets stuck; a start picked with the keyboard reaches the deepest valley', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/5')
+    await renderApp('/w/1/l/5')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
 
     await user.click(screen.getByRole('button', { name: 'Roll the ball' }))
@@ -239,7 +241,7 @@ describe('App', () => {
 
   it('Dirty Data: keeping the outliers fails; removing exactly them earns three stars', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/6')
+    await renderApp('/w/1/l/6')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     expect(screen.getByText('Removed 0 of 26 points')).toBeInTheDocument()
 
@@ -264,7 +266,7 @@ describe('App', () => {
 
   it('Scale Matters: no scaling is 1× at best; scaling plus a bigger learning rate is far faster', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/7')
+    await renderApp('/w/1/l/7')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     expect(screen.getByText(/Best without scaling: \d+ epochs/)).toBeInTheDocument()
 
@@ -287,7 +289,7 @@ describe('App', () => {
 
   it('Boss: each missing skill fails for its own reason; all three together win', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/8')
+    await renderApp('/w/1/l/8')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
 
     // As is: the unscaled feature makes every rate blow up.
@@ -334,7 +336,7 @@ describe('App', () => {
 
   it('Split the Kingdom: the starting border fails; the diagonal, placed by keyboard, wins', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/1')
+    await renderApp('/w/2/l/1')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     await user.click(screen.getByRole('button', { name: 'Check the border' }))
     expect(screen.getByRole('heading', { name: 'Too many on the wrong side' })).toBeInTheDocument()
@@ -359,7 +361,7 @@ describe('App', () => {
 
   it('Confidence: too gentle fails, too steep is overconfident, the sweet spot earns three stars', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/2')
+    await renderApp('/w/2/l/2')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     const threshold = screen.getByRole('slider', { name: 'Threshold' })
     const slope = screen.getByRole('slider', { name: 'Slope' })
@@ -390,7 +392,7 @@ describe('App', () => {
 
   it('Not a Straight Line: straight features fail; x1² and x2² alone split the rings for three stars', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/3')
+    await renderApp('/w/2/l/3')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     await user.click(screen.getByRole('button', { name: 'Train' }))
     expect(screen.getByRole('heading', { name: 'Still not split' })).toBeInTheDocument()
@@ -407,7 +409,7 @@ describe('App', () => {
 
   it('The Overfitter: 100% on training is the trap; the simple model generalizes', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/4')
+    await renderApp('/w/2/l/4')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     expect(screen.getByText('27 inputs to the model')).toBeInTheDocument()
 
@@ -437,7 +439,7 @@ describe('App', () => {
 
   it('Tame It: no penalty memorizes, too much underfits, the right strength closes the gap', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/5')
+    await renderApp('/w/2/l/5')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     expect(screen.getByText('Degree 6: 27 inputs to the model')).toBeInTheDocument()
 
@@ -466,7 +468,7 @@ describe('App', () => {
 
   it('Unfair Data: 94% accuracy hides the missed minority; weighting it finds them', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/6')
+    await renderApp('/w/2/l/6')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
 
     await user.click(screen.getByRole('button', { name: 'Train' }))
@@ -497,7 +499,7 @@ describe('App', () => {
 
   it('Read the Matrix: the threshold trades recall for precision, read off the matrix', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/7')
+    await renderApp('/w/2/l/7')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     // The model comes trained: the matrix is there before any button is pressed.
     expect(
@@ -529,7 +531,7 @@ describe('App', () => {
 
   it('Boss: Border War: a straight border catches nobody; the combined recipe holds', async () => {
     const user = userEvent.setup()
-    renderApp('/w/2/l/8')
+    await renderApp('/w/2/l/8')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     expect(
       screen.getByRole('table', { name: /training people at this threshold/ }),
@@ -559,7 +561,7 @@ describe('App', () => {
 
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
-    renderApp('/map')
+    await renderApp('/map')
     expect(screen.getAllByText('Not played yet')).toHaveLength(16)
     // Only worlds with levels are on the map; later worlds appear once their first level ships.
     expect(screen.getByRole('heading', { name: 'Boundary Plains' })).toBeInTheDocument()
@@ -570,7 +572,7 @@ describe('App', () => {
 
   it('explains a reckless run that flies off the map, then allows a free retry', async () => {
     const user = userEvent.setup()
-    renderApp('/w/1/l/3')
+    await renderApp('/w/1/l/3')
     await user.click(screen.getByRole('button', { name: 'Start the level' }))
     fireEvent.change(screen.getByRole('slider', { name: 'Step size' }), {
       target: { value: '0.3' },

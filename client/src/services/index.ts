@@ -4,6 +4,7 @@
  * See ARCHITECTURE.md §4.
  */
 export { EvaluationService } from './EvaluationService'
+export { ExportService } from './ExportService'
 export { LevelService } from './LevelService'
 export type { UnlockPolicy } from './LevelService'
 export { PlaySession } from './PlaySession'

@@ -3,3 +3,4 @@
  * See ARCHITECTURE.md §4.
  */
 export { getLocalStorage } from './BrowserStorage'
+export { copyText } from './Clipboard'

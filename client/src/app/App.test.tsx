@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
@@ -595,6 +595,54 @@ describe('App', () => {
       'href',
       '#/w/1/l/1',
     )
+  })
+
+  it('moves progress to another device with a code, after a preview', async () => {
+    const user = userEvent.setup()
+    // Device A: two levels passed.
+    const deviceA = await renderApp('/settings')
+    act(() =>
+      deviceA.progress.replace({
+        levels: { 'w1-l1': { bestStars: 3 }, 'w1-l2': { bestStars: 2 } },
+        concepts: ['linear-regression', 'loss-function'],
+      }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Show my progress code' }))
+    const code = (
+      (await screen.findByRole('textbox', { name: 'Your progress code' })) as HTMLTextAreaElement
+    ).value
+    expect(code).toMatch(/^MLQ1-/)
+    await user.click(screen.getByRole('button', { name: 'Copy code' }))
+    expect(await screen.findByText(/^Copied\./)).toBeInTheDocument()
+    expect(await navigator.clipboard.readText()).toBe(code)
+    cleanups.splice(0).forEach((cleanup) => cleanup())
+
+    // Device B: a new player loads the code.
+    await renderApp('/settings')
+    const paste = screen.getByRole('textbox', { name: 'Paste a progress code' })
+    fireEvent.change(paste, { target: { value: code.slice(0, 30) } })
+    await user.click(screen.getByRole('button', { name: 'Check code' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Part of this code is missing or changed',
+    )
+
+    fireEvent.change(paste, { target: { value: code } })
+    await user.click(screen.getByRole('button', { name: 'Check code' }))
+    expect(
+      await screen.findByText('This code has 5 stars from 2 levels and 2 Codex cards.'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('This device has 0 stars from 0 levels and 0 Codex cards now.'),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Replace my progress' }))
+    expect(
+      screen.getByText('Progress loaded: 5 stars from 2 levels and 2 Codex cards.'),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Map' }))
+    expect(
+      within(mapRow('Draw the Line')).getByRole('img', { name: '3 of 3 stars' }),
+    ).toBeInTheDocument()
   })
 
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {

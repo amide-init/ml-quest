@@ -81,7 +81,14 @@ export {
   levelProgressSchema,
   progressSchema,
 } from './ProgressModel'
-export type { ConceptId, LevelProgress, Progress } from './ProgressModel'
+export type {
+  ConceptId,
+  LevelProgress,
+  Progress,
+  ProgressCodeProblem,
+  ProgressCodeRead,
+  ProgressSummary,
+} from './ProgressModel'
 export {
   linearMultiSpecSchema,
   linearNoisySpecSchema,

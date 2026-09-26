@@ -99,6 +99,7 @@ These rules apply to every change: code, level content, docs. They're here so th
 
 1. **MUST** — Adding a runtime dependency needs a line in the PR explaining why it's needed and its gzip size.
 2. **SHOULD** — Prefer small, well-maintained, MIT-compatible packages. Code is MIT and level content is CC BY 4.0. Don't add GPL code.
+3. **MUST** — Use **pnpm** only. `npm`/`yarn` installs are blocked by a `preinstall` guard. Commit only `pnpm-lock.yaml`, never `package-lock.json` or `yarn.lock`.
 
 ## 9. Git & PRs
 

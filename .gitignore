@@ -22,3 +22,8 @@ coverage/
 # Test artifacts
 playwright-report/
 test-results/
+
+# pnpm only: never commit other package managers' lockfiles
+package-lock.json
+yarn.lock
+bun.lockb

@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "preinstall": "npx --yes only-allow pnpm",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
@@ -29,7 +30,8 @@
   "description": "ML Quest \u2014 learn machine learning by training real models to beat levels.",
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "pnpm": ">=10"
   },
   "packageManager": "pnpm@10.29.2"
 }

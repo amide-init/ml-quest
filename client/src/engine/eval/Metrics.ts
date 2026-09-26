@@ -19,6 +19,9 @@ export interface MetricInput<TData = void> {
   readonly convergedAt?: number | null
   /** Which attempt this is (1 = first try). */
   readonly attempt?: number
+  /** Training points the player removed, and the ones that were really outliers (W1-L6). */
+  readonly removedPoints?: readonly number[]
+  readonly outlierPoints?: readonly number[]
 }
 
 export interface MetricDefinition {
@@ -74,6 +77,18 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   attempt: {
     better: 'lower',
     compute: (input) => input.attempt ?? Number.NaN,
+  },
+  points_removed: {
+    better: 'lower',
+    compute: (input) => input.removedPoints?.length ?? Number.NaN,
+  },
+  good_points_removed: {
+    better: 'lower',
+    // Removing real data is a cost: only the planted outliers deserve to go.
+    compute: (input) =>
+      input.removedPoints === undefined
+        ? Number.NaN
+        : input.removedPoints.filter((index) => !input.outlierPoints?.includes(index)).length,
   },
 }
 

@@ -14,6 +14,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   'gradient-descent': 'level.w1-l3.title',
   'learning-rate': 'level.w1-l4.title',
   'local-minimum': 'level.w1-l5.title',
+  outlier: 'level.w1-l6.title',
 }
 
 export function CodexPage() {

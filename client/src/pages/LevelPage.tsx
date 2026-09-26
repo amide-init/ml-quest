@@ -2,6 +2,7 @@ import { useParams } from 'react-router'
 import { ButtonLink, PageHeader } from '@/components/ui'
 import { useDocumentTitle, useLevelSession } from '@/hooks'
 import { t } from '@/i18n'
+import { CleaningLevelView } from './level/CleaningLevelView'
 import { LandscapeLevelView } from './level/LandscapeLevelView'
 import { RegressionLevelView } from './level/RegressionLevelView'
 import { TrainingLevelView } from './level/TrainingLevelView'
@@ -64,6 +65,17 @@ function LevelScreen({ levelId, world, level }: { levelId: string; world: number
   if (scene.kind === 'training' && snapshot.kind === 'training') {
     return (
       <TrainingLevelView
+        game={game}
+        scene={scene}
+        snapshot={snapshot}
+        world={world}
+        level={level}
+      />
+    )
+  }
+  if (scene.kind === 'cleaning' && snapshot.kind === 'cleaning') {
+    return (
+      <CleaningLevelView
         game={game}
         scene={scene}
         snapshot={snapshot}

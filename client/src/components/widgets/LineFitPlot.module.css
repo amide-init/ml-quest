@@ -40,6 +40,29 @@
   fill: var(--color-ink);
 }
 
+.pointRemoved {
+  fill: none;
+  stroke: var(--color-ink-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 2 2;
+}
+
+.toggle {
+  cursor: pointer;
+  outline: none;
+}
+
+.toggleHit {
+  fill: transparent;
+}
+
+.toggle:hover .point,
+.toggle:focus-visible .point,
+.toggle:focus-visible .pointRemoved {
+  stroke: var(--color-focus);
+  stroke-width: 3;
+}
+
 .line {
   stroke: var(--color-beacon);
   stroke-width: 3;

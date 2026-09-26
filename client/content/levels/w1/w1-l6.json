@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "id": "w1-l6",
+  "world": 1,
+  "level": 6,
+  "seed": 106,
+  "algorithm": {
+    "id": "linear-regression",
+    "dataset": {
+      "generator": "linear-noisy",
+      "trainCount": 22,
+      "testCount": 40,
+      "slope": 1.6,
+      "intercept": 4,
+      "noise": 1.0,
+      "xMin": 0.5,
+      "xMax": 9.5,
+      "outliers": {
+        "count": 4,
+        "offset": -9,
+        "xMin": 7,
+        "xMax": 9.5
+      }
+    },
+    "initial": {
+      "w": 0,
+      "b": 0
+    },
+    "view": {
+      "xMin": 0,
+      "xMax": 10,
+      "yMin": 0,
+      "yMax": 24
+    },
+    "optimizer": {
+      "id": "least-squares",
+      "minPoints": 5
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_loss",
+      "op": "<=",
+      "value": 1.2
+    },
+    "two": {
+      "metric": "good_points_removed",
+      "op": "<=",
+      "value": 1
+    },
+    "three": {
+      "metric": "good_points_removed",
+      "op": "<=",
+      "value": 0
+    }
+  },
+  "text": {
+    "title": "level.w1-l6.title",
+    "mission": "level.w1-l6.mission",
+    "hints": ["level.w1-l6.hint1", "level.w1-l6.hint2", "level.w1-l6.hint3"],
+    "debrief": "level.w1-l6.debrief",
+    "concept": "outlier"
+  },
+  "authors": ["amide-init"]
+}

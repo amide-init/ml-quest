@@ -15,6 +15,7 @@ export interface PreparedRegression {
   /** Training points for drawing. Never includes the hidden test set. */
   readonly points: readonly Point[]
   readonly loss: (w: number, b: number) => number
+  readonly outlierIndices: readonly number[]
 }
 
 /** Generates a regression level's seeded train/test split and the reference values both runners need. */
@@ -31,5 +32,6 @@ export function prepareRegression(level: LevelOf<'linear-regression'>): Prepared
     optimalLoss: loss(best.w, best.b),
     points: Array.from(x, (xi, i): Point => [xi, y[i] ?? 0]),
     loss,
+    outlierIndices: split.outlierIndices,
   }
 }

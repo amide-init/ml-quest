@@ -79,6 +79,7 @@ export class RegressionRunner implements LevelRunner {
         break
       }
       case 'check':
+      case 'toggle-point':
       case 'set-hyperparameter':
       case 'set-start':
       case 'step':

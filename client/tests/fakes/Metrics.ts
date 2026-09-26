@@ -15,6 +15,8 @@ export function makeMetrics(overrides: Partial<Metrics> = {}): Metrics {
     distance_to_global_min: Number.NaN,
     hints_used: 0,
     attempt: 1,
+    points_removed: Number.NaN,
+    good_points_removed: Number.NaN,
     ...overrides,
   }
 }

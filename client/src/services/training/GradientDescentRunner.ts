@@ -98,6 +98,7 @@ export class GradientDescentRunner implements LevelRunner {
       case 'set-start':
       case 'set-params':
       case 'check':
+      case 'toggle-point':
         break
     }
     return this.#snapshot

@@ -50,4 +50,17 @@ export interface TrainingSnapshot {
   readonly run: TrainingRun | null
 }
 
-export type LevelSnapshot = LandscapeSnapshot | RegressionSnapshot | TrainingSnapshot
+/** A data-cleaning level's state: which points are removed and the line refit on the rest (W1-L6). */
+export interface CleaningSnapshot {
+  readonly kind: 'cleaning'
+  /** Indices of removed training points, in removal order. */
+  readonly removed: readonly number[]
+  /** Least-squares line on the points that remain. */
+  readonly w: number
+  readonly b: number
+  /** Training loss on the points that remain. */
+  readonly loss: number
+}
+
+export type LevelSnapshot =
+  LandscapeSnapshot | RegressionSnapshot | TrainingSnapshot | CleaningSnapshot

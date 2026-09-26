@@ -22,5 +22,7 @@ export type Command =
   | { readonly type: 'check' }
   /** Run the optimizer with the current hyperparameters (e.g. "Train"). */
   | { readonly type: 'train' }
+  /** Remove a training point, or put it back if it was removed (W1-L6 data cleaning). */
+  | { readonly type: 'toggle-point'; readonly index: number }
 
 export type CommandType = Command['type']

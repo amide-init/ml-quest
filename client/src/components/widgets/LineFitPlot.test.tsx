@@ -58,4 +58,30 @@ describe('LineFitPlot', () => {
     act(() => vi.advanceTimersByTime(700))
     expect(onCommand).not.toHaveBeenCalled()
   })
+
+  it('lets points be removed and restored by click and by keyboard', async () => {
+    vi.useRealTimers()
+    const onTogglePoint = vi.fn()
+    render(
+      <LineFitPlot
+        scene={scene}
+        w={2}
+        b={1}
+        disabled={false}
+        readOnly
+        removed={[1]}
+        onTogglePoint={onTogglePoint}
+        onCommand={() => {}}
+      />,
+    )
+    const kept = screen.getByRole('checkbox', { name: 'Point at x 1.0, y 4.0' })
+    const removed = screen.getByRole('checkbox', { name: 'Point at x 5.0, y 12.0' })
+    expect(kept).toHaveAttribute('aria-checked', 'true')
+    expect(removed).toHaveAttribute('aria-checked', 'false')
+    fireEvent.click(kept)
+    expect(onTogglePoint).toHaveBeenLastCalledWith(0)
+    fireEvent.keyDown(removed, { key: 'Enter' })
+    expect(onTogglePoint).toHaveBeenLastCalledWith(1)
+    expect(screen.queryByRole('slider')).not.toBeInTheDocument()
+  })
 })

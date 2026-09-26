@@ -88,6 +88,7 @@ export class DescentRunner implements LevelRunner {
       case 'set-hyperparameter':
       case 'set-params':
       case 'check':
+      case 'toggle-point':
         break
     }
     return this.#snapshot

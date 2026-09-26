@@ -24,6 +24,10 @@ async function playToTwoStars(user: ReturnType<typeof userEvent.setup>) {
   }
 }
 
+/** Move a slider (range input) by its accessible name. */
+const setSlider = (name: string, value: string) =>
+  fireEvent.change(screen.getByRole('slider', { name }), { target: { value } })
+
 describe('App', () => {
   beforeEach(() => {
     delete document.documentElement.dataset['theme']
@@ -69,11 +73,11 @@ describe('App', () => {
   })
 
   it('shows the placeholder for a level that is not built yet', () => {
-    renderApp('/w/2/l/8')
+    renderApp('/w/3/l/1')
     expect(
       screen.getByRole('heading', { level: 1, name: 'This level is being built' }),
     ).toBeInTheDocument()
-    expect(document.title).toBe('Level 2-8 – ML Quest')
+    expect(document.title).toBe('Level 3-1 – ML Quest')
   })
 
   it('plays Roll Downhill from briefing to debrief', async () => {
@@ -523,10 +527,40 @@ describe('App', () => {
     expect(screen.getByText('Next star: get it within 2 checks.')).toBeInTheDocument()
   }, 30_000)
 
+  it('Boss: Border War: a straight border catches nobody; the combined recipe holds', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/2/l/8')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(
+      screen.getByRole('table', { name: /training people at this threshold/ }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Precision n/a: nobody picked')).toBeInTheDocument()
+    // One Train button for all the model settings; the threshold only re-reads the model.
+    expect(screen.getAllByRole('button', { name: 'Train' })).toHaveLength(1)
+
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'The border is breached' })).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Hidden F1 0.00: the border flagged no one, so every raider slipped through. You need 0.85.',
+      ),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    setSlider('Complexity (polynomial degree)', '2')
+    setSlider('Regularization strength (λ)', '0.02')
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    setSlider('Flag as a raider when the model is at least this sure', '0.3')
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'The border holds' })).toBeInTheDocument()
+    expect(screen.getByText('Hidden F1 0.90: precision 86%, recall 95%.')).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  }, 40_000)
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(15)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(16)
     // Only worlds with levels are on the map; later worlds appear once their first level ships.
     expect(screen.getByRole('heading', { name: 'Boundary Plains' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Forest of Trees' })).not.toBeInTheDocument()

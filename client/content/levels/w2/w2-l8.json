@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "id": "w2-l8",
+  "world": 2,
+  "level": 8,
+  "seed": 803,
+  "algorithm": {
+    "id": "logistic-regression",
+    "dataset": {
+      "generator": "rings",
+      "trainPerClass": 90,
+      "testPerClass": 400,
+      "minorityShare": 0.15,
+      "innerRadius": 0.8,
+      "outerRadius": 1.9,
+      "spread": 0.35
+    },
+    "view": {
+      "xMin": -3.25,
+      "xMax": 3.25,
+      "yMin": -2.6,
+      "yMax": 2.6
+    },
+    "optimizer": {
+      "id": "complexity",
+      "degree": {
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "initial": 1
+      },
+      "regularization": {
+        "min": 0,
+        "max": 0.2,
+        "step": 0.01,
+        "initial": 0
+      },
+      "oversample": {
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "initial": 1
+      },
+      "threshold": {
+        "min": 0.05,
+        "max": 0.95,
+        "step": 0.05,
+        "initial": 0.5
+      },
+      "learningRate": 0.5,
+      "maxEpochs": 1500
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_f1",
+      "op": ">=",
+      "value": 0.85
+    },
+    "two": {
+      "metric": "test_f1",
+      "op": ">=",
+      "value": 0.87
+    },
+    "three": {
+      "metric": "test_f1",
+      "op": ">=",
+      "value": 0.9
+    }
+  },
+  "text": {
+    "title": "level.w2-l8.title",
+    "mission": "level.w2-l8.mission",
+    "hints": ["level.w2-l8.hint1", "level.w2-l8.hint2", "level.w2-l8.hint3"],
+    "debrief": "level.w2-l8.debrief",
+    "concept": "f1-score"
+  },
+  "authors": ["amide-init"]
+}

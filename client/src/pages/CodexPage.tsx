@@ -24,6 +24,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   regularization: 'level.w2-l5.title',
   'class-imbalance': 'level.w2-l6.title',
   'precision-recall': 'level.w2-l7.title',
+  'f1-score': 'level.w2-l8.title',
 }
 
 export function CodexPage() {

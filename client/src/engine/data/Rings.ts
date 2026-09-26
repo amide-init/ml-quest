@@ -2,12 +2,17 @@ import type { ClassificationData, DatasetSplit, RingsSpec, Rng } from '@/models'
 import { gaussian } from './LinearNoisy'
 
 function sample(spec: RingsSpec, perClass: number, rng: Rng): ClassificationData {
-  const count = perClass * 2
+  const minority =
+    spec.minorityShare === undefined
+      ? perClass
+      : Math.max(1, Math.round(perClass * spec.minorityShare))
+  const count = perClass + minority
   const x1 = new Float64Array(count)
   const x2 = new Float64Array(count)
   const label = new Uint8Array(count)
   for (let i = 0; i < count; i++) {
-    const cls = i % 2
+    // Interleave classes while both have points left (a balanced set is unchanged).
+    const cls = i < minority * 2 ? i % 2 : 0
     const radius = Math.abs(
       (cls === 1 ? spec.innerRadius : spec.outerRadius) + spec.spread * gaussian(rng),
     )

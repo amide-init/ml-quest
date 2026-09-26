@@ -555,7 +555,7 @@ nightly: Playwright WebKit + mobile viewports
 - **Repo:** [github.com/amide-init/ml-quest](https://github.com/amide-init/ml-quest). **Live URL:** `https://amide-init.github.io/ml-quest/`.
 - **Base path:** `vite.config.base = "/ml-quest/"` for GitHub Pages, set from an env var in the deploy workflow so local dev stays at `/`. It moves to `/` if we add a custom domain. If the repo is renamed, update this value too.
 - **PWA:** precache the app shell and World 1 on first visit, and runtime-cache later world chunks on first play. The update strategy is **prompt, never auto-reload**. A new version is applied on the map screen and never mid-level.
-- **Performance budgets** (fail CI if exceeded):
+- **Performance budgets** (fail CI if exceeded; `pnpm size` = `client/scripts/check-bundle-budget.mjs` runs after the build). The level player (`LevelPage`, its views, charts and widgets) is a lazy route chunk, so Home and the map load without it; `package.json` declares only CSS as side-effectful so unused barrel exports are dropped:
 
   | Asset | Budget (gzip) |
   |---|---|

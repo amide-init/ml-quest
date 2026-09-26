@@ -138,3 +138,10 @@
 .main:focus {
   outline: none;
 }
+
+.loading {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--gutter);
+  color: var(--color-ink-muted);
+}

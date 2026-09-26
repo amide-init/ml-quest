@@ -4,6 +4,7 @@ import { assertNever } from '@/lib'
 import type { EvaluationService } from './EvaluationService'
 import { BoundaryRunner } from './training/BoundaryRunner'
 import { CleaningRunner } from './training/CleaningRunner'
+import { ComplexityRunner } from './training/ComplexityRunner'
 import { DescentRunner } from './training/DescentRunner'
 import { FeatureRunner } from './training/FeatureRunner'
 import { GradientDescentRunner } from './training/GradientDescentRunner'
@@ -93,6 +94,11 @@ export class TrainingService {
             )
           case 'feature-builder':
             return new FeatureRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              this.#evaluation,
+            )
+          case 'complexity':
+            return new ComplexityRunner(
               { ...level, algorithm: { ...algorithm, optimizer } },
               this.#evaluation,
             )

@@ -20,6 +20,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   classification: 'level.w2-l1.title',
   sigmoid: 'level.w2-l2.title',
   'feature-engineering': 'level.w2-l3.title',
+  overfitting: 'level.w2-l4.title',
 }
 
 export function CodexPage() {

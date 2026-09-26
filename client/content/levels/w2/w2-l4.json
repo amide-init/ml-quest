@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "w2-l4",
+  "world": 2,
+  "level": 4,
+  "seed": 202,
+  "algorithm": {
+    "id": "logistic-regression",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 10,
+      "testPerClass": 60,
+      "centers": [
+        [-0.7, -0.4],
+        [0.7, 0.4]
+      ],
+      "spread": 0.75
+    },
+    "view": {
+      "xMin": -3.25,
+      "xMax": 3.25,
+      "yMin": -2.6,
+      "yMax": 2.6
+    },
+    "optimizer": {
+      "id": "complexity",
+      "degree": {
+        "min": 1,
+        "max": 6,
+        "step": 1,
+        "initial": 6
+      },
+      "learningRate": 0.5,
+      "maxEpochs": 2000
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.85
+    },
+    "two": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 2
+    },
+    "three": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 1
+    }
+  },
+  "text": {
+    "title": "level.w2-l4.title",
+    "mission": "level.w2-l4.mission",
+    "hints": ["level.w2-l4.hint1", "level.w2-l4.hint2", "level.w2-l4.hint3"],
+    "debrief": "level.w2-l4.debrief",
+    "concept": "overfitting"
+  },
+  "authors": ["amide-init"]
+}

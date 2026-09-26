@@ -393,10 +393,31 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   })
 
+  it('The Overfitter: 100% on training is the trap; the simple model generalizes', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/2/l/4')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText('27 inputs to the model')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(screen.getByText('Degree 6: 20 of 20 training points right')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'Overfitted' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Complexity (polynomial degree)' }), {
+      target: { value: '1' },
+    })
+    await user.click(screen.getByRole('button', { name: 'Check on new people' }))
+    expect(screen.getByRole('heading', { name: 'It generalizes' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '2 of 3 stars' })).toBeInTheDocument()
+    expect(screen.getByText('Next star: get it on your first check.')).toBeInTheDocument()
+  }, 20_000)
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(11)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(12)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

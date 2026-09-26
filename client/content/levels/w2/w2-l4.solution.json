@@ -1,0 +1,134 @@
+{
+  "level": "w2-l4",
+  "runs": [
+    {
+      "name": "resists the trap: the simplest model, first check",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "degree",
+          "value": 1
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "falls for the 100% model once, then goes simple",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "degree",
+          "value": 1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "two wrong checks before the simple model",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "degree",
+          "value": 3
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "degree",
+          "value": 1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): the most complex model, 100% on training",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: degree 4 still memorizes the training points",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "degree",
+          "value": 4
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: degree 2 is already too flexible here",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "degree",
+          "value": 2
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

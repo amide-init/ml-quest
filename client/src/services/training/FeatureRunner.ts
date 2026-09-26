@@ -2,7 +2,6 @@ import type {
   ClassificationData,
   Command,
   DatasetSplit,
-  DecisionRegions,
   EvalResult,
   FeatureScene,
   FeatureSnapshot,
@@ -13,7 +12,6 @@ import type {
 } from '@/models'
 import {
   applyStandardization,
-  contourLines,
   createSeededRandom,
   expandFeatures,
   featureValue,
@@ -28,10 +26,7 @@ import {
 } from '@/engine'
 import type { EvaluationService } from '@/services/EvaluationService'
 import type { LevelRunner } from './LevelRunner'
-
-/** Decision regions are sampled on this grid (columns × rows) over the map. */
-const GRID_COLS = 60
-const GRID_ROWS = 48
+import { borderOf, sampleRegions } from './Regions'
 
 interface TrainedModel {
   readonly features: readonly PolynomialFeature[]
@@ -169,21 +164,9 @@ export class FeatureRunner implements LevelRunner {
   }
 
   #describe(model: TrainedModel): NonNullable<FeatureSnapshot['trained']> {
-    const { xMin, xMax, yMin, yMax } = this.scene.view
-    const classes: number[] = []
-    for (let row = 0; row < GRID_ROWS; row++) {
-      const y = yMax - ((row + 0.5) / GRID_ROWS) * (yMax - yMin)
-      for (let col = 0; col < GRID_COLS; col++) {
-        const x = xMin + ((col + 0.5) / GRID_COLS) * (xMax - xMin)
-        classes.push(this.#score(model, x, y) > 0 ? 1 : 0)
-      }
-    }
-    const regions: DecisionRegions = { cols: GRID_COLS, rows: GRID_ROWS, classes }
-    const boundary = contourLines(
-      ([x, y]) => this.#score(model, x, y),
-      { min: [xMin, yMin], max: [xMax, yMax], resolution: 80 },
-      [0],
-    )
+    const score = (x: number, y: number) => this.#score(model, x, y)
+    const regions = sampleRegions(this.scene.view, score)
+    const boundary = borderOf(this.scene.view, score)
     const train = this.#prepare(this.#data.train, model)
     const total = this.#data.train.label.length
     return {

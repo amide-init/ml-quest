@@ -7,6 +7,12 @@ export { gaussian, generateLinearNoisy } from './LinearNoisy'
 export { applyStandardization, fitStandardization } from './Standardize'
 export type { Standardization } from './Standardize'
 export { generateTwoBlobs } from './TwoBlobs'
-export { expandFeatures, featureValue } from './Polynomial'
+export {
+  expandFeatures,
+  expandPolynomial,
+  featureValue,
+  polynomialTerms,
+  termValue,
+} from './Polynomial'
 export { generateRings } from './Rings'
 export { generateClassification } from './Classification'

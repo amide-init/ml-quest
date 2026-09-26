@@ -24,12 +24,14 @@ export function WorldMapPage() {
   const { bestStars } = useProgress()
   const catalog = useLevelCatalog()
   const levelsIn = (world: number) => catalog.filter((level) => level.world === world)
+  // A world shows up on the map once it has at least one playable level.
+  const worlds = WORLDS.filter((world) => levelsIn(world.id).length > 0)
 
   return (
     <div className={styles['page']}>
       <PageHeader title={title} lede={t('map.lede')} />
       <ol className={styles['trail']}>
-        {WORLDS.map((world) => {
+        {worlds.map((world) => {
           const className = [
             styles['world'],
             world.release === 'v1' ? styles['open'] : styles['later'],
@@ -43,36 +45,34 @@ export function WorldMapPage() {
                 <h2 className={styles['name']}>{t(worldKey(world.id, 'name'))}</h2>
                 <p className={styles['concepts']}>{t(worldKey(world.id, 'concepts'))}</p>
                 <span className={styles['release']}>{t(`map.release.${world.release}`)}</span>
-                {levelsIn(world.id).length > 0 ? (
-                  <ul
-                    className={styles['levels']}
-                    aria-label={t('map.levels.label', { world: t(worldKey(world.id, 'name')) })}
-                  >
-                    {levelsIn(world.id).map((level) => {
-                      const stars = bestStars(level.id)
-                      return (
-                        <li key={level.id} className={styles['level']}>
-                          <span className={styles['levelName']}>
-                            {t('level.label', { world: level.world, level: level.level })}{' '}
-                            <strong>{t(level.title as MessageKey)}</strong>
-                          </span>
-                          {stars > 0 ? (
-                            <StarRating stars={stars} size="small" />
-                          ) : (
-                            <span className={styles['label']}>{t('map.level.notPlayed')}</span>
-                          )}
-                          <ButtonLink
-                            to={`/w/${level.world}/l/${level.level}`}
-                            variant={stars > 0 ? 'quiet' : 'primary'}
-                            size="small"
-                          >
-                            {stars > 0 ? t('map.level.replay') : t('map.level.play')}
-                          </ButtonLink>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                ) : null}
+                <ul
+                  className={styles['levels']}
+                  aria-label={t('map.levels.label', { world: t(worldKey(world.id, 'name')) })}
+                >
+                  {levelsIn(world.id).map((level) => {
+                    const stars = bestStars(level.id)
+                    return (
+                      <li key={level.id} className={styles['level']}>
+                        <span className={styles['levelName']}>
+                          {t('level.label', { world: level.world, level: level.level })}{' '}
+                          <strong>{t(level.title as MessageKey)}</strong>
+                        </span>
+                        {stars > 0 ? (
+                          <StarRating stars={stars} size="small" />
+                        ) : (
+                          <span className={styles['label']}>{t('map.level.notPlayed')}</span>
+                        )}
+                        <ButtonLink
+                          to={`/w/${level.world}/l/${level.level}`}
+                          variant={stars > 0 ? 'quiet' : 'primary'}
+                          size="small"
+                        >
+                          {stars > 0 ? t('map.level.replay') : t('map.level.play')}
+                        </ButtonLink>
+                      </li>
+                    )
+                  })}
+                </ul>
               </div>
             </li>
           )

@@ -1,0 +1,68 @@
+name: CI
+
+# Every PR and every push to main must pass the same checks we run locally
+# (ARCHITECTURE.md §11, RULES.md §9). The job name is used as a required status check.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm (version from client/package.json "packageManager")
+        uses: pnpm/action-setup@v6
+        with:
+          package_json_file: client/package.json
+
+      - name: Set up Node (version from .nvmrc)
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: client/pnpm-lock.yaml
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint (oxlint + layer boundaries)
+        run: pnpm lint
+
+      - name: Format
+        run: pnpm format:check
+
+      - name: Test (with coverage)
+        run: pnpm test:coverage
+
+      - name: Build (GitHub Pages base path)
+        run: pnpm build
+        env:
+          VITE_BASE: /ml-quest/
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: client/coverage/
+          retention-days: 7
+          if-no-files-found: ignore

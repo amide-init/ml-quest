@@ -45,7 +45,9 @@ export type {
 } from './LevelModel'
 export type {
   BoundaryScene,
+  CheckedPoint,
   CleaningScene,
+  ComplexityScene,
   ContourLine,
   FeatureRange,
   FeatureScene,
@@ -61,6 +63,7 @@ export type { PlayReward, PlayView } from './PlayModel'
 export type {
   BoundarySnapshot,
   CleaningSnapshot,
+  ComplexitySnapshot,
   DecisionRegions,
   FeatureSnapshot,
   LandscapeSnapshot,

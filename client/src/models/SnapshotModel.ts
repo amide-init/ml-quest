@@ -1,6 +1,6 @@
 import type { PolynomialFeature } from './DatasetModel'
 import type { Point } from './LandscapeModel'
-import type { ContourLine } from './MapModel'
+import type { CheckedPoint, ContourLine } from './MapModel'
 
 /** What the UI renders for a landscape level at one moment (ARCHITECTURE §6). Plain data, easy to diff. */
 export interface LandscapeSnapshot {
@@ -132,6 +132,24 @@ export interface FeatureSnapshot {
   } | null
 }
 
+/** A model-complexity level's state (W2-L4): the chosen degree and the model trained at it. */
+export interface ComplexitySnapshot {
+  readonly kind: 'complexity'
+  readonly degree: number
+  readonly trained: {
+    readonly degree: number
+    /** Number of polynomial terms (model inputs) at that degree. */
+    readonly featureCount: number
+    readonly regions: DecisionRegions
+    readonly boundary: readonly ContourLine[]
+    /** Training-set result only: hidden accuracy is revealed by Check. */
+    readonly correct: number
+    readonly total: number
+  } | null
+  /** The hidden test points, revealed by Check (never before) and cleared by any change (D6). */
+  readonly checked: readonly CheckedPoint[] | null
+}
+
 export type LevelSnapshot =
   | LandscapeSnapshot
   | RegressionSnapshot
@@ -141,3 +159,4 @@ export type LevelSnapshot =
   | BoundarySnapshot
   | SigmoidSnapshot
   | FeatureSnapshot
+  | ComplexitySnapshot

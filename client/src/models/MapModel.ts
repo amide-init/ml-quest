@@ -101,6 +101,11 @@ export interface LabelledPoint {
   readonly label: number
 }
 
+/** A hidden test point, revealed only after it has been judged (D6): was the model right about it? */
+export interface CheckedPoint extends LabelledPoint {
+  readonly correct: boolean
+}
+
 /** A classification level (World 2): training points only, never the hidden test set. */
 export interface BoundaryScene {
   readonly kind: 'boundary'
@@ -126,6 +131,14 @@ export interface FeatureScene {
   readonly available: readonly PolynomialFeature[]
 }
 
+/** A model-complexity level (W2-L4): labelled training points and the degree range. */
+export interface ComplexityScene {
+  readonly kind: 'complexity'
+  readonly points: readonly LabelledPoint[]
+  readonly view: RegressionScene['view']
+  readonly degree: { readonly min: number; readonly max: number; readonly step: number }
+}
+
 export type LevelScene =
   | LandscapeMap
   | RegressionScene
@@ -135,3 +148,4 @@ export type LevelScene =
   | BoundaryScene
   | SigmoidScene
   | FeatureScene
+  | ComplexityScene

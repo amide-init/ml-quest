@@ -50,3 +50,8 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+
+.visualStack {
+  display: grid;
+  gap: var(--space-3);
+}

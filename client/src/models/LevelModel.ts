@@ -141,6 +141,16 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         learningRate: z.number().positive(),
         maxEpochs: z.number().int().positive().max(2000),
       }),
+      z.object({
+        /**
+         * The player picks the polynomial degree (every term up to it), trains to see the border, and
+         * checks when happy; only Check reveals hidden accuracy (W2-L4 The Overfitter).
+         */
+        id: z.literal('complexity'),
+        degree: rangeControlSchema,
+        learningRate: z.number().positive(),
+        maxEpochs: z.number().int().positive().max(5000),
+      }),
     ]),
   }),
 ])

@@ -43,3 +43,28 @@
   font-size: 15px;
   font-family: var(--font-text);
 }
+
+.checked1,
+.checked0 {
+  fill: none;
+  stroke-width: 1.75;
+}
+
+.checked1 {
+  stroke: var(--color-contour);
+}
+
+.checked0 {
+  stroke: var(--color-ridge);
+}
+
+.wrong .checked1,
+.wrong .checked0 {
+  stroke: var(--color-ink);
+}
+
+.cross {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}

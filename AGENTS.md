@@ -101,7 +101,7 @@ Dependencies only point down: `pages → components/hooks → stores → service
 - **Levels are data.** A new level is JSON plus a solution file plus locale strings plus a concept card. If a level seems to need custom code, add a registry entry (metric, dataset, widget) instead.
 - **Pass/fail only comes from the evaluator** (`EvaluationService` → `engine/eval`). Never add UI logic that marks a level as passed.
 - **NaN is a feature.** Divergence under a high learning rate is intended gameplay (`status: "diverged"`). Don't clamp it away.
-- **Hidden test set** data never goes to UI components. Only derived metrics do.
+- **Hidden test set** data never goes to UI components before it is judged. Only derived metrics do, plus an optional reveal of the just-judged points after a Check (D6), cleared on the next change.
 - **No literal player-facing strings** in levels or components. Use locale keys.
 - **Persisted shape changed?** Update `models/`, bump the version, and add a migration in `repositories/migrations/` plus a fixture test.
 - **TitleCase file names.** Name new files after their main export (`HintService.ts`, not `hint-service.ts` or `hint.service.ts`). To change only the case of an existing file, use `git mv`: macOS is case-insensitive and Linux CI is not.

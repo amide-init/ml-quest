@@ -6,6 +6,7 @@ import './index.css'
 import { App } from '@/app/App'
 import { hydrateStores } from '@/app/Bootstrap'
 import { createServices } from '@/app/Container'
+import { registerWithWorkbox, watchForUpdates } from '@/platform'
 
 const rootElement = document.getElementById('root')
 if (!rootElement) {
@@ -20,3 +21,8 @@ createRoot(rootElement).render(
     <App services={services} />
   </StrictMode>,
 )
+
+// Offline play: production builds only (dev and tests have no service worker).
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  watchForUpdates(registerWithWorkbox)
+}

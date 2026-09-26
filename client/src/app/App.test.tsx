@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { watchForUpdates } from '@/platform'
 import { App } from './App'
 import { hydrateStores } from './Bootstrap'
 import { createServices } from './Container'
@@ -708,6 +709,26 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'In the valley' })).toBeInTheDocument()
     expect(FakeAudioContext.notes).toBe(4) // and the chime on passing
     vi.unstubAllGlobals()
+  })
+
+  it('offers a downloaded update on the map, never in the middle of a level', async () => {
+    const user = userEvent.setup()
+    let needRefresh: (() => void) | undefined
+    const update = vi.fn(() => Promise.resolve())
+    watchForUpdates((options) => {
+      needRefresh = options.onNeedRefresh
+      return update
+    })
+    act(() => needRefresh?.())
+
+    await renderApp('/w/1/l/3')
+    expect(screen.queryByText('A new version of ML Quest is ready.')).not.toBeInTheDocument()
+    cleanups.splice(0).forEach((cleanup) => cleanup())
+
+    await renderApp('/map')
+    expect(screen.getByText('A new version of ML Quest is ready.')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Update now' }))
+    expect(update).toHaveBeenCalledWith(true)
   })
 
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {

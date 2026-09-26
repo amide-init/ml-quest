@@ -4,6 +4,8 @@
  * Do NOT re-export useServices from this barrel: pages and components must not reach services directly.
  * See ARCHITECTURE.md §4.
  */
+export { useAppUpdate } from './useAppUpdate'
+export type { UseAppUpdate } from './useAppUpdate'
 export { useDocumentPreferences } from './useDocumentPreferences'
 export { useDocumentTitle } from './useDocumentTitle'
 export { useLevelCatalog } from './useLevelCatalog'

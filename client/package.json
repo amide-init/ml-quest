@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "preinstall": "npx --yes only-allow pnpm",
+    "preinstall": "npx --yes only-allow@1.2.2 pnpm",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
@@ -14,7 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "pnpm lint:code && pnpm lint:boundaries",
     "lint:code": "oxlint --deny-warnings",
-    "lint:boundaries": "depcruise src --config .dependency-cruiser.cjs",
+    "lint:boundaries": "depcruise src tests --config .dependency-cruiser.cjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

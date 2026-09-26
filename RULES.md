@@ -34,7 +34,7 @@ These rules apply to every change: code, level content, docs. They're here so th
 5. **MUST** — **Services** hold all business rules (stars, hint cap, unlocks, export). They're plain TS classes with constructor-injected dependencies, and they never import React.
 6. **MUST** — **Repositories** only read and write data, run migrations and validate with Zod. They contain no business rules. Every repository has an interface plus an `InMemory*` implementation for tests.
 7. **MUST** — Services depend on repository **interfaces**. Only `app/Container.ts` constructs concrete classes. No singletons and no module-level mutable state.
-8. **MUST** — `client/src/engine/**` is pure TypeScript: no React, DOM, `window`, `localStorage`, `fetch`, `Date.now()`, or `Math.random()`. RNG and clocks are injected. It imports only `models/` and `lib/`.
+8. **MUST** — `client/src/engine/**` is pure TypeScript: no React, DOM, `window`, `localStorage`, `fetch`, timers, `performance`, `Date.now()`/`new Date()`, or `Math.random()`. RNG and clocks are injected. It imports only `models/` and `lib/`. This is enforced by oxlint (globals, `Math.random`, `Date.now`) and dependency-cruiser (imports); `new Date()` is checked in review.
 9. **MUST** — `models/` holds **domain** models. ML models are called **algorithms** and live in `engine/ml/algorithms/`.
 10. **MUST** — Everything random is seeded (datasets, splits, init, shuffles). The same level and seed always give the same result.
 11. **MUST** — Widgets emit **commands**, and viz components render **snapshots**. Only `TrainingService` talks to runners and workers.
@@ -93,7 +93,7 @@ These rules apply to every change: code, level content, docs. They're here so th
 1. **MUST** — Any change to a persisted shape bumps its version and adds a migration plus fixture tests.
 2. **MUST** — Never silently delete player progress. Back up corrupt data before resetting.
 3. **MUST** — Derive unlocks from progress (in `LevelService`) and never store them.
-4. **MUST** — Only repositories touch `localStorage`. Stores and services never do.
+4. **MUST** — Only repositories (and `platform/`) touch `localStorage`, `sessionStorage` or `indexedDB`. Stores and services never do. oxlint enforces this.
 
 ## 8. Dependencies
 

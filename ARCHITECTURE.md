@@ -1,6 +1,6 @@
 # ML Quest — Architecture
 
-> Status: **Draft v0.3** (pre-code; layered structure; v2+ compute & backend strategy) · Owner: @Amin Uddin · Last updated: 2026-09-26
+> Status: **v0.4** (Phase 0 in progress: foundation built; layered structure; v2+ compute & backend strategy) · Owner: @Amin Uddin · Last updated: 2026-09-26
 > Source of truth for *what* we build: [PRD.md](./PRD.md). This document covers *how*.
 > Repo: [amide-init/ml-quest](https://github.com/amide-init/ml-quest) · Live (after first deploy): https://amide-init.github.io/ml-quest/
 > Engineering rules that apply to every change: [RULES.md](./RULES.md).
@@ -417,6 +417,7 @@ interface ModelRunner {
 ### 6.3 Worker protocol
 
 - It's a discriminated union of messages, with the shared type in `workers/WorkerProtocol.ts`. Every message carries `sessionId`, so stale snapshots from a previous level or retry are ignored.
+- Worker code compiles against its own `tsconfig.worker.json` (`lib: WebWorker`), and `src/workers` is excluded from the app tsconfig (`lib: DOM`). Mixing the two libs lets worker-only APIs typecheck in UI code and causes conflicting global types.
 - We don't use Comlink. The protocol is small, and explicit messages are easier to log, replay and test.
 - **Crash handling:** if the worker errors or hangs past a watchdog (5 s without a heartbeat while training), the runner terminates it, spawns a fresh one, replays the session trace, and shows a non-blocking toast. If replay also fails, the runner falls back to InlineRunner with reduced step rate.
 

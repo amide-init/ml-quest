@@ -3,4 +3,3 @@
  * May import: components, hooks, models (types), i18n.
  * See ARCHITECTURE.md §4.
  */
-export {}

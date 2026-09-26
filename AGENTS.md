@@ -27,7 +27,7 @@ TensorFlow.js is only for World 4+ and **must not** enter the v1 bundle.
 
 ## Commands (planned; update this section once the scaffold exists)
 
-**Package manager: pnpm only** (pinned via `packageManager`; `npm install`/`yarn` are blocked). Enable it once with `corepack enable`.
+**Node 24 LTS** (`.nvmrc` at the repo root, so run `nvm use`) and **pnpm only** (pinned via `packageManager`; `npm install`/`yarn` are blocked). Enable pnpm once with `corepack enable`.
 
 The app lives in **`client/`**. Run every command from there (`cd client`), or from the root with `pnpm --dir client <script>`.
 
@@ -36,7 +36,10 @@ pnpm install
 pnpm dev              # local dev server
 pnpm build            # production build
 pnpm typecheck        # tsc -b
-pnpm lint             # oxlint + dependency-cruiser (layer boundaries)
+pnpm lint             # lint:code + lint:boundaries
+pnpm lint:code        # oxlint --deny-warnings (zero warnings allowed)
+pnpm lint:boundaries  # dependency-cruiser layer rules (.dependency-cruiser.cjs)
+pnpm format           # prettier --write · format:check in CI
 pnpm test             # vitest (engine, services, components, level validation)
 pnpm test:passbot     # replay every level solution through the engine
 pnpm test:e2e         # playwright
@@ -88,6 +91,8 @@ Dependencies only point down: `pages → components/hooks → stores → service
 - **"Model" means two things.** `src/models/` holds domain models (Level, Progress). ML models are **algorithms** in `src/engine/ml/algorithms/`.
 - **Business logic goes in services only.** Pages and components never compute stars, unlocks or hints, and never touch `localStorage` or the engine.
 - **Components are presentational.** They take props and emit callbacks. Only hooks call `useServices()`.
+- **Layer rule failed in `pnpm lint:boundaries`?** Move the code to the right layer. Don't loosen `.dependency-cruiser.cjs`; changing a rule needs an ADR.
+- **Repository implementations go in source subfolders** (`repositories/local-storage/`, `bundled/`, `in-memory/`), and interfaces stay at the top level. Never export implementations from `repositories/index.ts`.
 - **Services get repositories by interface** through the constructor. Only `app/Container.ts` creates concrete classes. No singletons.
 - **Levels are data.** A new level is JSON plus a solution file plus locale strings plus a concept card. If a level seems to need custom code, add a registry entry (metric, dataset, widget) instead.
 - **Pass/fail only comes from the evaluator** (`EvaluationService` → `engine/eval`). Never add UI logic that marks a level as passed.

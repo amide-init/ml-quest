@@ -191,6 +191,8 @@ export const levelConfigSchema = z
       hints: z.tuple([z.string(), z.string(), z.string()]),
       debrief: z.string(),
       concept: z.string(),
+      /** Optional reading on the level screen (Field notes): the idea, the controls, the result. */
+      notes: z.object({ idea: z.string(), controls: z.string(), reading: z.string() }),
     }),
     authors: z.array(z.string()).default([]),
   })

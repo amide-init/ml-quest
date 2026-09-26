@@ -1,8 +1,9 @@
 /**
- * Game pieces (Mascot, MissionCard, ResultPanel, DebriefCard, StarRating, HintPanel, LevelStats).
+ * Game pieces (Mascot, MissionCard, ResultPanel, DebriefCard, StarRating, HintPanel, FieldNotes, LevelStats).
  * See ARCHITECTURE.md §4.
  */
 export { DebriefCard } from './DebriefCard'
+export { FieldNotes } from './FieldNotes'
 export { HintPanel } from './HintPanel'
 export { LevelStats } from './LevelStats'
 export { LossMeter } from './LossMeter'

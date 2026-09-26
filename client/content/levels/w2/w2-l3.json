@@ -50,6 +50,11 @@
     "mission": "level.w2-l3.mission",
     "hints": ["level.w2-l3.hint1", "level.w2-l3.hint2", "level.w2-l3.hint3"],
     "debrief": "level.w2-l3.debrief",
+    "notes": {
+      "idea": "level.w2-l3.notes.idea",
+      "controls": "level.w2-l3.notes.controls",
+      "reading": "level.w2-l3.notes.reading"
+    },
     "concept": "feature-engineering"
   },
   "authors": ["amide-init"]

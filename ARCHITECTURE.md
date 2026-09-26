@@ -513,6 +513,7 @@ Persistence is split across three layers. **Repositories** read and write storag
 - **Levels:** `content/levels/<world>/<id>.json`, bundled **per world** as a lazy chunk via `import.meta.glob`. Playing World 1 never downloads World 2.
 - **Concept cards and debriefs:** markdown with front-matter (`id`, `title`, `oneLiner`, `visual`, `formula?`). They're compiled at build time to JSON (no runtime markdown parser). Formulas use KaTeX, rendered at build time to HTML, so KaTeX JS isn't shipped.
 - **Strings:** all player-facing text in levels is a **locale key**, never a literal. A string like `"w1.l4.mission"` resolves through `content/locales/<lang>/`. Hindi is a "Could" item, but externalizing strings from day one is cheap. Retrofitting later means touching every level.
+  - Text shown only inside a level (mission, hints, debrief, field notes) lives in `levels.json` and is read through `levelString()`, so it ships with the lazy level chunk; everything else (including level titles and concept cards, which the map and Codex show) is in `ui.json` behind the typed `t()`. `levels:validate` checks every level key exists in one of the two.
 - **Credits:** `"authors": ["github-handle"]` in the level config is rendered on the debrief card (PRD: contributors credited).
 
 ---

@@ -52,6 +52,11 @@
     "mission": "level.w2-l1.mission",
     "hints": ["level.w2-l1.hint1", "level.w2-l1.hint2", "level.w2-l1.hint3"],
     "debrief": "level.w2-l1.debrief",
+    "notes": {
+      "idea": "level.w2-l1.notes.idea",
+      "controls": "level.w2-l1.notes.controls",
+      "reading": "level.w2-l1.notes.reading"
+    },
     "concept": "classification"
   },
   "authors": ["amide-init"]

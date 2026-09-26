@@ -62,6 +62,11 @@
     "mission": "level.w1-l1.mission",
     "hints": ["level.w1-l1.hint1", "level.w1-l1.hint2", "level.w1-l1.hint3"],
     "debrief": "level.w1-l1.debrief",
+    "notes": {
+      "idea": "level.w1-l1.notes.idea",
+      "controls": "level.w1-l1.notes.controls",
+      "reading": "level.w1-l1.notes.reading"
+    },
     "concept": "linear-regression"
   },
   "authors": ["amide-init"]

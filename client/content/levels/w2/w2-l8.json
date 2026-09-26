@@ -73,6 +73,11 @@
     "mission": "level.w2-l8.mission",
     "hints": ["level.w2-l8.hint1", "level.w2-l8.hint2", "level.w2-l8.hint3"],
     "debrief": "level.w2-l8.debrief",
+    "notes": {
+      "idea": "level.w2-l8.notes.idea",
+      "controls": "level.w2-l8.notes.controls",
+      "reading": "level.w2-l8.notes.reading"
+    },
     "concept": "f1-score"
   },
   "authors": ["amide-init"]

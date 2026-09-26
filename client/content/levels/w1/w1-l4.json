@@ -60,6 +60,11 @@
     "mission": "level.w1-l4.mission",
     "hints": ["level.w1-l4.hint1", "level.w1-l4.hint2", "level.w1-l4.hint3"],
     "debrief": "level.w1-l4.debrief",
+    "notes": {
+      "idea": "level.w1-l4.notes.idea",
+      "controls": "level.w1-l4.notes.controls",
+      "reading": "level.w1-l4.notes.reading"
+    },
     "concept": "learning-rate"
   },
   "authors": ["amide-init"]

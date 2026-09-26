@@ -132,6 +132,7 @@ The game has 6 worlds; v1 ships World 1 and World 2 fully (16 levels), the rest 
 
 The rule is play first, name it after: players feel a concept through the level, then the debrief gives it its real name.
 
+- **Field notes:** every level has optional notes, closed by default, for players who want to understand before or while they play: the idea, what the controls do, and how to read the result. They never give the answer (that's what hints are for), so reading them never costs stars, and "play first" stays the default path.
 - **Concept cards:** after each pass, a card unlocks in the player's "ML Codex" with the term, a one-line definition, the level's key visual and an optional formula.
 - **Debrief questions:** one optional multiple-choice question per level ("Why did a high learning rate make the ball bounce?"). Correct answers give a bonus gem, never block progress.
 - **Misconception traps:** some levels are designed so the obvious move fails (e.g. maximizing training accuracy in The Overfitter), and the debrief explains why.

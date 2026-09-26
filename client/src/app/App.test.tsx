@@ -645,6 +645,24 @@ describe('App', () => {
     ).toBeInTheDocument()
   })
 
+  it('offers optional Field notes on a level, closed until opened, at no cost', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/2/l/5')
+    // Available before starting, for players who want to read first.
+    const summary = screen.getByText('Field notes: Regularization')
+    expect(summary.closest('details')).not.toHaveAttribute('open')
+    await user.click(summary)
+    expect(summary.closest('details')).toHaveAttribute('open')
+    expect(screen.getByText(/Regularization adds a penalty for large weights/)).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    // Reading the notes is not a hint: none revealed, and the star cap note is not triggered.
+    expect(
+      screen.getByText('Hints unlock after a failed attempt, or after a minute without a move.'),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Field notes: Regularization')).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     await renderApp('/map')

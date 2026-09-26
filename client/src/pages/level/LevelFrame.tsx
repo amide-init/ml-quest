@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { ConditionFailure } from '@/models'
-import { DebriefCard, HintPanel, MissionCard, ResultPanel } from '@/components/game'
+import { DebriefCard, FieldNotes, HintPanel, MissionCard, ResultPanel } from '@/components/game'
 import { useDocumentTitle, type UseLevelSession } from '@/hooks'
 import { t } from '@/i18n'
 import { levelText } from './LevelText'
@@ -94,6 +94,13 @@ export function LevelFrame({
               onReveal={game.revealHint}
             />
           ) : null}
+
+          <FieldNotes
+            term={levelText(`concept.${config.text.concept}.term`)}
+            idea={levelText(config.text.notes.idea)}
+            controls={levelText(config.text.notes.controls)}
+            reading={levelText(config.text.notes.reading)}
+          />
         </div>
       </div>
     </div>

@@ -87,6 +87,11 @@
     "mission": "level.w1-l8.mission",
     "hints": ["level.w1-l8.hint1", "level.w1-l8.hint2", "level.w1-l8.hint3"],
     "debrief": "level.w1-l8.debrief",
+    "notes": {
+      "idea": "level.w1-l8.notes.idea",
+      "controls": "level.w1-l8.notes.controls",
+      "reading": "level.w1-l8.notes.reading"
+    },
     "concept": "preprocessing"
   },
   "authors": ["amide-init"]

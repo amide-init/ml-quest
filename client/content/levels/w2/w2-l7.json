@@ -67,6 +67,11 @@
     "mission": "level.w2-l7.mission",
     "hints": ["level.w2-l7.hint1", "level.w2-l7.hint2", "level.w2-l7.hint3"],
     "debrief": "level.w2-l7.debrief",
+    "notes": {
+      "idea": "level.w2-l7.notes.idea",
+      "controls": "level.w2-l7.notes.controls",
+      "reading": "level.w2-l7.notes.reading"
+    },
     "concept": "precision-recall"
   },
   "authors": ["amide-init"]

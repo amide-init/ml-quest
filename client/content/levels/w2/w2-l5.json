@@ -75,6 +75,11 @@
     "mission": "level.w2-l5.mission",
     "hints": ["level.w2-l5.hint1", "level.w2-l5.hint2", "level.w2-l5.hint3"],
     "debrief": "level.w2-l5.debrief",
+    "notes": {
+      "idea": "level.w2-l5.notes.idea",
+      "controls": "level.w2-l5.notes.controls",
+      "reading": "level.w2-l5.notes.reading"
+    },
     "concept": "regularization"
   },
   "authors": ["amide-init"]

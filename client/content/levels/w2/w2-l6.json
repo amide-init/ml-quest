@@ -81,6 +81,11 @@
     "mission": "level.w2-l6.mission",
     "hints": ["level.w2-l6.hint1", "level.w2-l6.hint2", "level.w2-l6.hint3"],
     "debrief": "level.w2-l6.debrief",
+    "notes": {
+      "idea": "level.w2-l6.notes.idea",
+      "controls": "level.w2-l6.notes.controls",
+      "reading": "level.w2-l6.notes.reading"
+    },
     "concept": "class-imbalance"
   },
   "authors": ["amide-init"]

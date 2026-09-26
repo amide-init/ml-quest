@@ -115,7 +115,7 @@ Follow these in order. Each step names the layer it belongs to.
 ### Add a new level
 1. `content/levels/<world>/<id>.json`: config with `$schema`, `schemaVersion`, seed, dataset, algorithm, widgets, conditions, hint and debrief keys.
 2. `content/levels/<world>/<id>.solution.json`: a scripted solution that reaches at least 1 star (ideally also a 3-star one). Add an anti-solution if the level has a misconception trap.
-3. `content/locales/en/*.json`: mission, 3 hints, debrief strings.
+3. `content/locales/en/levels.json`: mission, 3 hints, debrief and the three field notes (`idea`, `controls`, `reading`: explain the concept and the controls, never the answer). `ui.json`: the title and the concept's term and definition.
 4. `content/concepts/<concept>.md`: the codex card, if the concept is new.
 5. Run `pnpm levels:validate && pnpm test:passbot`.
 6. **Don't touch `client/src/`.** If you have to, you're missing a registry entry (see below).

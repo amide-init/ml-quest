@@ -1,0 +1,68 @@
+.notes {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+}
+
+.summary {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-6);
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+/* An open/closed chevron before the title: points right when closed, down when open. */
+.title::before {
+  content: '';
+  position: absolute;
+  top: 0.42em;
+  left: 0.1em;
+  width: 0.45em;
+  height: 0.45em;
+  border-right: 2.5px solid var(--color-contour);
+  border-bottom: 2.5px solid var(--color-contour);
+  transform: rotate(-45deg);
+  transition: transform 120ms ease;
+}
+
+.notes[open] .title::before {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title::before {
+    transition: none;
+  }
+}
+
+.title {
+  position: relative;
+  /* Hanging indent: a wrapped title lines up with its first line, not under the chevron. */
+  padding-left: 1.6rem;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.note {
+  padding-left: 1.6rem;
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+
+.body {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0 var(--space-6) var(--space-6);
+}
+
+.heading {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}

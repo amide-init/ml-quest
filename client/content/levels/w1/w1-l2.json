@@ -63,6 +63,11 @@
     "mission": "level.w1-l2.mission",
     "hints": ["level.w1-l2.hint1", "level.w1-l2.hint2", "level.w1-l2.hint3"],
     "debrief": "level.w1-l2.debrief",
+    "notes": {
+      "idea": "level.w1-l2.notes.idea",
+      "controls": "level.w1-l2.notes.controls",
+      "reading": "level.w1-l2.notes.reading"
+    },
     "concept": "loss-function"
   },
   "authors": ["amide-init"]

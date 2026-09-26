@@ -53,6 +53,11 @@
     "mission": "level.w1-l7.mission",
     "hints": ["level.w1-l7.hint1", "level.w1-l7.hint2", "level.w1-l7.hint3"],
     "debrief": "level.w1-l7.debrief",
+    "notes": {
+      "idea": "level.w1-l7.notes.idea",
+      "controls": "level.w1-l7.notes.controls",
+      "reading": "level.w1-l7.notes.reading"
+    },
     "concept": "feature-scaling"
   },
   "authors": ["amide-init"]

@@ -66,6 +66,11 @@
     "mission": "level.w1-l3.mission",
     "hints": ["level.w1-l3.hint1", "level.w1-l3.hint2", "level.w1-l3.hint3"],
     "debrief": "level.w1-l3.debrief",
+    "notes": {
+      "idea": "level.w1-l3.notes.idea",
+      "controls": "level.w1-l3.notes.controls",
+      "reading": "level.w1-l3.notes.reading"
+    },
     "concept": "gradient-descent"
   },
   "authors": ["amide-init"]

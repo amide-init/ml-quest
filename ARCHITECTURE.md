@@ -141,7 +141,7 @@ src/
   stores/                 # Zustand stores: ProgressStore.ts, SettingsStore.ts, SessionStore.ts
                           #   (hold UI-facing state; write through services, never repositories)
   services/               # Application/business logic. Plain TS classes, no React.
-    LevelService.ts          # load + validate level, world graph, derive unlocks
+    LevelService.ts          # load + validate level, world graph, derive unlocks (levelStatuses: PRD F1)
     TrainingService.ts       # owns the runner (Inline | Worker strategy), dispatch, snapshots
     EvaluationService.ts     # wraps engine evaluator, baseline caching
     ProgressService.ts       # record results, best stars, gems, cosmetics
@@ -538,6 +538,10 @@ Persistence is split across three layers. **Repositories** read and write storag
 The PRD says "Playwright pass-bot". We split it deliberately. **Winnability is proven at the engine level**: that's fast, deterministic, and covers all 16 levels in seconds. **Playwright proves the UI can express the solution.** Running all 16 levels through a browser on every PR would be slow and flaky, and it wouldn't prove anything more.
 
 ---
+
+### Level unlocking (PRD F1)
+
+`LevelService.levelStatuses(progress)` is the only place unlocks are decided. In world/level order, a level is **completed** once passed, **open** when it is the first level or the one before it is passed, and **locked** otherwise, with `requires` (the level that opens it) and `playNext` (the first open level, where the player can actually continue). World 2 therefore opens with the World 1 boss. A passed level never locks again. The unlock policy is set in the composition root: `sequential` for players, `all` for tests that jump straight into a level (and a possible teacher mode later). Pages read statuses through `useLevelStatuses()`; the map shows locked rows with what they wait for, and a direct link to a locked level shows a locked screen instead of starting a session.
 
 ## 11. Build, deploy & CI
 

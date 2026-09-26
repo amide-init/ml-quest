@@ -7,10 +7,18 @@ import { createServices } from './Container'
 
 const cleanups: (() => void)[] = []
 
-/** Renders the app at a route and waits until a lazily loaded screen (the level player) is in. */
-async function renderApp(path = '/', storage: 'memory' | 'browser' = 'memory') {
+/**
+ * Renders the app at a route and waits until a lazily loaded screen (the level player) is in.
+ * Levels are all open by default so tests can jump straight into one; the unlock tests pass
+ * "sequential", the policy players get.
+ */
+async function renderApp(
+  path = '/',
+  storage: 'memory' | 'browser' = 'memory',
+  unlocks: 'all' | 'sequential' = 'all',
+) {
   window.location.hash = `#${path}`
-  const services = createServices({ storage })
+  const services = createServices({ storage, unlocks })
   cleanups.push(hydrateStores(services))
   const view = render(<App services={services} />)
   cleanups.push(view.unmount)
@@ -29,6 +37,9 @@ async function playToTwoStars(user: ReturnType<typeof userEvent.setup>) {
 /** Move a slider (range input) by its accessible name. */
 const setSlider = (name: string, value: string) =>
   fireEvent.change(screen.getByRole('slider', { name }), { target: { value } })
+
+/** The map row (list item) of a level, found by its title. */
+const mapRow = (title: string) => screen.getByText(title).closest('li')!
 
 describe('App', () => {
   beforeEach(() => {
@@ -558,6 +569,33 @@ describe('App', () => {
     expect(screen.getByText('Hidden F1 0.90: precision 86%, recall 95%.')).toBeInTheDocument()
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   }, 40_000)
+
+  it('opens levels one by one for a new player: the map shows what each locked level waits for', async () => {
+    await renderApp('/map', 'memory', 'sequential')
+    expect(within(mapRow('Draw the Line')).getByRole('link', { name: 'Play' })).toBeInTheDocument()
+    expect(
+      within(mapRow('Feel the Loss')).getByText('Locked: pass Level 1-1 first'),
+    ).toBeInTheDocument()
+    expect(within(mapRow('Feel the Loss')).queryByRole('link')).not.toBeInTheDocument()
+    // Worlds unlock in order: World 2 waits for the World 1 boss.
+    expect(
+      within(mapRow('Split the Kingdom')).getByText('Locked: pass Level 1-8 first'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows what opens a locked level instead of starting it from a direct link', async () => {
+    await renderApp('/w/1/l/3', 'memory', 'sequential')
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'This level is locked' }),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Start the level' })).not.toBeInTheDocument()
+    // 1-2 opens it, but 1-2 is locked too: the button goes where the player can continue.
+    expect(screen.getByText(/Pass Level 1-2, Feel the Loss, to open this one/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Play Level 1-1' })).toHaveAttribute(
+      'href',
+      '#/w/1/l/1',
+    )
+  })
 
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()

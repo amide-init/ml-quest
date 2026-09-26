@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
@@ -40,6 +40,14 @@ describe('App', () => {
       screen.getByRole('heading', { level: 1, name: 'Learn machine learning by making it work.' }),
     ).toBeInTheDocument()
     expect(screen.getByRole('navigation', { name: 'Main' })).toBeInTheDocument()
+    const github = screen.getByRole('list', { name: 'ML Quest on GitHub' })
+    const star = within(github).getByRole('link', { name: /^Star ML Quest on GitHub/ })
+    expect(star).toHaveAttribute('href', 'https://github.com/amide-init/ml-quest')
+    expect(within(github).getByRole('link', { name: /^Fork ML Quest on GitHub/ })).toHaveAttribute(
+      'href',
+      'https://github.com/amide-init/ml-quest/fork',
+    )
+    expect(star).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
   it('navigates to Settings and applies the chosen theme to the document', async () => {

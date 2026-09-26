@@ -85,3 +85,20 @@ export const twoBlobsSpecSchema = z.object({
   spread: z.number().positive(),
 })
 export type TwoBlobsSpec = z.infer<typeof twoBlobsSpecSchema>
+
+/** A disc of one class inside a ring of the other (W2 "Not a Straight Line"): no straight line splits it. */
+export const ringsSpecSchema = z.object({
+  generator: z.literal('rings'),
+  trainPerClass: z.number().int().min(2).max(250),
+  testPerClass: z.number().int().min(1).max(250),
+  /** Mean radius of the inner disc (class 1) and the outer ring (class 0). */
+  innerRadius: z.number().positive(),
+  outerRadius: z.number().positive(),
+  /** Radial spread of each band. */
+  spread: z.number().positive(),
+})
+export type RingsSpec = z.infer<typeof ringsSpecSchema>
+
+/** Features a player can give a 2D classifier: the raw inputs and their degree-2 combinations. */
+export const polynomialFeatureSchema = z.enum(['x1', 'x2', 'x1^2', 'x2^2', 'x1*x2'])
+export type PolynomialFeature = z.infer<typeof polynomialFeatureSchema>

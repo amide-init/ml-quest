@@ -1,0 +1,134 @@
+{
+  "level": "w2-l3",
+  "runs": [
+    {
+      "name": "just the two squares: x1\u00b2 + x2\u00b2 describes a circle",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "toggle-feature",
+          "feature": "x1"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x2"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x1^2"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x2^2"
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "squares added to the straight-line features",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "toggle-feature",
+          "feature": "x1^2"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x2^2"
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "every feature: fits the training points, slips on new ones",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "toggle-feature",
+          "feature": "x1^2"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x2^2"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x1*x2"
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: straight-line features only",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: one square is only half a circle",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "toggle-feature",
+          "feature": "x1"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x2"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x1^2"
+        },
+        {
+          "type": "train"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: the product alone",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "toggle-feature",
+          "feature": "x1"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x2"
+        },
+        {
+          "type": "toggle-feature",
+          "feature": "x1*x2"
+        },
+        {
+          "type": "train"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import { starRulesSchema } from './ConditionModel'
-import { linearMultiSpecSchema, linearNoisySpecSchema, twoBlobsSpecSchema } from './DatasetModel'
+import {
+  linearMultiSpecSchema,
+  linearNoisySpecSchema,
+  polynomialFeatureSchema,
+  ringsSpecSchema,
+  twoBlobsSpecSchema,
+} from './DatasetModel'
 import { landscapeSpecSchema, pointSchema } from './LandscapeModel'
 
 export const levelIdSchema = z.string().regex(/^w[1-6]-l[1-8]$/, 'Level ids look like "w1-l3"')
@@ -106,7 +112,7 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
   z.object({
     /** Classification with a straight boundary (World 2). */
     id: z.literal('logistic-regression'),
-    dataset: twoBlobsSpecSchema,
+    dataset: z.discriminatedUnion('generator', [twoBlobsSpecSchema, ringsSpecSchema]),
     /** Visible window of the 2D feature space. */
     view: z.object({ xMin: z.number(), xMax: z.number(), yMin: z.number(), yMax: z.number() }),
     optimizer: z.discriminatedUnion('id', [
@@ -123,6 +129,17 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         id: z.literal('manual-sigmoid'),
         slope: rangeControlSchema,
         threshold: rangeControlSchema,
+      }),
+      z.object({
+        /**
+         * The player picks which features the model sees (x1, x2, x1², …), then trains it with
+         * gradient descent on standardized features (W2-L3 Not a Straight Line).
+         */
+        id: z.literal('feature-builder'),
+        available: z.array(polynomialFeatureSchema).min(1),
+        initial: z.array(polynomialFeatureSchema),
+        learningRate: z.number().positive(),
+        maxEpochs: z.number().int().positive().max(2000),
       }),
     ]),
   }),

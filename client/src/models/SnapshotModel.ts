@@ -1,4 +1,6 @@
+import type { PolynomialFeature } from './DatasetModel'
 import type { Point } from './LandscapeModel'
+import type { ContourLine } from './MapModel'
 
 /** What the UI renders for a landscape level at one moment (ARCHITECTURE §6). Plain data, easy to diff. */
 export interface LandscapeSnapshot {
@@ -109,6 +111,27 @@ export interface SigmoidSnapshot {
   readonly minConfidence: number
 }
 
+/** Decision regions on a grid over the map: class (0/1) per cell, row by row from the top. */
+export interface DecisionRegions {
+  readonly cols: number
+  readonly rows: number
+  readonly classes: readonly number[]
+}
+
+/** A feature-builder level's state (W2-L3): chosen features and the latest trained model. */
+export interface FeatureSnapshot {
+  readonly kind: 'features'
+  readonly selected: readonly PolynomialFeature[]
+  readonly trained: {
+    readonly features: readonly PolynomialFeature[]
+    readonly regions: DecisionRegions
+    /** The border: where the model's score is exactly 0. */
+    readonly boundary: readonly ContourLine[]
+    readonly correct: number
+    readonly total: number
+  } | null
+}
+
 export type LevelSnapshot =
   | LandscapeSnapshot
   | RegressionSnapshot
@@ -117,3 +140,4 @@ export type LevelSnapshot =
   | ScalingSnapshot
   | BoundarySnapshot
   | SigmoidSnapshot
+  | FeatureSnapshot

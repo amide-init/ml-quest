@@ -3,5 +3,6 @@
  * See ARCHITECTURE.md §4.
  */
 export { BoundaryPlot } from './BoundaryPlot'
+export { FeaturePicker } from './FeaturePicker'
 export { HyperparameterControls } from './HyperparameterControls'
 export { LineFitPlot } from './LineFitPlot'

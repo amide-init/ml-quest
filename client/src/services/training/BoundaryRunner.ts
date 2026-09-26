@@ -13,7 +13,7 @@ import {
   accuracy,
   boundaryThrough,
   createSeededRandom,
-  generateTwoBlobs,
+  generateClassification,
   hashSeed,
   logisticRegression,
 } from '@/engine'
@@ -35,7 +35,7 @@ export class BoundaryRunner implements LevelRunner {
   constructor(level: LogisticLevelWith<'manual-boundary'>, evaluation: EvaluationService) {
     this.#level = level
     this.#evaluation = evaluation
-    this.#data = generateTwoBlobs(level.algorithm.dataset, {
+    this.#data = generateClassification(level.algorithm.dataset, {
       train: createSeededRandom(hashSeed(level.id, level.seed, 'train')),
       test: createSeededRandom(hashSeed(level.id, level.seed, 'test')),
     })
@@ -78,6 +78,7 @@ export class BoundaryRunner implements LevelRunner {
       case 'set-hyperparameter':
       case 'set-scaling':
       case 'toggle-point':
+      case 'toggle-feature':
         break
     }
     return this.#snapshot

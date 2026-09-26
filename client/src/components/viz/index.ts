@@ -6,5 +6,6 @@
 export { FeatureRanges } from './FeatureRanges'
 export { LossCurve } from './LossCurve'
 export { LossLandscapeMap } from './LossLandscapeMap'
+export { RegionMap } from './RegionMap'
 export { SigmoidPlot } from './SigmoidPlot'
 export { ValleyLandscape } from './ValleyLandscape'

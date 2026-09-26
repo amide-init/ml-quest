@@ -5,6 +5,7 @@ import type { EvaluationService } from './EvaluationService'
 import { BoundaryRunner } from './training/BoundaryRunner'
 import { CleaningRunner } from './training/CleaningRunner'
 import { DescentRunner } from './training/DescentRunner'
+import { FeatureRunner } from './training/FeatureRunner'
 import { GradientDescentRunner } from './training/GradientDescentRunner'
 import { LandscapeRunner } from './training/LandscapeRunner'
 import type { LevelRunner } from './training/LevelRunner'
@@ -87,6 +88,11 @@ export class TrainingService {
             )
           case 'manual-sigmoid':
             return new SigmoidRunner(
+              { ...level, algorithm: { ...algorithm, optimizer } },
+              this.#evaluation,
+            )
+          case 'feature-builder':
+            return new FeatureRunner(
               { ...level, algorithm: { ...algorithm, optimizer } },
               this.#evaluation,
             )

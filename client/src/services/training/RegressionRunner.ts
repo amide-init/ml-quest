@@ -83,6 +83,7 @@ export class RegressionRunner implements LevelRunner {
       case 'set-scaling':
       case 'set-boundary':
       case 'flip-sides':
+      case 'toggle-feature':
       case 'set-hyperparameter':
       case 'set-start':
       case 'step':

@@ -142,6 +142,7 @@ export class ScalingRunner implements LevelRunner {
       case 'check':
       case 'set-boundary':
       case 'flip-sides':
+      case 'toggle-feature':
       case 'toggle-point':
         break
     }

@@ -325,20 +325,16 @@ Each step lives in exactly one layer. To find a bug in star scoring, look in `Pr
 These types live in `models/` and are implemented in `engine/ml/algorithms/` and `engine/ml/optimizers/`. Parameters are flat `Float64Array`s plus a named layout. That makes them cheap to copy, transfer and diff, and easy for widgets to bind to by name.
 
 ```ts
-interface Algorithm {           // an ML model; named "Algorithm" to avoid clashing with domain models
-  id: string;                                   // registry key, e.g. "linear-regression"
-  layout(spec): ParamLayout;                    // names/shapes → offsets in the flat vector
-  init(spec, rng): Float64Array;
-  predict(params, X): Float64Array;
-  loss(params, batch, reg?): number;
-  grad(params, batch, reg?): Float64Array;
-  describe?(params): ModelVisualState;          // what viz needs: line, boundary fn, tree, etc.
+interface Algorithm<TData = void> {  // models/EngineModel.ts: an ML model; "Algorithm" avoids clashing with domain models
+  id: string                                   // registry key, e.g. "landscape-2d", "linear-regression"
+  paramNames: readonly string[]                // names in vector order, so widgets bind by name (["x","y"], ["w","b"])
+  loss(params: Vector, data: TData): number
+  gradient(params: Vector, data: TData): Vector
+  inDomain(params: Vector): boolean            // false = left the map → the step is "diverged" (gameplay, not an error)
 }
 
-interface Optimizer {
-  id: "manual" | "manual-gd" | "gd" | "sgd" | "momentum" | ...;
-  step(state, algorithm, batch, hp): OptimizerState;
-}
+// engine/ml/optimizers/GradientDescent.ts: one step, never clamped
+gradientDescentStep(algorithm, params, data, learningRate) → { params, loss, gradient, status: 'ok' | 'diverged' }
 ```
 
 v1 algorithms, all hand-written TS and each under ~150 lines: `linear-regression`, `logistic-regression`, `polynomial-*` (via feature transforms, so not a separate algorithm), and `landscape-2d`. The last one is a synthetic loss surface for W1-L3 and W1-L5, where the "parameters" are the ball's position.

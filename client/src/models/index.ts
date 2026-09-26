@@ -45,9 +45,11 @@ export type {
 export type {
   CleaningScene,
   ContourLine,
+  FeatureRange,
   LandscapeMap,
   LevelScene,
   RegressionScene,
+  ScalingScene,
   TrainingScene,
 } from './MapModel'
 export type { PlayReward, PlayView } from './PlayModel'
@@ -55,6 +57,8 @@ export type {
   CleaningSnapshot,
   LandscapeSnapshot,
   LevelSnapshot,
+  LossRun,
+  ScalingSnapshot,
   RegressionSnapshot,
   TrainingRun,
   TrainingSnapshot,
@@ -66,5 +70,11 @@ export {
   progressSchema,
 } from './ProgressModel'
 export type { ConceptId, LevelProgress, Progress } from './ProgressModel'
-export { linearNoisySpecSchema } from './DatasetModel'
-export type { DatasetSplit, LinearNoisySpec, RegressionData } from './DatasetModel'
+export { linearMultiSpecSchema, linearNoisySpecSchema } from './DatasetModel'
+export type {
+  DatasetSplit,
+  LinearMultiSpec,
+  LinearNoisySpec,
+  RegressionData,
+  TabularData,
+} from './DatasetModel'

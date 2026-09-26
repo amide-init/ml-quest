@@ -84,7 +84,7 @@ export function TrainingLevelView({ game, scene, snapshot, world, level }: Train
             onCommand={game.dispatch}
           />
           <LossCurve
-            run={run}
+            losses={run ? run.epochs.map((recorded) => recorded.loss) : null}
             shownEpochs={epoch}
             maxEpochs={scene.maxEpochs}
             targetLoss={scene.targetLoss}

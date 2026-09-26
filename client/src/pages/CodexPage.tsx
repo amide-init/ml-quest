@@ -15,6 +15,7 @@ const CONCEPT_SOURCE: Readonly<Record<string, MessageKey>> = {
   'learning-rate': 'level.w1-l4.title',
   'local-minimum': 'level.w1-l5.title',
   outlier: 'level.w1-l6.title',
+  'feature-scaling': 'level.w1-l7.title',
 }
 
 export function CodexPage() {

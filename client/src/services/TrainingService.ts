@@ -8,6 +8,7 @@ import { GradientDescentRunner } from './training/GradientDescentRunner'
 import { LandscapeRunner } from './training/LandscapeRunner'
 import type { LevelRunner } from './training/LevelRunner'
 import { RegressionRunner } from './training/RegressionRunner'
+import { ScalingRunner } from './training/ScalingRunner'
 
 const CONTOUR_LEVELS = [
   0.02, 0.06, 0.12, 0.2, 0.3, 0.42, 0.56, 0.72, 0.9, 1.1, 1.35, 1.65, 2, 2.45, 3,
@@ -72,6 +73,8 @@ export class TrainingService {
             return assertNever(optimizer)
         }
       }
+      case 'multi-linear-regression':
+        return new ScalingRunner({ ...level, algorithm }, this.#evaluation)
       default:
         return assertNever(algorithm)
     }

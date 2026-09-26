@@ -3,6 +3,7 @@
  * plus the home-page ValleyLandscape demo.
  * See ARCHITECTURE.md §4.
  */
+export { FeatureRanges } from './FeatureRanges'
 export { LossCurve } from './LossCurve'
 export { LossLandscapeMap } from './LossLandscapeMap'
 export { ValleyLandscape } from './ValleyLandscape'

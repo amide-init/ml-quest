@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "w1-l7",
+  "world": 1,
+  "level": 7,
+  "seed": 107,
+  "algorithm": {
+    "id": "multi-linear-regression",
+    "dataset": {
+      "generator": "linear-multi",
+      "trainCount": 30,
+      "testCount": 20,
+      "weights": [3, 0.4],
+      "intercept": 5,
+      "noise": 1,
+      "ranges": [
+        [0, 1],
+        [0, 10]
+      ]
+    },
+    "featureLabels": ["level.w1-l7.feature1", "level.w1-l7.feature2"],
+    "optimizer": {
+      "id": "gradient-descent",
+      "learningRate": {
+        "min": 0.005,
+        "max": 1,
+        "step": 0.005,
+        "initial": 0.03
+      },
+      "maxEpochs": 400,
+      "convergenceGap": 0.05
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "speedup",
+      "op": ">=",
+      "value": 3
+    },
+    "two": {
+      "metric": "speedup",
+      "op": ">=",
+      "value": 10
+    },
+    "three": {
+      "metric": "speedup",
+      "op": ">=",
+      "value": 30
+    }
+  },
+  "text": {
+    "title": "level.w1-l7.title",
+    "mission": "level.w1-l7.mission",
+    "hints": ["level.w1-l7.hint1", "level.w1-l7.hint2", "level.w1-l7.hint3"],
+    "debrief": "level.w1-l7.debrief",
+    "concept": "feature-scaling"
+  },
+  "authors": ["amide-init"]
+}

@@ -250,10 +250,33 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   })
 
+  it('Scale Matters: no scaling is 1× at best; scaling plus a bigger learning rate is far faster', async () => {
+    const user = userEvent.setup()
+    renderApp('/w/1/l/7')
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText(/Best without scaling: \d+ epochs/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole('heading', { name: /^Only 0\.\d× faster$/ }, { timeout: 5000 }),
+    ).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    await user.click(screen.getByRole('switch', { name: 'Scale the features' }))
+    fireEvent.change(screen.getByRole('slider', { name: 'Learning rate' }), {
+      target: { value: '0.5' },
+    })
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      await screen.findByRole('heading', { name: /^\d+\.\d× faster$/ }, { timeout: 5000 }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  }, 20_000)
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     renderApp('/map')
-    expect(screen.getAllByText('Not played yet')).toHaveLength(6)
+    expect(screen.getAllByText('Not played yet')).toHaveLength(7)
     await user.click(screen.getByRole('link', { name: 'Codex' }))
     expect(screen.getByRole('link', { name: 'Go to the map' })).toBeInTheDocument()
   })

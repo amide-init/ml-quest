@@ -1,0 +1,131 @@
+{
+  "level": "w3-l4",
+  "runs": [
+    {
+      "name": "limits the tree to three questions deep: the pattern, not the noise (82%)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 3
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "falls for the 100% tree once, then limits it",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 3
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "too deep, then too shallow, then right",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 1
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 4
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): the full-depth tree, 100% on training, 72% on new mushrooms",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: one question is too simple (72%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: depth 5 already chases the noise",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

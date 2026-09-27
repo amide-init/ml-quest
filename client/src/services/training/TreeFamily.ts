@@ -3,6 +3,7 @@ import { assertNever } from '@/lib'
 import type { EvaluationService } from '@/services/EvaluationService'
 import type { LevelRunner } from './LevelRunner'
 import { SplitRunner } from './SplitRunner'
+import { TreeRunner } from './TreeRunner'
 
 /** Runners for the decision-tree levels (World 3). */
 export function treeRunners(
@@ -16,7 +17,11 @@ export function treeRunners(
       const narrowed = { ...level, algorithm: { ...algorithm, optimizer } }
       return () => new SplitRunner(narrowed, evaluation)
     }
+    case 'grown': {
+      const narrowed = { ...level, algorithm: { ...algorithm, optimizer } }
+      return () => new TreeRunner(narrowed, evaluation)
+    }
     default:
-      return assertNever(optimizer.id)
+      return assertNever(optimizer)
   }
 }

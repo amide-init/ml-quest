@@ -68,3 +68,9 @@
   stroke-width: 2;
   stroke-linecap: round;
 }
+
+/* A decision tree's box: its edges show where the tree's questions cut. */
+.box {
+  stroke: color-mix(in oklab, var(--color-ink) 35%, transparent);
+  stroke-width: 1;
+}

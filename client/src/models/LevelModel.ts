@@ -185,6 +185,14 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         /** Show each region's Gini impurity (W3-L3 Pure Baskets). */
         showImpurity: z.boolean().default(false),
       }),
+      z.object({
+        /** The machine grows the tree (CART, Gini); the player sets its limits (W3-L4 onward). */
+        id: z.literal('grown'),
+        /** A slider, or a fixed depth when the level is about another limit (W3-L5). */
+        maxDepth: z.union([rangeControlSchema, z.number().int().min(0).max(12)]),
+        /** Minimum training mushrooms per leaf (W3-L5 Pruning Shears). Absent = 1. */
+        minLeaf: rangeControlSchema.optional(),
+      }),
     ]),
   }),
 ])

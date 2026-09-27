@@ -209,6 +209,32 @@ export interface SplitSnapshot {
   readonly checked: readonly CheckedPoint[] | null
 }
 
+/** One box of a grown tree on the map, shaded by what it predicts. */
+export interface LeafRegion {
+  readonly bounds: SplitLeaf['bounds']
+  readonly prediction: 0 | 1
+}
+
+/** A grown tree (W3-L4 onward): the limits set, and the tree they grew. */
+export interface TreeSnapshot {
+  readonly kind: 'tree'
+  readonly maxDepth: number
+  readonly minLeaf: number
+  readonly trained: {
+    readonly maxDepth: number
+    readonly minLeaf: number
+    readonly tree: TreeNode
+    readonly leaves: readonly LeafRegion[]
+    readonly leafCount: number
+    readonly depth: number
+    /** Training points sorted right: the only score shown before a check. */
+    readonly correct: number
+    readonly total: number
+  } | null
+  /** Hidden points, revealed only by Check (D6). */
+  readonly checked: readonly CheckedPoint[] | null
+}
+
 export type LevelSnapshot =
   | LandscapeSnapshot
   | RegressionSnapshot
@@ -220,3 +246,4 @@ export type LevelSnapshot =
   | FeatureSnapshot
   | ComplexitySnapshot
   | SplitSnapshot
+  | TreeSnapshot

@@ -13,6 +13,7 @@ import { ScalingLevelView } from './level/ScalingLevelView'
 import { SigmoidLevelView } from './level/SigmoidLevelView'
 import { SplitLevelView } from './level/SplitLevelView'
 import { TrainingLevelView } from './level/TrainingLevelView'
+import { TreeLevelView } from './level/TreeLevelView'
 import { NotFoundPage } from './NotFoundPage'
 import noticeStyles from './NoticePage.module.css'
 
@@ -175,6 +176,11 @@ function LevelScreen({ levelId, world, level }: LevelProps) {
   if (scene.kind === 'splits' && snapshot.kind === 'splits') {
     return (
       <SplitLevelView game={game} scene={scene} snapshot={snapshot} world={world} level={level} />
+    )
+  }
+  if (scene.kind === 'tree' && snapshot.kind === 'tree') {
+    return (
+      <TreeLevelView game={game} scene={scene} snapshot={snapshot} world={world} level={level} />
     )
   }
   throw new Error(

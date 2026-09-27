@@ -58,6 +58,7 @@ export type {
   RegressionScene,
   ScalingScene,
   SplitScene,
+  TreeScene,
   SigmoidScene,
   TrainingScene,
 } from './MapModel'
@@ -76,6 +77,8 @@ export type {
   SigmoidSnapshot,
   SplitLeaf,
   SplitSnapshot,
+  TreeSnapshot,
+  LeafRegion,
   RegressionSnapshot,
   TrainingRun,
   TrainingSnapshot,

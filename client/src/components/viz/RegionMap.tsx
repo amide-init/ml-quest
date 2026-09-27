@@ -4,6 +4,7 @@ import type {
   ContourLine,
   DecisionRegions,
   LabelledPoint,
+  LeafRegion,
   RegressionScene,
 } from '@/models'
 import styles from './RegionMap.module.css'
@@ -21,6 +22,8 @@ interface RegionMapProps {
   readonly checked?: readonly CheckedPoint[] | null
   /** How much each class-1 point weighs in training (W2-L6 oversampling): heavier points draw larger. */
   readonly class1Weight?: number
+  /** A decision tree's exact boxes (World 3), drawn instead of sampled regions. */
+  readonly leaves?: readonly LeafRegion[] | null
 }
 
 /**
@@ -34,6 +37,7 @@ export function RegionMap({
   boundary,
   checked = null,
   class1Weight = 1,
+  leaves = null,
 }: RegionMapProps) {
   // Area grows sub-linearly, so ×10 reads as clearly heavier without covering its neighbours.
   const class1Radius = 6 * class1Weight ** 0.35
@@ -86,6 +90,19 @@ export function RegionMap({
             : t('level.features.plot', { count: points.length })
         }
       >
+        {leaves?.map((leaf) => (
+          <rect
+            key={`${leaf.bounds.xMin},${leaf.bounds.yMin},${leaf.bounds.xMax},${leaf.bounds.yMax}`}
+            className={[
+              leaf.prediction === 1 ? styles['region1'] : styles['region0'],
+              styles['box'],
+            ].join(' ')}
+            x={sx(leaf.bounds.xMin)}
+            y={sy(leaf.bounds.yMax)}
+            width={sx(leaf.bounds.xMax) - sx(leaf.bounds.xMin)}
+            height={sy(leaf.bounds.yMin) - sy(leaf.bounds.yMax)}
+          />
+        ))}
         {[0, 1].map((cls) => (
           <path
             key={cls}
@@ -146,7 +163,7 @@ export function RegionMap({
             />
           ),
         )}
-        {regions ? null : (
+        {regions || leaves ? null : (
           <text className={styles['empty']} x={WIDTH / 2} y={28} textAnchor="middle">
             {t('level.features.none')}
           </text>

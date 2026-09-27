@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "w3-l4",
+  "world": 3,
+  "level": 4,
+  "seed": 405,
+  "draft": true,
+  "algorithm": {
+    "id": "decision-tree",
+    "dataset": {
+      "generator": "grid-regions",
+      "bounds": {
+        "xMin": 0,
+        "xMax": 10,
+        "yMin": 0,
+        "yMax": 8
+      },
+      "xCuts": [3.2, 6.6],
+      "yCuts": [3.9],
+      "cells": [
+        [1, 0, 1],
+        [0, 0, 1]
+      ],
+      "trainCount": 70,
+      "testCount": 400,
+      "labelNoise": 0.15
+    },
+    "view": {
+      "xMin": 0,
+      "xMax": 10,
+      "yMin": 0,
+      "yMax": 8
+    },
+    "optimizer": {
+      "id": "grown",
+      "maxDepth": {
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "initial": 10
+      }
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.8
+    },
+    "two": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 2
+    },
+    "three": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 1
+    }
+  },
+  "text": {
+    "title": "level.w3-l4.title",
+    "mission": "level.w3-l4.mission",
+    "hints": ["level.w3-l4.hint1", "level.w3-l4.hint2", "level.w3-l4.hint3"],
+    "debrief": "level.w3-l4.debrief",
+    "notes": {
+      "idea": "level.w3-l4.notes.idea",
+      "controls": "level.w3-l4.notes.controls",
+      "reading": "level.w3-l4.notes.reading"
+    },
+    "concept": "tree-overfitting"
+  },
+  "authors": ["amide-init"]
+}

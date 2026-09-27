@@ -1,0 +1,89 @@
+{
+  "level": "w3-l5",
+  "runs": [
+    {
+      "name": "prunes hard: at least 15 per leaf, a 4-leaf tree, gap 3 points",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 15
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "prunes moderately: 8 per leaf, 8 leaves",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 8
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "prunes just enough: 5 per leaf, 11 leaves",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): no pruning, 1 per leaf, gap 23 points",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: pruned so hard it underfits: the gap closes but only 77% of new mushrooms",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 25
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

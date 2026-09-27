@@ -159,6 +159,15 @@ export interface SplitScene {
   readonly showImpurity: boolean
 }
 
+/** A grown-tree level (W3-L4 onward): training points and the limits the player can set. */
+export interface TreeScene {
+  readonly kind: 'tree'
+  readonly points: readonly LabelledPoint[]
+  readonly view: RegressionScene['view']
+  readonly maxDepth: { readonly min: number; readonly max: number; readonly step: number } | null
+  readonly minLeaf: { readonly min: number; readonly max: number; readonly step: number } | null
+}
+
 export type LevelScene =
   | LandscapeMap
   | RegressionScene
@@ -170,3 +179,4 @@ export type LevelScene =
   | FeatureScene
   | ComplexityScene
   | SplitScene
+  | TreeScene

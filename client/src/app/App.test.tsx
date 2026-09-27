@@ -811,6 +811,42 @@ describe('App', () => {
     expect(screen.getAllByText(/Gini 0\.\d\d/).length).toBeGreaterThanOrEqual(2)
   })
 
+  it('Overgrown: the full-depth tree memorizes, too shallow is too simple, depth 3 generalizes', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/4', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(screen.getByText(/Training: 70 of 70 sorted right\./)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Memorized the noise' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    setSlider('Maximum depth', '1')
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Too simple' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    setSlider('Maximum depth', '3')
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'It generalizes' })).toBeInTheDocument()
+    expect(screen.getByText('Your tree')).toBeInTheDocument()
+  })
+
+  it('Pruning Shears: a bigger minimum leaf shrinks the tree and closes the gap', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/5', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText('Depth limit: 10 questions in a row')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(screen.getByText(/^Your tree: 18 leaves/)).toBeInTheDocument()
+    setSlider('Minimum mushrooms per leaf', '15')
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(screen.getByText(/^Your tree: 4 leaves/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Pruned' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     await renderApp('/map')

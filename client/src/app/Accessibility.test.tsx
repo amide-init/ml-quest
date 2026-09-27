@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import axe from 'axe-core'
 import { afterEach, describe, expect, it } from 'vitest'
+import { BundledLevelRepository } from '@/repositories/bundled/BundledLevelRepository'
 import { App } from './App'
 import { hydrateStores } from './Bootstrap'
 import { createServices } from './Container'
@@ -11,7 +12,7 @@ afterEach(() => cleanups.splice(0).forEach((cleanup) => cleanup()))
 
 async function renderAt(path: string) {
   window.location.hash = `#${path}`
-  const services = createServices({ storage: 'memory', unlocks: 'all' })
+  const services = createServices({ storage: 'memory', unlocks: 'all', drafts: true })
   cleanups.push(hydrateStores(services))
   cleanups.push(render(<App services={services} />).unmount)
   await waitFor(() => expect(screen.queryByText('Loading the level…')).not.toBeInTheDocument())
@@ -32,7 +33,11 @@ async function violations() {
   )
 }
 
-const LEVELS = [1, 2].flatMap((world) => [1, 2, 3, 4, 5, 6, 7, 8].map((level) => [world, level]))
+// Every level, drafts included, so a world is audited while it's being built.
+const LEVELS = new BundledLevelRepository()
+  .list()
+  .map((level) => [level.world, level.level] as const)
+  .toSorted(([w1, l1], [w2, l2]) => w1 - w2 || l1 - l2)
 
 describe('accessibility (axe, WCAG 2.1 A/AA)', () => {
   for (const path of ['/', '/map', '/codex', '/settings']) {

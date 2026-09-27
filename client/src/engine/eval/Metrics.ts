@@ -1,6 +1,13 @@
 import type { Algorithm, Confusion, MetricId, Metrics, TracedCommand, Vector } from '@/models'
 import { distance } from '@/engine/math'
 
+/**
+ * The model's loss on some data, or NaN when the level's model has no loss (trees). Data may be
+ * undefined on purpose: a loss landscape (World 1) needs none.
+ */
+const lossOn = <TData>(input: MetricInput<TData>, data: TData | undefined) =>
+  input.algorithm && input.params ? input.algorithm.loss(input.params, data as TData) : Number.NaN
+
 /** Share of class-1 points found (true positives over all real positives). NaN without positives. */
 export const recallOf = (confusion: Confusion | undefined) =>
   confusion && confusion.truePositives + confusion.falseNegatives > 0
@@ -26,10 +33,14 @@ export const f1Of = (confusion: Confusion | undefined) => {
 
 /** Everything a metric may look at. Grows as later worlds add datasets and test splits. */
 export interface MetricInput<TData = void> {
-  readonly algorithm: Algorithm<TData>
-  readonly data: TData
-  /** The model's parameters when the player pressed Check (the ball's position in World 1). */
-  readonly params: Vector
+  /**
+   * A gradient-based model, its training data and its parameters when the player pressed Check
+   * (the ball's position in World 1). Absent for models without a loss, like decision trees:
+   * the loss metrics are then NaN ("not measured").
+   */
+  readonly algorithm?: Algorithm<TData>
+  readonly data?: TData
+  readonly params?: Vector
   readonly trace: readonly TracedCommand[]
   readonly hintsRevealed: number
   /** Only for landscape levels: where the true valley floor is. */
@@ -87,28 +98,25 @@ export const METRICS: Readonly<Record<MetricId, MetricDefinition>> = {
   },
   final_loss: {
     better: 'lower',
-    compute: (input) => input.algorithm.loss(input.params, input.data),
+    compute: (input) => lossOn(input, input.data),
   },
   test_loss: {
     better: 'lower',
-    compute: (input) =>
-      input.testData === undefined
-        ? Number.NaN
-        : input.algorithm.loss(input.params, input.testData),
+    compute: (input) => (input.testData === undefined ? Number.NaN : lossOn(input, input.testData)),
   },
   loss_gap: {
     better: 'lower',
     // How much worse than the best possible fit. 0 = optimal.
     compute: (input) =>
-      input.optimalLoss === undefined
-        ? Number.NaN
-        : input.algorithm.loss(input.params, input.data) - input.optimalLoss,
+      input.optimalLoss === undefined ? Number.NaN : lossOn(input, input.data) - input.optimalLoss,
   },
   distance_to_global_min: {
     better: 'lower',
     // Without a known minimum the metric is undefined; NaN fails every comparison, so it can't pass by accident.
     compute: (input) =>
-      input.globalMinimum ? distance(input.params, input.globalMinimum) : Number.NaN,
+      input.globalMinimum && input.params
+        ? distance(input.params, input.globalMinimum)
+        : Number.NaN,
   },
   hints_used: {
     better: 'lower',

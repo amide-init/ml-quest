@@ -150,6 +150,15 @@ export interface ComplexityScene {
   readonly threshold: { readonly min: number; readonly max: number; readonly step: number } | null
 }
 
+/** A hand-built decision tree level (W3-L1 to L3): training points and the question budget. */
+export interface SplitScene {
+  readonly kind: 'splits'
+  readonly points: readonly LabelledPoint[]
+  readonly view: RegressionScene['view']
+  readonly maxSplits: number
+  readonly showImpurity: boolean
+}
+
 export type LevelScene =
   | LandscapeMap
   | RegressionScene
@@ -160,3 +169,4 @@ export type LevelScene =
   | SigmoidScene
   | FeatureScene
   | ComplexityScene
+  | SplitScene

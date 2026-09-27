@@ -35,6 +35,20 @@
   border-color: var(--color-ink-muted);
 }
 
+/* Not available right now (e.g. no questions left): dimmed, and hover doesn't pretend otherwise. */
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.quiet:disabled:hover {
+  border-color: var(--color-line);
+}
+
+.primary:disabled:hover {
+  background: var(--color-beacon);
+}
+
 .small {
   min-height: 2.25rem;
   padding: 0 var(--space-4);

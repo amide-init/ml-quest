@@ -1,5 +1,6 @@
 import type { PolynomialFeature } from './DatasetModel'
 import type { Confusion } from './EngineModel'
+import type { TreeNode } from './TreeModel'
 import type { Point } from './LandscapeModel'
 import type { CheckedPoint, ContourLine } from './MapModel'
 
@@ -170,6 +171,44 @@ export interface ComplexitySnapshot {
   readonly checked: readonly CheckedPoint[] | null
 }
 
+/** One question the player asked: split the region at `path` along an axis. */
+export interface PlayerSplit {
+  readonly path: string
+  readonly axis: 0 | 1
+  readonly threshold: number
+}
+
+/** A final region of the player's tree, as drawn on the map. */
+export interface SplitLeaf {
+  readonly path: string
+  readonly bounds: {
+    readonly xMin: number
+    readonly xMax: number
+    readonly yMin: number
+    readonly yMax: number
+  }
+  /** Training points of class 0 and class 1 inside. */
+  readonly counts: readonly [number, number]
+  /** The majority class (an empty region takes its parent's). */
+  readonly prediction: 0 | 1
+  readonly impurity: number
+}
+
+/** A hand-built decision tree (W3-L1 to L3): the questions, the tree they make, its regions. */
+export interface SplitSnapshot {
+  readonly kind: 'splits'
+  readonly splits: readonly PlayerSplit[]
+  readonly tree: TreeNode
+  readonly leaves: readonly SplitLeaf[]
+  /** Training points sorted right. */
+  readonly correct: number
+  readonly total: number
+  /** Weighted Gini impurity of the leaves, on the training points. */
+  readonly impurity: number
+  /** Hidden points, revealed only by Check (D6). */
+  readonly checked: readonly CheckedPoint[] | null
+}
+
 export type LevelSnapshot =
   | LandscapeSnapshot
   | RegressionSnapshot
@@ -180,3 +219,4 @@ export type LevelSnapshot =
   | SigmoidSnapshot
   | FeatureSnapshot
   | ComplexitySnapshot
+  | SplitSnapshot

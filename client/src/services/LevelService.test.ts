@@ -10,7 +10,8 @@ import { TrainingService } from './TrainingService'
 
 const service = (unlocks?: UnlockPolicy) =>
   new LevelService(
-    new BundledLevelRepository(),
+    // The released worlds: levels still being built (drafts) are not part of these rules' story.
+    new BundledLevelRepository(undefined, { includeDrafts: false }),
     new TrainingService(new EvaluationService()),
     new ProgressService(new InMemoryProgressRepository()),
     () => 0,

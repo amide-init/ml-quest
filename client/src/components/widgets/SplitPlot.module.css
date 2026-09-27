@@ -1,0 +1,111 @@
+.sheet {
+  border: 1.5px solid var(--color-line);
+  border-radius: var(--radius-sheet);
+  background: var(--color-paper-raised);
+  overflow: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+.region {
+  stroke: var(--color-line);
+  stroke-width: 1;
+  cursor: pointer;
+}
+
+.region1 {
+  fill: color-mix(in oklab, var(--color-contour) 20%, transparent);
+}
+
+.region0 {
+  fill: color-mix(in oklab, var(--color-ridge) 16%, transparent);
+}
+
+/* The region the next question will split: a clear outline, not a colour change. */
+.selected {
+  stroke: var(--color-ink);
+  stroke-width: 3;
+  stroke-dasharray: 8 5;
+}
+
+.region:focus-visible {
+  outline: none;
+  stroke: var(--color-focus);
+  stroke-width: 3;
+}
+
+.class1 {
+  fill: var(--color-contour);
+  stroke: var(--color-paper-raised);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.class0 {
+  fill: var(--color-ridge);
+  stroke: var(--color-paper-raised);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.checked1,
+.checked0 {
+  fill: none;
+  stroke-width: 1.75;
+  pointer-events: none;
+}
+
+.checked1 {
+  stroke: var(--color-contour);
+}
+
+.checked0 {
+  stroke: var(--color-ridge);
+}
+
+.wrong .checked1,
+.wrong .checked0 {
+  stroke: var(--color-ink);
+}
+
+.cross {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.split {
+  cursor: grab;
+}
+
+.split:focus,
+.region:focus {
+  outline: none;
+}
+
+.split:focus-visible .splitLine {
+  stroke-width: 6;
+}
+
+.splitHit {
+  stroke: transparent;
+  stroke-width: 24;
+}
+
+.splitLine {
+  stroke: var(--color-beacon);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.axes {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}

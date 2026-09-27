@@ -34,5 +34,17 @@ export type Command =
   | { readonly type: 'flip-sides' }
   /** Give the model a feature, or take it away (W2-L3 feature builder). */
   | { readonly type: 'toggle-feature'; readonly feature: PolynomialFeature }
+  /**
+   * Decision trees by hand (World 3). Nodes are addressed by path from the root: "" is the root,
+   * then "L" (value < threshold) and "R", e.g. "LR". Axis 0 is x₁, 1 is x₂.
+   */
+  | {
+      readonly type: 'add-split'
+      readonly leaf: string
+      readonly axis: 0 | 1
+      readonly threshold: number
+    }
+  | { readonly type: 'move-split'; readonly node: string; readonly threshold: number }
+  | { readonly type: 'remove-split'; readonly node: string }
 
 export type CommandType = Command['type']

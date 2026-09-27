@@ -5,6 +5,7 @@ import {
   linearNoisySpecSchema,
   polynomialFeatureSchema,
   ringsSpecSchema,
+  gridRegionsSpecSchema,
   twoBlobsSpecSchema,
 } from './DatasetModel'
 import { landscapeSpecSchema, pointSchema } from './LandscapeModel'
@@ -167,6 +168,25 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
       }),
     ]),
   }),
+  z.object({
+    /** Decision trees and forests (World 3). Features are cap width (x₁) and stem height (x₂). */
+    id: z.literal('decision-tree'),
+    dataset: z.discriminatedUnion('generator', [
+      gridRegionsSpecSchema,
+      twoBlobsSpecSchema,
+      ringsSpecSchema,
+    ]),
+    view: z.object({ xMin: z.number(), xMax: z.number(), yMin: z.number(), yMax: z.number() }),
+    optimizer: z.discriminatedUnion('id', [
+      z.object({
+        /** The player asks the questions: axis-aligned splits by hand (W3-L1 to L3). */
+        id: z.literal('manual-splits'),
+        maxSplits: z.number().int().min(1).max(7),
+        /** Show each region's Gini impurity (W3-L3 Pure Baskets). */
+        showImpurity: z.boolean().default(false),
+      }),
+    ]),
+  }),
 ])
 export type LevelAlgorithm = z.infer<typeof levelAlgorithmSchema>
 export type AlgorithmId = LevelAlgorithm['id']
@@ -235,5 +255,14 @@ type LogisticAlgorithm = Extract<LevelAlgorithm, { id: 'logistic-regression' }>
 export type LogisticLevelWith<Id extends LogisticAlgorithm['optimizer']['id']> = LevelConfig & {
   readonly algorithm: LogisticAlgorithm & {
     readonly optimizer: Extract<LogisticAlgorithm['optimizer'], { id: Id }>
+  }
+}
+
+type TreeAlgorithm = Extract<LevelAlgorithm, { id: 'decision-tree' }>
+
+/** A decision-tree level narrowed to one optimizer, e.g. TreeLevelWith<'manual-splits'>. */
+export type TreeLevelWith<Id extends TreeAlgorithm['optimizer']['id']> = LevelConfig & {
+  readonly algorithm: TreeAlgorithm & {
+    readonly optimizer: Extract<TreeAlgorithm['optimizer'], { id: Id }>
   }
 }

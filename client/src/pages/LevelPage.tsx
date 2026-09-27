@@ -11,6 +11,7 @@ import { LandscapeLevelView } from './level/LandscapeLevelView'
 import { RegressionLevelView } from './level/RegressionLevelView'
 import { ScalingLevelView } from './level/ScalingLevelView'
 import { SigmoidLevelView } from './level/SigmoidLevelView'
+import { SplitLevelView } from './level/SplitLevelView'
 import { TrainingLevelView } from './level/TrainingLevelView'
 import { NotFoundPage } from './NotFoundPage'
 import noticeStyles from './NoticePage.module.css'
@@ -169,6 +170,11 @@ function LevelScreen({ levelId, world, level }: LevelProps) {
         world={world}
         level={level}
       />
+    )
+  }
+  if (scene.kind === 'splits' && snapshot.kind === 'splits') {
+    return (
+      <SplitLevelView game={game} scene={scene} snapshot={snapshot} world={world} level={level} />
     )
   }
   throw new Error(

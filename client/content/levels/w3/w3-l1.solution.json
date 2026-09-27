@@ -1,0 +1,116 @@
+{
+  "level": "w3-l1",
+  "runs": [
+    {
+      "name": "asks about cap width, cut where the kinds change (92% of new mushrooms)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 6.2
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "cuts too early first, then at the right place",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 5.5
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 6.2
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "a slightly early cut still sorts most (89%)",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 5.9
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: a question about stem height sorts nothing (65%, the majority)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 1,
+          "threshold": 4
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: no question at all",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: the right measurement, cut far too late",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 7.6
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

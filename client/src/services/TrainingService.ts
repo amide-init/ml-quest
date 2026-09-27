@@ -36,6 +36,10 @@ export class TrainingService {
         const { classificationRunners } = await import('./training/ClassificationFamily')
         return classificationRunners({ ...level, algorithm }, this.#evaluation)
       }
+      case 'decision-tree': {
+        const { treeRunners } = await import('./training/TreeFamily')
+        return treeRunners({ ...level, algorithm }, this.#evaluation)
+      }
       default:
         return assertNever(algorithm)
     }

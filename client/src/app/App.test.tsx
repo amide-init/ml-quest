@@ -17,9 +17,10 @@ async function renderApp(
   path = '/',
   storage: 'memory' | 'browser' = 'memory',
   unlocks: 'all' | 'sequential' = 'all',
+  drafts = false,
 ) {
   window.location.hash = `#${path}`
-  const services = createServices({ storage, unlocks })
+  const services = createServices({ storage, unlocks, drafts })
   cleanups.push(hydrateStores(services))
   const view = render(<App services={services} />)
   cleanups.push(view.unmount)
@@ -744,6 +745,32 @@ describe('App', () => {
     )
     expect(screen.getByText('World complete: 23 of 24 stars')).toBeInTheDocument()
     expect(screen.getByText('0 of 8 levels passed, 0 of 24 stars')).toBeInTheDocument()
+  })
+
+  it('keeps draft levels (World 3 while it is built) off the live site', async () => {
+    await renderApp('/w/3/l/1')
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'This level is being built' }),
+    ).toBeInTheDocument()
+  })
+
+  it('One Question: asks about cap width, moves the cut by keyboard, sorts new mushrooms', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/1', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText('0 of 1 question asked')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Split by cap width' }))
+    const cut = screen.getByRole('slider', { name: 'Question about cap width' })
+    expect(cut).toHaveAttribute('aria-valuenow', '5')
+    for (let i = 0; i < 12; i++) fireEvent.keyDown(cut, { key: 'ArrowRight' })
+    expect(cut).toHaveAttribute('aria-valuetext', 'cap width below 6.2 cm')
+    expect(screen.getByText('cap width < 6.2 cm?')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Split by cap width' })).toBeDisabled()
+
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Sorted' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   })
 
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {

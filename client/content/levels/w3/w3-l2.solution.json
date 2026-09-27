@@ -1,0 +1,165 @@
+{
+  "level": "w3-l2",
+  "runs": [
+    {
+      "name": "splits by cap width, then asks again inside the mixed left region (95%)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 3.8
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 1,
+          "threshold": 5.1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "the other order works too: stem height first, then the bottom region",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 1,
+          "threshold": 5.1
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 0,
+          "threshold": 3.8
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "asks the second question in the wrong region first, then fixes it",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 3.8
+        },
+        {
+          "type": "add-split",
+          "leaf": "R",
+          "axis": 1,
+          "threshold": 5.1
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 3.8
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 1,
+          "threshold": 5.1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "an extra, useless third question still sorts them but costs a star",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 3.8
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 1,
+          "threshold": 5.1
+        },
+        {
+          "type": "add-split",
+          "leaf": "R",
+          "axis": 1,
+          "threshold": 2
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): one question can't sort an L shape (83%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 3.8
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: the second question asked in the wrong region",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 3.8
+        },
+        {
+          "type": "add-split",
+          "leaf": "R",
+          "axis": 1,
+          "threshold": 5.1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

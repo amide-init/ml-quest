@@ -1,0 +1,223 @@
+{
+  "level": "w3-l3",
+  "runs": [
+    {
+      "name": "three questions with the cuts tuned by impurity: every basket nearly pure (0.083)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 7.1
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 0,
+          "threshold": 2.9
+        },
+        {
+          "type": "add-split",
+          "leaf": "LL",
+          "axis": 1,
+          "threshold": 4.3
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "the same order asked from the left works as well",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 2.9
+        },
+        {
+          "type": "add-split",
+          "leaf": "R",
+          "axis": 0,
+          "threshold": 7.1
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 1,
+          "threshold": 4.3
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "right structure, cuts a little loose (impurity 0.12)",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 7.2
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 0,
+          "threshold": 2.8
+        },
+        {
+          "type": "add-split",
+          "leaf": "LL",
+          "axis": 1,
+          "threshold": 4.4
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "right structure, cuts off by a few millimetres (impurity 0.17)",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 6.9
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 0,
+          "threshold": 3.1
+        },
+        {
+          "type": "add-split",
+          "leaf": "LL",
+          "axis": 1,
+          "threshold": 4.1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: one question, the purest single cut (82%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 7.1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: a purer second question that doesn't change accuracy yet (82%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 7.1
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 0,
+          "threshold": 2.9
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: starting with stem height leaves the baskets mixed",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 1,
+          "threshold": 4.3
+        },
+        {
+          "type": "add-split",
+          "leaf": "R",
+          "axis": 0,
+          "threshold": 7.1
+        },
+        {
+          "type": "add-split",
+          "leaf": "RL",
+          "axis": 0,
+          "threshold": 2.9
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: the right questions with sloppy cuts (89%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "add-split",
+          "leaf": "",
+          "axis": 0,
+          "threshold": 7.5
+        },
+        {
+          "type": "add-split",
+          "leaf": "L",
+          "axis": 0,
+          "threshold": 2.5
+        },
+        {
+          "type": "add-split",
+          "leaf": "LL",
+          "axis": 1,
+          "threshold": 4.8
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

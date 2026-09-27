@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "id": "w3-l3",
+  "world": 3,
+  "level": 3,
+  "seed": 303,
+  "draft": true,
+  "algorithm": {
+    "id": "decision-tree",
+    "dataset": {
+      "generator": "grid-regions",
+      "bounds": {
+        "xMin": 0,
+        "xMax": 10,
+        "yMin": 0,
+        "yMax": 8
+      },
+      "xCuts": [2.9, 7.1],
+      "yCuts": [4.3],
+      "cells": [
+        [1, 0, 1],
+        [0, 0, 1]
+      ],
+      "trainCount": 90,
+      "testCount": 300,
+      "labelNoise": 0.05
+    },
+    "view": {
+      "xMin": 0,
+      "xMax": 10,
+      "yMin": 0,
+      "yMax": 8
+    },
+    "optimizer": {
+      "id": "manual-splits",
+      "maxSplits": 3,
+      "showImpurity": true
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.9
+    },
+    "two": {
+      "all": [
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.9
+        },
+        {
+          "metric": "impurity",
+          "op": "<=",
+          "value": 0.15
+        }
+      ]
+    },
+    "three": {
+      "all": [
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.9
+        },
+        {
+          "metric": "impurity",
+          "op": "<=",
+          "value": 0.1
+        }
+      ]
+    }
+  },
+  "text": {
+    "title": "level.w3-l3.title",
+    "mission": "level.w3-l3.mission",
+    "hints": ["level.w3-l3.hint1", "level.w3-l3.hint2", "level.w3-l3.hint3"],
+    "debrief": "level.w3-l3.debrief",
+    "notes": {
+      "idea": "level.w3-l3.notes.idea",
+      "controls": "level.w3-l3.notes.controls",
+      "reading": "level.w3-l3.notes.reading"
+    },
+    "concept": "gini-impurity"
+  },
+  "authors": ["amide-init"]
+}

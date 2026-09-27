@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "id": "w3-l2",
+  "world": 3,
+  "level": 2,
+  "seed": 302,
+  "draft": true,
+  "algorithm": {
+    "id": "decision-tree",
+    "dataset": {
+      "generator": "grid-regions",
+      "bounds": {
+        "xMin": 0,
+        "xMax": 10,
+        "yMin": 0,
+        "yMax": 8
+      },
+      "xCuts": [3.8],
+      "yCuts": [5.1],
+      "cells": [
+        [1, 1],
+        [0, 1]
+      ],
+      "trainCount": 80,
+      "testCount": 300,
+      "labelNoise": 0.05
+    },
+    "view": {
+      "xMin": 0,
+      "xMax": 10,
+      "yMin": 0,
+      "yMax": 8
+    },
+    "optimizer": {
+      "id": "manual-splits",
+      "maxSplits": 3
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.9
+    },
+    "two": {
+      "all": [
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.9
+        },
+        {
+          "metric": "split_count",
+          "op": "<=",
+          "value": 2
+        }
+      ]
+    },
+    "three": {
+      "all": [
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.9
+        },
+        {
+          "metric": "split_count",
+          "op": "<=",
+          "value": 2
+        },
+        {
+          "metric": "attempt",
+          "op": "<=",
+          "value": 1
+        }
+      ]
+    }
+  },
+  "text": {
+    "title": "level.w3-l2.title",
+    "mission": "level.w3-l2.mission",
+    "hints": ["level.w3-l2.hint1", "level.w3-l2.hint2", "level.w3-l2.hint3"],
+    "debrief": "level.w3-l2.debrief",
+    "notes": {
+      "idea": "level.w3-l2.notes.idea",
+      "controls": "level.w3-l2.notes.controls",
+      "reading": "level.w3-l2.notes.reading"
+    },
+    "concept": "tree-depth"
+  },
+  "authors": ["amide-init"]
+}

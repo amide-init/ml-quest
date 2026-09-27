@@ -427,6 +427,12 @@
   "level.result.splits.failed.title": "Not sorted yet",
   "level.result.splits.failed.body": "Only {test}% of new mushrooms sorted right; you need {target}%. (Training: {train}%.)",
   "level.result.next.test_accuracy.splits": "Next star: sort at least {value}% of new mushrooms right.",
-  "level.result.next.split_count": "Next star: sort them with {value} questions or fewer.",
-  "level.result.next.impurity": "Next star: purer groups, a tree impurity of {value} or less."
+  "level.result.next.split_count": "Next star: sort them with {value, plural, one {# question} other {# questions}} or fewer.",
+  "level.result.next.impurity": "Next star: purer groups, a tree impurity of {value} or less.",
+  "level.w3-l2.title": "Ask Again",
+  "concept.tree-depth.term": "Tree depth",
+  "concept.tree-depth.definition": "How many questions a decision tree asks along its longest path. Each extra level splits a region again, so the tree can carve out corners and blocks a single straight cut can't.",
+  "level.w3-l3.title": "Pure Baskets",
+  "concept.gini-impurity.term": "Gini impurity",
+  "concept.gini-impurity.definition": "How mixed a group is: 0 when every item is the same class, up to 0.5 for an even two-class mix. A decision tree picks each question to lower the weighted impurity of the groups it creates."
 }

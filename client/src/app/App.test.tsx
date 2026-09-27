@@ -773,6 +773,44 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   })
 
+  it('Ask Again: a second question inside the mixed region fences in the corner', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/2', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    await user.click(screen.getByRole('button', { name: 'Split by cap width' }))
+    const first = screen.getByRole('slider', { name: 'Question about cap width' })
+    for (let i = 0; i < 12; i++) fireEvent.keyDown(first, { key: 'ArrowLeft' })
+    expect(first).toHaveAttribute('aria-valuetext', 'cap width below 3.8 cm')
+
+    // Two regions now: nothing selected until the player picks one.
+    expect(screen.getByText('Choose a region on the map to split it.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Split by stem height' })).toBeDisabled()
+    const regions = screen.getAllByRole('button', { name: /^Region predicting/ })
+    expect(regions).toHaveLength(2)
+    await user.click(regions[0]!)
+    await user.click(screen.getByRole('button', { name: 'Split by stem height' }))
+    const second = screen.getByRole('slider', { name: 'Question about stem height' })
+    for (let i = 0; i < 11; i++) fireEvent.keyDown(second, { key: 'ArrowRight' })
+    expect(second).toHaveAttribute('aria-valuetext', 'stem height below 5.1 cm')
+    expect(screen.getByText('2 of 3 questions asked')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Sorted' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  })
+
+  it('Pure Baskets shows impurity per basket and for the whole tree', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/3', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    expect(screen.getByText(/Tree impurity \(Gini\): 0\.45\./)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Split by cap width' }))
+    const cut = screen.getByRole('slider', { name: 'Question about cap width' })
+    for (let i = 0; i < 21; i++) fireEvent.keyDown(cut, { key: 'ArrowRight' })
+    expect(screen.getByText(/Tree impurity \(Gini\): 0\.21\./)).toBeInTheDocument()
+    expect(screen.getAllByText(/Gini 0\.\d\d/).length).toBeGreaterThanOrEqual(2)
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     await renderApp('/map')

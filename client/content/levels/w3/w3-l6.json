@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "id": "w3-l6",
+  "world": 3,
+  "level": 6,
+  "seed": 639,
+  "draft": true,
+  "algorithm": {
+    "id": "decision-tree",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 50,
+      "testPerClass": 250,
+      "centers": [
+        [3.96, 3.22],
+        [6.04, 4.78]
+      ],
+      "spread": 1.2
+    },
+    "view": {
+      "xMin": 0,
+      "xMax": 10,
+      "yMin": 0,
+      "yMax": 8
+    },
+    "optimizer": {
+      "id": "grown",
+      "maxDepth": {
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "initial": 10
+      },
+      "resamples": 8
+    }
+  },
+  "stars": {
+    "pass": {
+      "all": [
+        {
+          "metric": "instability",
+          "op": "<=",
+          "value": 0.08
+        },
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.75
+        }
+      ]
+    },
+    "two": {
+      "all": [
+        {
+          "all": [
+            {
+              "metric": "instability",
+              "op": "<=",
+              "value": 0.08
+            },
+            {
+              "metric": "test_accuracy",
+              "op": ">=",
+              "value": 0.75
+            }
+          ]
+        },
+        {
+          "metric": "test_accuracy",
+          "op": ">=",
+          "value": 0.8
+        }
+      ]
+    },
+    "three": {
+      "all": [
+        {
+          "all": [
+            {
+              "all": [
+                {
+                  "metric": "instability",
+                  "op": "<=",
+                  "value": 0.08
+                },
+                {
+                  "metric": "test_accuracy",
+                  "op": ">=",
+                  "value": 0.75
+                }
+              ]
+            },
+            {
+              "metric": "test_accuracy",
+              "op": ">=",
+              "value": 0.8
+            }
+          ]
+        },
+        {
+          "metric": "attempt",
+          "op": "<=",
+          "value": 1
+        }
+      ]
+    }
+  },
+  "text": {
+    "title": "level.w3-l6.title",
+    "mission": "level.w3-l6.mission",
+    "hints": ["level.w3-l6.hint1", "level.w3-l6.hint2", "level.w3-l6.hint3"],
+    "debrief": "level.w3-l6.debrief",
+    "notes": {
+      "idea": "level.w3-l6.notes.idea",
+      "controls": "level.w3-l6.notes.controls",
+      "reading": "level.w3-l6.notes.reading"
+    },
+    "concept": "bias-variance"
+  },
+  "authors": ["amide-init"]
+}

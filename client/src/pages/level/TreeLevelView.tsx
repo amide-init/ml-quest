@@ -17,16 +17,43 @@ interface TreeLevelViewProps {
 
 const percent = (share: number) => Math.round(share * 100)
 
-/** W3-L5 (leaf-size slider) talks about the train/new gap; W3-L4 about new mushrooms alone. */
-function describeResult(result: EvalResult, pruning: boolean) {
+type Focus = 'depth' | 'pruning' | 'variance' | 'forest'
+
+const focusOf = (scene: TreeScene): Focus =>
+  scene.resamples !== null
+    ? 'variance'
+    : scene.trees
+      ? 'forest'
+      : scene.minLeaf
+        ? 'pruning'
+        : 'depth'
+
+/** Each level talks about its own lesson: depth, pruning (the gap), variance, or the forest. */
+function describeResult(result: EvalResult, focus: Focus, trees: number) {
   const { accuracy, test_accuracy: test, accuracy_gap: gap, leaf_count: leaves } = result.metrics
+  const pruning = focus === 'pruning'
   const target = result.failedConditions.find((condition) => condition.metric === 'test_accuracy')
   const values = {
     train: percent(accuracy),
     test: percent(test),
     gap: percent(gap),
     leaves,
+    trees,
+    disagreement: percent(result.metrics.instability),
     target: percent(target?.expected ?? 0.8),
+  }
+  if (focus === 'variance') {
+    const shaky = result.metrics.instability > 0.08
+    const key = result.passed
+      ? 'level.result.tree.steady'
+      : shaky
+        ? 'level.result.tree.shaky'
+        : 'level.result.tree.simple'
+    return { title: t(`${key}.title` as MessageKey), body: t(`${key}.body` as MessageKey, values) }
+  }
+  if (focus === 'forest') {
+    const key = result.passed ? 'level.result.tree.forest' : 'level.result.tree.fewTrees'
+    return { title: t(`${key}.title` as MessageKey), body: t(`${key}.body` as MessageKey, values) }
   }
   if (result.passed) {
     const key = pruning ? 'level.result.tree.pruned' : 'level.result.tree.passed'
@@ -56,6 +83,8 @@ const describeNext = (condition: ConditionFailure) => {
         : t('level.result.next.attempt.within', { value: condition.expected })
     case 'leaf_count':
       return t('level.result.next.leaf_count', { value: condition.expected })
+    case 'test_accuracy':
+      return t('level.result.next.test_accuracy.splits', { value: percent(condition.expected) })
     default:
       return t(`level.result.next.${condition.metric}` as MessageKey, { value: condition.expected })
   }
@@ -68,24 +97,28 @@ const describeNext = (condition: ConditionFailure) => {
 export function TreeLevelView({ game, scene, snapshot, world, level }: TreeLevelViewProps) {
   const result = game.view.session.lastResult
   const trained = snapshot.trained
-  const pruning = scene.minLeaf !== null
-  const train = { actionLabel: t('level.train'), action: { type: 'train' } as const }
+  const focus = focusOf(scene)
+  // One Train button, on the last slider that changes the model.
+  const trainsOn = scene.trees ? 'trees' : scene.minLeaf ? 'minLeaf' : 'maxDepth'
+  const train = (name: string) =>
+    name === trainsOn ? { actionLabel: t('level.train'), action: { type: 'train' } as const } : {}
 
   return (
     <LevelFrame
       game={game}
       world={world}
       level={level}
-      resultText={result ? describeResult(result, pruning) : null}
+      resultText={result ? describeResult(result, focus, snapshot.trees) : null}
       describeNext={describeNext}
       visual={
         <div className={styles['visualStack']}>
           <RegionMap
             points={scene.points}
             view={scene.view}
-            regions={null}
-            boundary={[]}
-            leaves={trained?.leaves ?? null}
+            regions={trained?.regions ?? null}
+            boundary={trained?.boundary ?? []}
+            leaves={trained && trained.leaves.length > 0 ? trained.leaves : null}
+            ghostBorders={trained?.ghosts ?? []}
             checked={snapshot.checked}
           />
           {snapshot.checked ? (
@@ -96,7 +129,9 @@ export function TreeLevelView({ game, scene, snapshot, world, level }: TreeLevel
               })}
             </p>
           ) : null}
-          {trained ? <TreeDiagram tree={trained.tree} showImpurity={false} /> : null}
+          {trained && focus !== 'forest' ? (
+            <TreeDiagram tree={trained.tree} showImpurity={false} />
+          ) : null}
         </div>
       }
       controls={
@@ -110,7 +145,7 @@ export function TreeLevelView({ game, scene, snapshot, world, level }: TreeLevel
               min={scene.maxDepth.min}
               max={scene.maxDepth.max}
               step={scene.maxDepth.step}
-              {...(pruning ? {} : train)}
+              {...train('maxDepth')}
               disabled={false}
               onCommand={game.dispatch}
             />
@@ -128,20 +163,49 @@ export function TreeLevelView({ game, scene, snapshot, world, level }: TreeLevel
               min={scene.minLeaf.min}
               max={scene.minLeaf.max}
               step={scene.minLeaf.step}
-              {...train}
+              {...train('minLeaf')}
               disabled={false}
               onCommand={game.dispatch}
             />
           ) : null}
+          {scene.trees ? (
+            <HyperparameterControls
+              name="trees"
+              label={t('level.tree.trees.label')}
+              hint={t('level.tree.trees.hint')}
+              value={snapshot.trees}
+              min={scene.trees.min}
+              max={scene.trees.max}
+              step={scene.trees.step}
+              {...train('trees')}
+              disabled={false}
+              onCommand={game.dispatch}
+            />
+          ) : null}
+          {trained && trained.disagreement !== null ? (
+            <p className={styles['stats']} aria-live="polite">
+              {t('level.tree.disagreement', {
+                count: scene.resamples ?? 0,
+                value: percent(trained.disagreement),
+              })}
+            </p>
+          ) : null}
           <p className={styles['mission']} aria-live="polite">
-            {trained
-              ? t('level.tree.trained', {
-                  leaves: trained.leafCount,
-                  depth: trained.depth,
+            {trained && focus === 'forest'
+              ? t('level.tree.forest', {
+                  trees: trained.trees,
+                  depth: trained.maxDepth,
                   correct: trained.correct,
                   total: trained.total,
                 })
-              : t('level.tree.none')}
+              : trained
+                ? t('level.tree.trained', {
+                    leaves: trained.leafCount,
+                    depth: trained.depth,
+                    correct: trained.correct,
+                    total: trained.total,
+                  })
+                : t('level.tree.none')}
           </p>
           <Button variant="primary" onClick={() => game.dispatch({ type: 'check' })}>
             {t('level.splits.check')}

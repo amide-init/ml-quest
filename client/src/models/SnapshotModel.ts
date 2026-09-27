@@ -220,11 +220,23 @@ export interface TreeSnapshot {
   readonly kind: 'tree'
   readonly maxDepth: number
   readonly minLeaf: number
+  /** Forest size (1 = a single tree). */
+  readonly trees: number
   readonly trained: {
     readonly maxDepth: number
     readonly minLeaf: number
+    readonly trees: number
+    /** A single tree, or the first tree of a forest (for the diagram). */
     readonly tree: TreeNode
+    /** A single tree's exact boxes; empty for a forest, which is drawn from its vote instead. */
     readonly leaves: readonly LeafRegion[]
+    /** A forest's vote over the map, and its border (null for a single tree). */
+    readonly regions: DecisionRegions | null
+    readonly boundary: readonly ContourLine[]
+    /** Borders of trees retrained on resampled data (W3-L6), drawn faintly. */
+    readonly ghosts: readonly (readonly ContourLine[])[]
+    /** Share of the map where those retrained trees disagree (0 = all agree; at most 0.5). */
+    readonly disagreement: number | null
     readonly leafCount: number
     readonly depth: number
     /** Training points sorted right: the only score shown before a check. */

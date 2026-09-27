@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "w3-l7",
+  "world": 3,
+  "level": 7,
+  "seed": 703,
+  "draft": true,
+  "algorithm": {
+    "id": "decision-tree",
+    "dataset": {
+      "generator": "two-blobs",
+      "trainPerClass": 50,
+      "testPerClass": 250,
+      "centers": [
+        [3.88, 3.16],
+        [6.12, 4.84]
+      ],
+      "spread": 1.5
+    },
+    "view": {
+      "xMin": 0,
+      "xMax": 10,
+      "yMin": 0,
+      "yMax": 8
+    },
+    "optimizer": {
+      "id": "grown",
+      "maxDepth": 10,
+      "trees": {
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "initial": 1
+      }
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.78
+    },
+    "two": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 2
+    },
+    "three": {
+      "metric": "attempt",
+      "op": "<=",
+      "value": 1
+    }
+  },
+  "text": {
+    "title": "level.w3-l7.title",
+    "mission": "level.w3-l7.mission",
+    "hints": ["level.w3-l7.hint1", "level.w3-l7.hint2", "level.w3-l7.hint3"],
+    "debrief": "level.w3-l7.debrief",
+    "notes": {
+      "idea": "level.w3-l7.notes.idea",
+      "controls": "level.w3-l7.notes.controls",
+      "reading": "level.w3-l7.notes.reading"
+    },
+    "concept": "bagging"
+  },
+  "authors": ["amide-init"]
+}

@@ -1,0 +1,114 @@
+{
+  "level": "w3-l6",
+  "runs": [
+    {
+      "name": "three questions deep: accurate (82%) and steady (retrained trees disagree on 7% of the map)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 3
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "trusts the full-depth tree first, then picks the steady one",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        },
+        {
+          "type": "retry"
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 3
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "one question: very steady but crude (78%): passes with a single star",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 1
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): the full-depth tree scores 81% today, but retrained trees disagree on 12% of the map",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: two questions deep is the wobbliest of all (16%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 2
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: five questions deep still wobbles",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 5
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

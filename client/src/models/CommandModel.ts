@@ -11,6 +11,7 @@ export type HyperparameterName =
   | 'oversample'
   | 'maxDepth'
   | 'minLeaf'
+  | 'trees'
 
 /**
  * Every player action is a serializable Command (ARCHITECTURE §3). Widgets emit commands,

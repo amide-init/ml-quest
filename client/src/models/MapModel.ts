@@ -166,6 +166,9 @@ export interface TreeScene {
   readonly view: RegressionScene['view']
   readonly maxDepth: { readonly min: number; readonly max: number; readonly step: number } | null
   readonly minLeaf: { readonly min: number; readonly max: number; readonly step: number } | null
+  readonly trees: { readonly min: number; readonly max: number; readonly step: number } | null
+  /** Retrained trees overlaid to show variance (W3-L6), or null. */
+  readonly resamples: number | null
 }
 
 export type LevelScene =

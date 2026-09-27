@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "id": "w3-l8",
+  "world": 3,
+  "level": 8,
+  "seed": 802,
+  "draft": true,
+  "algorithm": {
+    "id": "decision-tree",
+    "dataset": {
+      "generator": "rings",
+      "trainPerClass": 60,
+      "testPerClass": 300,
+      "innerRadius": 1.4,
+      "outerRadius": 2.9,
+      "spread": 0.9
+    },
+    "view": {
+      "xMin": -4.5,
+      "xMax": 4.5,
+      "yMin": -3.6,
+      "yMax": 3.6
+    },
+    "optimizer": {
+      "id": "grown",
+      "maxDepth": {
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "initial": 10
+      },
+      "minLeaf": {
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "initial": 1
+      },
+      "trees": {
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "initial": 1
+      }
+    }
+  },
+  "stars": {
+    "pass": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.765
+    },
+    "two": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.775
+    },
+    "three": {
+      "metric": "test_accuracy",
+      "op": ">=",
+      "value": 0.78
+    }
+  },
+  "text": {
+    "title": "level.w3-l8.title",
+    "mission": "level.w3-l8.mission",
+    "hints": ["level.w3-l8.hint1", "level.w3-l8.hint2", "level.w3-l8.hint3"],
+    "debrief": "level.w3-l8.debrief",
+    "notes": {
+      "idea": "level.w3-l8.notes.idea",
+      "controls": "level.w3-l8.notes.controls",
+      "reading": "level.w3-l8.notes.reading"
+    },
+    "concept": "random-forest"
+  },
+  "authors": ["amide-init"]
+}

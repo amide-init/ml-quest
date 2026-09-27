@@ -1,0 +1,167 @@
+{
+  "level": "w3-l8",
+  "runs": [
+    {
+      "name": "a tuned forest: 30 trees, four questions deep, at least 3 per leaf (78.5%)",
+      "expect": {
+        "passed": true,
+        "stars": 3
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 4
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 3
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "trees",
+          "value": 30
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "a forest of 30 trees limited to depth 4 (77.7%)",
+      "expect": {
+        "passed": true,
+        "stars": 2
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 4
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 1
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "trees",
+          "value": 30
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "the pruning route: 20 deep trees with at least 4 per leaf",
+      "expect": {
+        "passed": true,
+        "stars": 1
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 8
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 4
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "trees",
+          "value": 20
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution (the trap): one deep tree (68%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: the best single tree anyone can grow still fails (70%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 5
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 4
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "trees",
+          "value": 1
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    },
+    {
+      "name": "anti-solution: 50 raw deep trees: more trees alone isn't enough (74.5%)",
+      "expect": {
+        "passed": false
+      },
+      "commands": [
+        {
+          "type": "set-hyperparameter",
+          "name": "maxDepth",
+          "value": 10
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "minLeaf",
+          "value": 1
+        },
+        {
+          "type": "set-hyperparameter",
+          "name": "trees",
+          "value": 50
+        },
+        {
+          "type": "train"
+        },
+        {
+          "type": "check"
+        }
+      ]
+    }
+  ]
+}

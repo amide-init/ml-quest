@@ -192,6 +192,10 @@ export const levelAlgorithmSchema = z.discriminatedUnion('id', [
         maxDepth: z.union([rangeControlSchema, z.number().int().min(0).max(12)]),
         /** Minimum training mushrooms per leaf (W3-L5 Pruning Shears). Absent = 1. */
         minLeaf: rangeControlSchema.optional(),
+        /** Forest size (W3-L7 bagging, the boss): trees grown on bootstrap samples, then averaged. */
+        trees: rangeControlSchema.optional(),
+        /** Also grow this many trees on resampled data and overlay them (W3-L6 Shaky Branches). */
+        resamples: z.number().int().min(2).max(12).optional(),
       }),
     ]),
   }),

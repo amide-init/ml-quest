@@ -74,3 +74,11 @@
   stroke: color-mix(in oklab, var(--color-ink) 35%, transparent);
   stroke-width: 1;
 }
+
+/* A retrained tree's border (W3-L6): many faint lines show how much the model wobbles. */
+.ghost {
+  fill: none;
+  stroke: var(--color-beacon);
+  stroke-width: 1.5;
+  stroke-opacity: 0.55;
+}

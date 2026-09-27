@@ -24,6 +24,8 @@ interface RegionMapProps {
   readonly class1Weight?: number
   /** A decision tree's exact boxes (World 3), drawn instead of sampled regions. */
   readonly leaves?: readonly LeafRegion[] | null
+  /** Borders of other models drawn faintly underneath (W3-L6: trees retrained on resampled data). */
+  readonly ghostBorders?: readonly (readonly ContourLine[])[]
 }
 
 /**
@@ -38,6 +40,7 @@ export function RegionMap({
   checked = null,
   class1Weight = 1,
   leaves = null,
+  ghostBorders = [],
 }: RegionMapProps) {
   // Area grows sub-linearly, so ×10 reads as clearly heavier without covering its neighbours.
   const class1Radius = 6 * class1Weight ** 0.35
@@ -110,6 +113,18 @@ export function RegionMap({
             d={regionPath(cls)}
           />
         ))}
+        {ghostBorders.flatMap((lines, index) =>
+          lines.map((line) => (
+            <path
+              key={`g${index}-${line.points[0]?.join(',')}`}
+              className={styles['ghost']}
+              d={
+                line.points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${sx(x)} ${sy(y)}`).join('') +
+                (line.closed ? 'Z' : '')
+              }
+            />
+          )),
+        )}
         {boundary.map((line) => (
           <path
             key={`${line.points[0]?.join(',')}`}

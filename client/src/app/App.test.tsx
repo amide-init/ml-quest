@@ -847,6 +847,54 @@ describe('App', () => {
     expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
   })
 
+  it('Shaky Branches: retrained deep trees disagree; three questions deep is steady', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/6', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      screen.getByText('The 8 retrained trees disagree on 12% of the map.'),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Shaky branches' })).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    setSlider('Maximum depth', '3')
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(screen.getByText('The 8 retrained trees disagree on 7% of the map.')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Steady' })).toBeInTheDocument()
+  })
+
+  it('Many Trees: one deep tree fails; a forest of 30 voting holds', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/7', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'Not steady enough' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Try again' }))
+    setSlider('Number of trees', '30')
+    await user.click(screen.getByRole('button', { name: 'Train' }))
+    expect(
+      screen.getByText(/^Your forest: 30 trees, each up to 10 questions deep/),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'The forest holds' })).toBeInTheDocument()
+  })
+
+  it('Boss: The Old Forest needs many limited trees', async () => {
+    const user = userEvent.setup()
+    await renderApp('/w/3/l/8', 'memory', 'all', true)
+    await user.click(screen.getByRole('button', { name: 'Start the level' }))
+    setSlider('Maximum depth', '4')
+    setSlider('Minimum mushrooms per leaf', '3')
+    setSlider('Number of trees', '30')
+    expect(screen.getAllByRole('button', { name: 'Train' })).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: 'Check on new mushrooms' }))
+    expect(screen.getByRole('heading', { name: 'The forest holds' })).toBeInTheDocument()
+    expect(screen.getByRole('img', { name: '3 of 3 stars' })).toBeInTheDocument()
+  })
+
   it('shows an unplayed level on the map and an empty Codex for a new player', async () => {
     const user = userEvent.setup()
     await renderApp('/map')
